@@ -1,5 +1,20 @@
 <RCC>
   <qresource prefix="FrameFlow">
+    <file>lock.svg</file>
+    <file>eye.svg</file>
+    <file>drag.svg</file>
+    <file>dots.svg</file>
+    <file>effect.svg</file>
+    <file>transition.svg</file>
+    <file>tv.svg</file>
+    <file>scenes.svg</file>
+    <file>plus.svg</file>
+    <file>camera.svg</file>
+    <file>chat.svg</file>
+    <file>microphone.svg</file>
+    <file>stats.svg</file>
+    <file>full-screen.svg</file>
+    <file>offline.svg</file>
     <file>volume.svg</file>
     <file>record.svg</file>
     <file>liveblue.svg</file>

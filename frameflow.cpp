@@ -7,6 +7,10 @@
 #include "settingsdialog.h"
 #include "alertsdialog.h"
 #include "confirmationdialog.h"
+#include "scenewidget.h"
+#include "sourcewidget.h"
+#include "transitionwidget.h"
+#include "effectwidget.h"
 
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
@@ -38,6 +42,51 @@ FrameFlow::FrameFlow(QWidget *_parent)
       projectsWidget_->activateWindow();
     }
   });
+
+  // dummy scenes
+  for(int i = 0; i < 5; i++)
+  {
+    QListWidgetItem* lwi = new QListWidgetItem(ui.sceneListWidget);
+    lwi->setSizeHint(QSize(100, 100));
+    SceneWidget* sw = new SceneWidget();
+    ui.sceneListWidget->addItem(lwi);
+    ui.sceneListWidget->setItemWidget(lwi, sw);
+  }
+
+  // dummy sources
+  for(int i = 0; i < 5; i++)
+  {
+    QListWidgetItem* lwi = new QListWidgetItem(ui.sourceListWidget);
+    lwi->setSizeHint(QSize(0, 35));
+    SourceWidget* sw = new SourceWidget();
+    ui.sourceListWidget->addItem(lwi);
+    ui.sourceListWidget->setItemWidget(lwi, sw);
+  }
+
+  // dummy transitions
+  for(int i = 0; i < 5; i++)
+  {
+    QListWidgetItem* lwi = new QListWidgetItem(ui.transitionListWidget);
+    lwi->setSizeHint(QSize(100, 35));
+    TransitionWidget* sw = new TransitionWidget();
+    ui.transitionListWidget->addItem(lwi);
+    ui.transitionListWidget->setItemWidget(lwi, sw);
+  }
+  ui.transitionListWidget->setCurrentRow(0); // cut
+  ui.transitionsStackedWidget->setCurrentIndex(1);
+  onExpandTransitions();
+
+  // dummy effects
+  for(int i = 0; i < 5; i++)
+  {
+    QListWidgetItem* lwi = new QListWidgetItem(ui.effectListWidget);
+    lwi->setSizeHint(QSize(50, 50));
+    EffectWidget* sw = new EffectWidget();
+    ui.effectListWidget->addItem(lwi);
+    ui.effectListWidget->setItemWidget(lwi, sw);
+  }
+  ui.effectsStackedWidget->setCurrentIndex(1);
+  onExpandEffects();
 }
 
 FrameFlow::~FrameFlow()
@@ -103,6 +152,7 @@ void FrameFlow::writeSettings()
 
 void FrameFlow::closeEvent(QCloseEvent* event)
 {
+#ifndef _DEBUG
   QMessageBox::StandardButton reply = ConfirmationDialog::question(this, "Exit application", "Are you sure you want to exit?", QMessageBox::Yes, QMessageBox::No, QMessageBox::No);
   if(reply == QMessageBox::Yes)
   {
@@ -113,6 +163,10 @@ void FrameFlow::closeEvent(QCloseEvent* event)
   {
     event->ignore();
   }
+#else
+  writeSettings();
+  event->accept();
+#endif // _DEBUG
 }
 
 void FrameFlow::updateSystemStats()
@@ -170,5 +224,100 @@ void FrameFlow::onSetWindowTitleVisible()
 
   setWindowFlags(flags);
 
-  show();
+  if(!windowTitleVisible_) showFullScreen();
+  else show();
+}
+
+void FrameFlow::onSceneSelectedChange(QListWidgetItem*, QListWidgetItem*)
+{
+  QListWidgetItem *currentItem = ui.sceneListWidget->currentItem();
+  SceneWidget *sw = static_cast<SceneWidget*>(ui.sceneListWidget->itemWidget(currentItem));
+  for(int i = 0; i < ui.sceneListWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.sceneListWidget->item(i);
+    SceneWidget* w = static_cast<SceneWidget*>(ui.sceneListWidget->itemWidget(item));
+    w->setSelected(w == sw);
+  }
+}
+
+void FrameFlow::onSourceSelectedChange(QListWidgetItem*, QListWidgetItem*)
+{
+  QListWidgetItem* currentItem = ui.sourceListWidget->currentItem();
+  SourceWidget* sw = static_cast<SourceWidget*>(ui.sourceListWidget->itemWidget(currentItem));
+  for(int i = 0; i < ui.sourceListWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.sourceListWidget->item(i);
+    SourceWidget* w = static_cast<SourceWidget*>(ui.sourceListWidget->itemWidget(item));
+    w->setSelected(w == sw);
+  }
+}
+
+void FrameFlow::onTransitionSelectedChange(QListWidgetItem*, QListWidgetItem*)
+{
+  QListWidgetItem* currentItem = ui.transitionListWidget->currentItem();
+  TransitionWidget* sw = static_cast<TransitionWidget*>(ui.transitionListWidget->itemWidget(currentItem));
+  for(int i = 0; i < ui.transitionListWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.transitionListWidget->item(i);
+    TransitionWidget* w = static_cast<TransitionWidget*>(ui.transitionListWidget->itemWidget(item));
+    w->setSelected(w == sw);
+  }
+}
+
+void FrameFlow::onEffectSelectedChange(QListWidgetItem*, QListWidgetItem*)
+{
+  QListWidgetItem* currentItem = ui.effectListWidget->currentItem();
+  EffectWidget* sw = static_cast<EffectWidget*>(ui.effectListWidget->itemWidget(currentItem));
+  for(int i = 0; i < ui.effectListWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.effectListWidget->item(i);
+    EffectWidget* w = static_cast<EffectWidget*>(ui.effectListWidget->itemWidget(item));
+    w->setSelected(w == sw);
+  }
+}
+
+void FrameFlow::onExpandTransitions()
+{
+  int index = ui.transitionsStackedWidget->currentIndex();
+  if(index == 0)
+  {
+    ui.expandTransitionButton->setText("Collapse");
+    ui.transitionsStackedWidget->setCurrentIndex(1);
+    ui.transitionsStackedWidget->setFixedHeight(100);
+  }
+  else
+  {
+    ui.expandTransitionButton->setText("Expand");
+    ui.transitionsStackedWidget->setCurrentIndex(0);
+    ui.transitionsStackedWidget->setFixedHeight(50);
+  }
+}
+
+void FrameFlow::onExpandEffects()
+{
+  int index = ui.effectsStackedWidget->currentIndex();
+  if(index == 0)
+  {
+    ui.expandEffectButton->setText("Collapse");
+    ui.effectsStackedWidget->setCurrentIndex(1);
+    ui.effectsStackedWidget->setFixedHeight(100);
+  }
+  else
+  {
+    ui.expandEffectButton->setText("Expand");
+    ui.effectsStackedWidget->setCurrentIndex(0);
+    ui.effectsStackedWidget->setFixedHeight(50);
+  }
+}
+
+void FrameFlow::keyPressEvent(QKeyEvent* event)
+{
+  if(event->key() == Qt::Key_F11)
+  {
+    onSetWindowTitleVisible();
+  }
+  else
+  {
+    QMainWindow::keyPressEvent(event);
+  }
 }

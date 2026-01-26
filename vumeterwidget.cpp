@@ -25,7 +25,13 @@ void VuMeterWidget::paintEvent(QPaintEvent*)
   float norm = (m_db + 60.0f) / 60.0f;
   float height = r.height() * norm;
 
-  QRectF bar(r.left(), r.bottom() - height, r.width(), height);
+  QRectF bar(r.left() + 5, 0, 10, r.height());
+  QColor backgroundColor = QColor("#21242C");
+  p.setBrush(backgroundColor);
+  p.setPen(Qt::NoPen);
+  p.drawRoundedRect(bar, 4, 4);
+
+  bar = QRectF(r.left() + 5, r.bottom() - height, 10, height);
 
   // Color by level
   QColor color;
@@ -36,4 +42,10 @@ void VuMeterWidget::paintEvent(QPaintEvent*)
   p.setBrush(color);
   p.setPen(Qt::NoPen);
   p.drawRoundedRect(bar, 4, 4);
+
+  // line
+  QColor lineColor = QColor("#F44336");
+  p.setBrush(lineColor);
+  p.setPen(lineColor);
+  p.drawLine(r.left() + 5, 10, r.left() + 15, 10);
 }

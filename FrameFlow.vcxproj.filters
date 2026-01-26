@@ -82,6 +82,21 @@
     <ClCompile Include="vumeterwidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scenewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sourcewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="splashwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="transitionwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="effectwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myutils.h">
@@ -122,6 +137,24 @@
     <QtMoc Include="vumeterwidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="scenewidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sourcewidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="togglelistwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="splashwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="transitionwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="effectwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="projectswidget.ui">
@@ -143,6 +176,21 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="vumetercontrol.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="scenewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="sourcewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="splashwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="transitionwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="effectwidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

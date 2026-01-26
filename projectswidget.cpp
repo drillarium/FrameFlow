@@ -11,7 +11,6 @@ ProjectsWidget::ProjectsWidget(QWidget *_parent)
   setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
   setAttribute(Qt::WA_TranslucentBackground);
 
-  // ui.listWidget->addItems(QStringList() << "1111" << "22222" << "33333" << "4444444" << "1111" << "22222" << "33333" << "4444444");
   QListWidgetItem *lwi = new QListWidgetItem(ui.listWidget);
   lwi->setSizeHint(QSize(0, 28));
   ProjectMenuItem* pmi = new ProjectMenuItem();
