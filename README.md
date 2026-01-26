@@ -67,12 +67,7 @@ FrameFlow complements and extends the classic live production model by introduci
 
 ## 🖥 Screenshots
 
-> 📸 Replace the image below with an actual capture of the application
-
-```text
-/docs/
-  screenshot.png
-```
+![FrameFlow Screenshot](docs/screenshot.png)
 
 Example:
 
