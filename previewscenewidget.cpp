@@ -72,4 +72,21 @@ void PreviewSceneWidget::paintEvent(QPaintEvent*)
     Qt::AlignCenter,
     "Preview: Main Scene"
   );
+
+  // boder
+  const int borderWidth = 2;
+  const int radius = 10;
+  QRect rborder = rect();
+  rborder.adjust(borderWidth / 2.0, borderWidth / 2.0, -borderWidth / 2.0, -borderWidth / 2.0);
+
+  QColor color(Qt::black);
+  if(previewMode_ == EPreviewMode::PM_PREVIEW) color = QColor(0x19BDDE);
+  else if(previewMode_ == EPreviewMode::PM_PROGRAM) color = QColor(Qt::red);
+  QPen pen(color);
+  pen.setWidth(borderWidth);
+  QPainter painter(this);
+  painter.setPen(pen);
+  painter.setBrush(Qt::NoBrush);
+
+  painter.drawRoundedRect(r, radius, radius);
 }

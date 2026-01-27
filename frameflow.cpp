@@ -87,6 +87,18 @@ FrameFlow::FrameFlow(QWidget *_parent)
   }
   ui.effectsStackedWidget->setCurrentIndex(1);
   onExpandEffects();
+
+  connect(ui.buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, [this] (QAbstractButton* button) {
+    if(button == ui.directButton) {
+      ui.stackedWidget->setCurrentIndex(0);
+    }
+    else if(button == ui.previewButton) {
+      ui.stackedWidget->setCurrentIndex(1);
+    }
+  });
+
+  ui.PGCWidget->setPreviewMode(EPreviewMode::PM_PROGRAM);
+  ui.PREVIEWWidget->setPreviewMode(EPreviewMode::PM_PREVIEW);
 }
 
 FrameFlow::~FrameFlow()
@@ -321,3 +333,4 @@ void FrameFlow::keyPressEvent(QKeyEvent* event)
     QMainWindow::keyPressEvent(event);
   }
 }
+
