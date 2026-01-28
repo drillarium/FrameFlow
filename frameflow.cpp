@@ -11,6 +11,7 @@
 #include "sourcewidget.h"
 #include "transitionwidget.h"
 #include "effectwidget.h"
+#include "selectsourcedialog.h"
 
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
@@ -52,6 +53,7 @@ FrameFlow::FrameFlow(QWidget *_parent)
     ui.sceneListWidget->addItem(lwi);
     ui.sceneListWidget->setItemWidget(lwi, sw);
   }
+  ui.sceneListWidget->setCurrentRow(0); // first
 
   // dummy sources
   for(int i = 0; i < 5; i++)
@@ -77,7 +79,7 @@ FrameFlow::FrameFlow(QWidget *_parent)
   onExpandTransitions();
 
   // dummy effects
-  for(int i = 0; i < 5; i++)
+  for(int i = 0; i < 2; i++)
   {
     QListWidgetItem* lwi = new QListWidgetItem(ui.effectListWidget);
     lwi->setSizeHint(QSize(50, 50));
@@ -240,51 +242,43 @@ void FrameFlow::onSetWindowTitleVisible()
   else show();
 }
 
-void FrameFlow::onSceneSelectedChange(QListWidgetItem*, QListWidgetItem*)
+void FrameFlow::onSceneSelectionChanged()
 {
-  QListWidgetItem *currentItem = ui.sceneListWidget->currentItem();
-  SceneWidget *sw = static_cast<SceneWidget*>(ui.sceneListWidget->itemWidget(currentItem));
   for(int i = 0; i < ui.sceneListWidget->count(); ++i)
   {
     QListWidgetItem* item = ui.sceneListWidget->item(i);
     SceneWidget* w = static_cast<SceneWidget*>(ui.sceneListWidget->itemWidget(item));
-    w->setSelected(w == sw);
+    w->setSelected(item->isSelected());
   }
 }
 
-void FrameFlow::onSourceSelectedChange(QListWidgetItem*, QListWidgetItem*)
+void FrameFlow::onSourceSelectionChanged()
 {
-  QListWidgetItem* currentItem = ui.sourceListWidget->currentItem();
-  SourceWidget* sw = static_cast<SourceWidget*>(ui.sourceListWidget->itemWidget(currentItem));
   for(int i = 0; i < ui.sourceListWidget->count(); ++i)
   {
     QListWidgetItem* item = ui.sourceListWidget->item(i);
     SourceWidget* w = static_cast<SourceWidget*>(ui.sourceListWidget->itemWidget(item));
-    w->setSelected(w == sw);
+    w->setSelected(item->isSelected());
   }
 }
 
-void FrameFlow::onTransitionSelectedChange(QListWidgetItem*, QListWidgetItem*)
+void FrameFlow::onTransitionSelectionChanged()
 {
-  QListWidgetItem* currentItem = ui.transitionListWidget->currentItem();
-  TransitionWidget* sw = static_cast<TransitionWidget*>(ui.transitionListWidget->itemWidget(currentItem));
   for(int i = 0; i < ui.transitionListWidget->count(); ++i)
   {
     QListWidgetItem* item = ui.transitionListWidget->item(i);
     TransitionWidget* w = static_cast<TransitionWidget*>(ui.transitionListWidget->itemWidget(item));
-    w->setSelected(w == sw);
+    w->setSelected(item->isSelected());
   }
 }
 
-void FrameFlow::onEffectSelectedChange(QListWidgetItem*, QListWidgetItem*)
+void FrameFlow::onEffectSelectionChanged()
 {
-  QListWidgetItem* currentItem = ui.effectListWidget->currentItem();
-  EffectWidget* sw = static_cast<EffectWidget*>(ui.effectListWidget->itemWidget(currentItem));
   for(int i = 0; i < ui.effectListWidget->count(); ++i)
   {
     QListWidgetItem* item = ui.effectListWidget->item(i);
     EffectWidget* w = static_cast<EffectWidget*>(ui.effectListWidget->itemWidget(item));
-    w->setSelected(w == sw);
+    w->setSelected(item->isSelected());
   }
 }
 
@@ -334,3 +328,17 @@ void FrameFlow::keyPressEvent(QKeyEvent* event)
   }
 }
 
+void FrameFlow::onAddSource()
+{
+  SelectSourceDialog dlg(this);
+  dlg.setWindowModality(Qt::ApplicationModal);
+
+  // center
+  QScreen* screen = QGuiApplication::screenAt(QCursor::pos());
+  if(!screen) screen = QGuiApplication::primaryScreen();
+  QRect screenGeometry = screen->availableGeometry();
+  // dlg.adjustSize();
+  dlg.move(screenGeometry.center() - dlg.rect().center());
+
+  dlg.exec();
+}

@@ -177,6 +177,15 @@ QPushButton {
   background: #19BDDE;
   border-radius: 4px;
 }
+
+#PGCSceneNameLabel, #PREVIEWSceneNameLabel {
+  background: black;
+  border-radius: 4px;
+}
+
+#recordingLabel {
+  color: red;
+}
 </string>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -859,7 +868,7 @@ QPushButton {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_4">
+                 <widget class="QPushButton" name="addSourceButton">
                   <property name="cursor">
                    <cursorShape>PointingHandCursor</cursorShape>
                   </property>
@@ -1223,7 +1232,7 @@ QPushButton {
                   </widget>
                  </item>
                  <item>
-                  <widget class="ToggleListWidget" name="effectListWidget">
+                  <widget class="QListWidget" name="effectListWidget">
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
@@ -1241,6 +1250,9 @@ QPushButton {
                    </property>
                    <property name="editTriggers">
                     <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::SelectionMode::MultiSelection</enum>
                    </property>
                    <property name="verticalScrollMode">
                     <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
@@ -1650,37 +1662,58 @@ QPushButton {
                      <set>Qt::AlignmentFlag::AlignCenter</set>
                     </property>
                    </widget>
+                   <widget class="QLabel" name="PREVIEWSceneNameLabel">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>30</y>
+                      <width>161</width>
+                      <height>21</height>
+                     </rect>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>SCENE IN PREVIEW NAME</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignmentFlag::AlignCenter</set>
+                    </property>
+                   </widget>
                   </widget>
                  </item>
                  <item>
                   <widget class="QWidget" name="verticalWidget" native="true">
                    <property name="minimumSize">
                     <size>
-                     <width>65</width>
+                     <width>56</width>
                      <height>0</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>65</width>
+                     <width>56</width>
                      <height>16777215</height>
                     </size>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_18">
                     <property name="spacing">
-                     <number>5</number>
+                     <number>3</number>
                     </property>
                     <property name="leftMargin">
-                     <number>9</number>
+                     <number>3</number>
                     </property>
                     <property name="topMargin">
-                     <number>9</number>
+                     <number>3</number>
                     </property>
                     <property name="rightMargin">
-                     <number>9</number>
+                     <number>3</number>
                     </property>
                     <property name="bottomMargin">
-                     <number>9</number>
+                     <number>3</number>
                     </property>
                     <item>
                      <spacer name="verticalSpacer_4">
@@ -1767,6 +1800,27 @@ QPushButton {
                     </property>
                     <property name="text">
                      <string>PROGRAM</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignmentFlag::AlignCenter</set>
+                    </property>
+                   </widget>
+                   <widget class="QLabel" name="PGCSceneNameLabel">
+                    <property name="geometry">
+                     <rect>
+                      <x>10</x>
+                      <y>30</y>
+                      <width>171</width>
+                      <height>21</height>
+                     </rect>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>SCENE IN PROGRAM NAME</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -2298,6 +2352,54 @@ QPushButton {
               </widget>
              </item>
              <item>
+              <widget class="QWidget" name="horizontalWidget" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_18">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="label_18">
+                  <property name="text">
+                   <string>Recording</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_16">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="recordingLabel">
+                  <property name="text">
+                   <string>● 00:12:45</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
               <widget class="QWidget" name="horizontalWidget_3" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_8">
                 <property name="spacing">
@@ -2338,7 +2440,7 @@ QPushButton {
                 <item>
                  <widget class="QLabel" name="viewersCountLabel">
                   <property name="text">
-                   <string>-</string>
+                   <string>1.234</string>
                   </property>
                  </widget>
                 </item>
@@ -2741,38 +2843,6 @@ QPushButton {
    </hints>
   </connection>
   <connection>
-   <sender>sceneListWidget</sender>
-   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
-   <receiver>FrameFlowClass</receiver>
-   <slot>onSceneSelectedChange(QListWidgetItem*,QListWidgetItem*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>138</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>580</x>
-     <y>436</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sourceListWidget</sender>
-   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
-   <receiver>FrameFlowClass</receiver>
-   <slot>onSourceSelectedChange(QListWidgetItem*,QListWidgetItem*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>120</x>
-     <y>259</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>580</x>
-     <y>436</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>expandEffectButton</sender>
    <signal>clicked()</signal>
    <receiver>FrameFlowClass</receiver>
@@ -2805,14 +2875,14 @@ QPushButton {
    </hints>
   </connection>
   <connection>
-   <sender>transitionListWidget</sender>
-   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
+   <sender>effectListWidget</sender>
+   <signal>itemSelectionChanged()</signal>
    <receiver>FrameFlowClass</receiver>
-   <slot>onTransitionSelectedChange(QListWidgetItem*,QListWidgetItem*)</slot>
+   <slot>onEffectSelectionChanged()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>440</y>
+     <x>123</x>
+     <y>567</y>
     </hint>
     <hint type="destinationlabel">
      <x>580</x>
@@ -2821,14 +2891,62 @@ QPushButton {
    </hints>
   </connection>
   <connection>
-   <sender>effectListWidget</sender>
-   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
+   <sender>sceneListWidget</sender>
+   <signal>itemSelectionChanged()</signal>
    <receiver>FrameFlowClass</receiver>
-   <slot>onEffectSelectedChange(QListWidgetItem*,QListWidgetItem*)</slot>
+   <slot>onSceneSelectionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>130</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>580</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sourceListWidget</sender>
+   <signal>itemSelectionChanged()</signal>
+   <receiver>FrameFlowClass</receiver>
+   <slot>onSourceSelectionChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>130</x>
+     <y>299</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>580</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>transitionListWidget</sender>
+   <signal>itemSelectionChanged()</signal>
+   <receiver>FrameFlowClass</receiver>
+   <slot>onTransitionSelectionChanged()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>123</x>
-     <y>567</y>
+     <y>413</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>580</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addSourceButton</sender>
+   <signal>clicked()</signal>
+   <receiver>FrameFlowClass</receiver>
+   <slot>onAddSource()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>238</x>
+     <y>227</y>
     </hint>
     <hint type="destinationlabel">
      <x>580</x>
@@ -2847,6 +2965,11 @@ QPushButton {
   <slot>onExpandEffects()</slot>
   <slot>onTransitionSelectedChange(QListWidgetItem*,QListWidgetItem*)</slot>
   <slot>onEffectSelectedChange(QListWidgetItem*,QListWidgetItem*)</slot>
+  <slot>onEffectSelectionChanged()</slot>
+  <slot>onTransitionSelectionChanged()</slot>
+  <slot>onSourceSelectionChanged()</slot>
+  <slot>onSceneSelectionChanged()</slot>
+  <slot>onAddSource()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="buttonGroup"/>

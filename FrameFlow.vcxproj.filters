@@ -97,9 +97,30 @@
     <ClCompile Include="effectwidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="selectsourcedialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="db.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="project_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="project_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="db.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -155,6 +176,12 @@
     <QtMoc Include="effectwidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="selectsourcedialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="project_manager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="projectswidget.ui">
@@ -191,6 +218,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="effectwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="selectsourcedialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

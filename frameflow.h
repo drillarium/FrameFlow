@@ -20,12 +20,13 @@ protected slots:
   void onAlerts();
   void onSettings();
   void onSetWindowTitleVisible();
-  void onSceneSelectedChange(QListWidgetItem*, QListWidgetItem*);
-  void onSourceSelectedChange(QListWidgetItem*, QListWidgetItem*);
-  void onTransitionSelectedChange(QListWidgetItem*, QListWidgetItem*);
-  void onEffectSelectedChange(QListWidgetItem*, QListWidgetItem*);
   void onExpandTransitions();
   void onExpandEffects();
+  void onSceneSelectionChanged();
+  void onSourceSelectionChanged();
+  void onTransitionSelectionChanged();
+  void onEffectSelectionChanged();
+  void onAddSource();
 
 private:
   void readSettings();

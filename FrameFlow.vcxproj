@@ -37,12 +37,12 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.8.2</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;sql</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.8.2</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;sql</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -95,13 +95,16 @@
     <ClCompile Include="alertbutton.cpp" />
     <ClCompile Include="alertsdialog.cpp" />
     <ClCompile Include="confirmationdialog.cpp" />
+    <ClCompile Include="db.cpp" />
     <ClCompile Include="effectwidget.cpp" />
     <ClCompile Include="myutils.win.cpp" />
     <ClCompile Include="newprojectdialog.cpp" />
     <ClCompile Include="previewscenewidget.cpp" />
     <ClCompile Include="projectmenuitem.cpp" />
     <ClCompile Include="projectswidget.cpp" />
+    <ClCompile Include="project_manager.cpp" />
     <ClCompile Include="scenewidget.cpp" />
+    <ClCompile Include="selectsourcedialog.cpp" />
     <ClCompile Include="settingsdialog.cpp" />
     <ClCompile Include="sourcewidget.cpp" />
     <ClCompile Include="splashwidget.cpp" />
@@ -122,6 +125,7 @@
     <QtUic Include="projectmenuitem.ui" />
     <QtUic Include="projectswidget.ui" />
     <QtUic Include="scenewidget.ui" />
+    <QtUic Include="selectsourcedialog.ui" />
     <QtUic Include="settingsdialog.ui" />
     <QtUic Include="sourcewidget.ui" />
     <QtUic Include="splashwidget.ui" />
@@ -130,6 +134,12 @@
     <ResourceCompile Include="FrameFlow.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="db.h" />
+    <QtMoc Include="project_manager.h" />
+    <ClInclude Include="project_model.h" />
+    <ClInclude Include="scene_model.h" />
+    <ClInclude Include="source_model.h" />
+    <QtMoc Include="selectsourcedialog.h" />
     <QtMoc Include="transitionwidget.h" />
     <QtMoc Include="splashwidget.h" />
     <QtMoc Include="togglelistwidget.h" />
