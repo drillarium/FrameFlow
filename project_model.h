@@ -9,7 +9,6 @@ struct Project
   QUuid id;
   QString name;
   QString description;
-  int schemaVersion;
   int width = 1920;
   int height = 1080;
   double framerate = 30.0;

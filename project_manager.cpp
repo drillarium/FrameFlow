@@ -10,14 +10,13 @@ ProjectManager& ProjectManager::instance()
 }
 
 ProjectManager::ProjectManager(QObject* parent)
-  : QObject(parent)
+:QObject(parent)
 {
 }
 
 bool ProjectManager::openDatabase(const QString& dbPath)
 {
-  if(!Database::instance().open(dbPath))
-    return false;
+  if(!Database::instance().open(dbPath)) return false;
 
   cachedProjects_ = Database::instance().listProjects();
   emit projectListChanged();
@@ -38,8 +37,7 @@ bool ProjectManager::createProject(const QString& name)
   p.createdAt = QDateTime::currentDateTimeUtc();
   p.modifiedAt = p.createdAt;
 
-  if(!Database::instance().saveProject(p))
-    return false;
+  if(!Database::instance().saveProject(p)) return false;
 
   currentProject_ = p;
   cachedProjects_ = Database::instance().listProjects();
@@ -55,8 +53,7 @@ bool ProjectManager::createProject(const QString& name)
 bool ProjectManager::loadProject(const QUuid& projectId)
 {
   auto project = Database::instance().loadProject(projectId);
-  if(!project)
-    return false;
+  if(!project) return false;
 
   currentProject_ = *project;
   dirty_ = false;
@@ -67,15 +64,40 @@ bool ProjectManager::loadProject(const QUuid& projectId)
   return true;
 }
 
+bool ProjectManager::saveProject(Project& _project)
+{
+  for(int i = 0; i < cachedProjects_.size(); i++)
+  {
+    if(cachedProjects_[i].id == _project.id)
+    {
+      _project.modifiedAt = QDateTime::currentDateTimeUtc();
+      if(!Database::instance().saveProject(_project)) return false;
+
+      dirty_ = false;
+      cachedProjects_ = Database::instance().listProjects();
+
+      // current project
+      if(currentProject_ && currentProject_->id == _project.id)
+      {
+        emit currentProjectChanged();
+        emit dirtyChanged(false);
+      }
+      emit projectListChanged();
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
 bool ProjectManager::saveCurrentProject()
 {
-  if(!currentProject_)
-    return false;
+  if(!currentProject_) return false;
 
   currentProject_->modifiedAt = QDateTime::currentDateTimeUtc();
 
-  if(!Database::instance().saveProject(*currentProject_))
-    return false;
+  if(!Database::instance().saveProject(*currentProject_)) return false;
 
   dirty_ = false;
   cachedProjects_ = Database::instance().listProjects();
@@ -88,10 +110,10 @@ bool ProjectManager::saveCurrentProject()
 
 bool ProjectManager::deleteProject(const QUuid& projectId)
 {
-  if(!Database::instance().deleteProject(projectId))
-    return false;
+  if(!Database::instance().deleteProject(projectId)) return false;
 
-  if(currentProject_ && currentProject_->id == projectId) {
+  if(currentProject_ && currentProject_->id == projectId)
+  {
     closeProject();
   }
 
@@ -103,8 +125,7 @@ bool ProjectManager::deleteProject(const QUuid& projectId)
 
 void ProjectManager::closeProject()
 {
-  if(!currentProject_)
-    return;
+  if(!currentProject_) return;
 
   currentProject_.reset();
   dirty_ = false;
@@ -120,8 +141,7 @@ bool ProjectManager::isDirty() const
 
 void ProjectManager::setDirty(bool dirty)
 {
-  if(dirty_ == dirty)
-    return;
+  if(dirty_ == dirty) return;
 
   dirty_ = dirty;
   emit dirtyChanged(dirty_);

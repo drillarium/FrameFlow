@@ -18,6 +18,7 @@ public:
   bool createProject(const QString& name);
   bool loadProject(const QUuid& projectId);
   bool saveCurrentProject();
+  bool saveProject(Project &_project);
   void closeProject();
   bool deleteProject(const QUuid& projectId);
 

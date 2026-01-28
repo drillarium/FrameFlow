@@ -370,7 +370,7 @@ QPushButton {
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="currentProjectNameLabel">
             <property name="text">
              <string>My Project</string>
             </property>

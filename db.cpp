@@ -198,7 +198,7 @@ bool Database::saveProject(const Project& project)
   QSqlQuery q;
   q.prepare(R"(
         INSERT INTO projects(id, name, description, width, height, framerate, created_at, modified_at)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
             name=excluded.name,
             description=excluded.description,

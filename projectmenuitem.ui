@@ -310,22 +310,6 @@ QLineEdit:focus {
    </hints>
   </connection>
   <connection>
-   <sender>validateButton</sender>
-   <signal>clicked()</signal>
-   <receiver>ProjectMenuItemClass</receiver>
-   <slot>onEndEdit()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>35</x>
-     <y>14</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>325</x>
-     <y>25</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>cancelButton</sender>
    <signal>clicked()</signal>
    <receiver>ProjectMenuItemClass</receiver>
@@ -341,9 +325,26 @@ QLineEdit:focus {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>validateButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ProjectMenuItemClass</receiver>
+   <slot>onValidateEdit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>612</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>25</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onStartEdit()</slot>
   <slot>onEndEdit()</slot>
+  <slot>onValidateEdit()</slot>
  </slots>
 </ui>

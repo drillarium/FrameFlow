@@ -2,6 +2,7 @@
 #include <QMouseEvent>
 #include "newprojectdialog.h"
 #include "projectmenuitem.h"
+#include "project_manager.h"
 
 ProjectsWidget::ProjectsWidget(QWidget *_parent)
 :QDialog(_parent)
@@ -11,11 +12,17 @@ ProjectsWidget::ProjectsWidget(QWidget *_parent)
   setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
   setAttribute(Qt::WA_TranslucentBackground);
 
-  QListWidgetItem *lwi = new QListWidgetItem(ui.listWidget);
-  lwi->setSizeHint(QSize(0, 28));
-  ProjectMenuItem* pmi = new ProjectMenuItem();
-  ui.listWidget->addItem(lwi);
-  ui.listWidget->setItemWidget(lwi, pmi);
+  ProjectManager& pm = ProjectManager::instance();
+  auto projects = pm.listProjects();
+  for(int i = 0; i < projects.size(); i++)
+  {
+    QListWidgetItem* lwi = new QListWidgetItem(ui.listWidget);
+    lwi->setSizeHint(QSize(0, 28));
+    ProjectMenuItem* pmi = new ProjectMenuItem(projects[i]);
+    ui.listWidget->addItem(lwi);
+    ui.listWidget->setItemWidget(lwi, pmi);
+  }
+
   updateSizeFromList();
 
   qApp->installEventFilter(this);

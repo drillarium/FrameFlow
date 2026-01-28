@@ -27,6 +27,9 @@ protected slots:
   void onTransitionSelectionChanged();
   void onEffectSelectionChanged();
   void onAddSource();
+  void onCurrentProjectChange();
+  void onProjectListChanged();
+  void onProjectDirtyChange();
 
 private:
   void readSettings();

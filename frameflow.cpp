@@ -12,6 +12,9 @@
 #include "transitionwidget.h"
 #include "effectwidget.h"
 #include "selectsourcedialog.h"
+#include "project_manager.h"
+#include <QStandardPaths>
+#include <QDir>
 
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
@@ -25,6 +28,30 @@ FrameFlow::FrameFlow(QWidget *_parent)
   QTimer* timer = new QTimer(this);
   connect(timer, &QTimer::timeout, this, &FrameFlow::updateSystemStats);
   timer->start(1000);
+
+  // db path
+  QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+  QDir dir(dataDir);
+  QString dbPath = dir.filePath("frameflow.db");
+
+  // project manager
+  ProjectManager& pm = ProjectManager::instance();
+  connect(&pm, &ProjectManager::currentProjectChanged, this, &FrameFlow::onCurrentProjectChange);
+  connect(&pm, &ProjectManager::projectListChanged, this, &FrameFlow::onProjectListChanged);
+  connect(&pm, &ProjectManager::dirtyChanged, this, &FrameFlow::onProjectDirtyChange);
+
+  // open DB and create a first project case no project available
+  pm.openDatabase(dbPath);
+  auto projects = pm.listProjects();
+  if(projects.size() == 0)
+  {
+    pm.createProject("My Project");
+  }
+  projects = pm.listProjects();
+  if(projects.size() > 0)
+  {
+    pm.loadProject(projects[0].id);
+  }
   
   // project button
   projectsWidget_ = new ProjectsWidget(this);
@@ -341,4 +368,25 @@ void FrameFlow::onAddSource()
   dlg.move(screenGeometry.center() - dlg.rect().center());
 
   dlg.exec();
+}
+
+void FrameFlow::onCurrentProjectChange()
+{
+  ProjectManager& pm = ProjectManager::instance();
+  auto project = pm.currentProject();
+  if(project)
+  {
+    ui.currentProjectNameLabel->setText(project->name);
+  }
+}
+
+void FrameFlow::onProjectListChanged()
+{
+  ProjectManager& pm = ProjectManager::instance();
+  auto projects = pm.listProjects();
+}
+
+void FrameFlow::onProjectDirtyChange()
+{
+
 }
