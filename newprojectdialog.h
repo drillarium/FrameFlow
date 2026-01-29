@@ -2,6 +2,7 @@
 
 #include <QDialog>
 #include "ui_newprojectdialog.h"
+#include "project_manager.h"
 
 class NewProjectDialog : public QDialog
 {
@@ -11,7 +12,13 @@ public:
   NewProjectDialog(QWidget *parent = nullptr);
   ~NewProjectDialog();
 
+  Project project() { return project_; }
+
+protected slots:
+  void onCreateProject();
+
 private:
   Ui::NewProjectDialogClass ui;
+  Project project_;
 };
 

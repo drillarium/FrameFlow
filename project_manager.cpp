@@ -32,14 +32,19 @@ QVector<Project> ProjectManager::listProjects() const
 bool ProjectManager::createProject(const QString& name)
 {
   Project p;
-  p.id = QUuid::createUuid();
   p.name = name;
-  p.createdAt = QDateTime::currentDateTimeUtc();
-  p.modifiedAt = p.createdAt;
+  return createProject(p);
+}
 
-  if(!Database::instance().saveProject(p)) return false;
+bool ProjectManager::createProject(Project& project)
+{
+  project.id = QUuid::createUuid();
+  project.createdAt = QDateTime::currentDateTimeUtc();
+  project.modifiedAt = project.createdAt;
 
-  currentProject_ = p;
+  if(!Database::instance().saveProject(project)) return false;
+
+  currentProject_ = project;
   cachedProjects_ = Database::instance().listProjects();
   dirty_ = false;
 
@@ -79,6 +84,7 @@ bool ProjectManager::saveProject(Project& _project)
       // current project
       if(currentProject_ && currentProject_->id == _project.id)
       {
+        currentProject_ = _project;
         emit currentProjectChanged();
         emit dirtyChanged(false);
       }
@@ -112,13 +118,23 @@ bool ProjectManager::deleteProject(const QUuid& projectId)
 {
   if(!Database::instance().deleteProject(projectId)) return false;
 
-  if(currentProject_ && currentProject_->id == projectId)
+  bool isCurrent = (currentProject_ && currentProject_->id == projectId);
+  if(isCurrent)
   {
     closeProject();
   }
 
   cachedProjects_ = Database::instance().listProjects();
   emit projectListChanged();
+
+  // load first one
+  if(isCurrent)
+  {
+    if(cachedProjects_.size() > 0)
+    {
+      loadProject(cachedProjects_[0].id);
+    }
+  }
 
   return true;
 }

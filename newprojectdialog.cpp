@@ -13,4 +13,8 @@ NewProjectDialog::~NewProjectDialog()
 {
 }
 
-
+void NewProjectDialog::onCreateProject()
+{
+  project_.name = ui.lineEdit->text();
+  accept();
+}

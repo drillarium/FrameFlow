@@ -151,6 +151,9 @@ QLineEdit:focus {
             <property name="cursor">
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::FocusPolicy::NoFocus</enum>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -341,10 +344,43 @@ QLineEdit:focus {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>ProjectMenuItemClass</receiver>
+   <slot>onValidateEdit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>310</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>25</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>deleteButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ProjectMenuItemClass</receiver>
+   <slot>onDeleteProject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>639</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>25</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onStartEdit()</slot>
   <slot>onEndEdit()</slot>
   <slot>onValidateEdit()</slot>
+  <slot>onDeleteProject()</slot>
  </slots>
 </ui>

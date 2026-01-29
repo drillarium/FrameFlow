@@ -79,7 +79,7 @@ QPlainTextEdit {
        <number>9</number>
       </property>
       <item>
-       <widget class="QWidget" name="headerWidget" native="true">
+       <widget class="QWidget" name="headerMessageWidget" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
           <number>6</number>
@@ -181,7 +181,7 @@ QPlainTextEdit {
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="footerWidget" native="true">
+       <widget class="QWidget" name="footerMessageWidget" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="leftMargin">
           <number>0</number>

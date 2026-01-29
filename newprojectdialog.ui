@@ -636,5 +636,24 @@ QComboBox QScrollBar:vertical {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>createProjectButton</sender>
+   <signal>clicked()</signal>
+   <receiver>NewProjectDialogClass</receiver>
+   <slot>onCreateProject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>412</x>
+     <y>415</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>onCreateProject()</slot>
+ </slots>
 </ui>

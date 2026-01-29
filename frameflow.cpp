@@ -374,9 +374,13 @@ void FrameFlow::onCurrentProjectChange()
 {
   ProjectManager& pm = ProjectManager::instance();
   auto project = pm.currentProject();
-  if(project)
+  if(!project) return;
+
+  ui.currentProjectNameLabel->setText(project->name);
+
+  if(projectsWidget_)
   {
-    ui.currentProjectNameLabel->setText(project->name);
+    projectsWidget_->setCurrentProject(project->id);
   }
 }
 
@@ -384,6 +388,11 @@ void FrameFlow::onProjectListChanged()
 {
   ProjectManager& pm = ProjectManager::instance();
   auto projects = pm.listProjects();
+
+  if(projectsWidget_)
+  {
+    projectsWidget_->updateProjectList();
+  }
 }
 
 void FrameFlow::onProjectDirtyChange()

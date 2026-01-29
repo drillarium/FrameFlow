@@ -16,6 +16,7 @@ public:
 
   // Project lifecycle
   bool createProject(const QString& name);
+  bool createProject(Project& project);
   bool loadProject(const QUuid& projectId);
   bool saveCurrentProject();
   bool saveProject(Project &_project);

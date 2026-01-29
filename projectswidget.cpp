@@ -3,6 +3,7 @@
 #include "newprojectdialog.h"
 #include "projectmenuitem.h"
 #include "project_manager.h"
+#include "confirmationdialog.h"
 
 ProjectsWidget::ProjectsWidget(QWidget *_parent)
 :QDialog(_parent)
@@ -12,18 +13,7 @@ ProjectsWidget::ProjectsWidget(QWidget *_parent)
   setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
   setAttribute(Qt::WA_TranslucentBackground);
 
-  ProjectManager& pm = ProjectManager::instance();
-  auto projects = pm.listProjects();
-  for(int i = 0; i < projects.size(); i++)
-  {
-    QListWidgetItem* lwi = new QListWidgetItem(ui.listWidget);
-    lwi->setSizeHint(QSize(0, 28));
-    ProjectMenuItem* pmi = new ProjectMenuItem(projects[i]);
-    ui.listWidget->addItem(lwi);
-    ui.listWidget->setItemWidget(lwi, pmi);
-  }
-
-  updateSizeFromList();
+  updateProjectList();
 
   qApp->installEventFilter(this);
 }
@@ -33,12 +23,46 @@ ProjectsWidget::~ProjectsWidget()
 
 }
 
+void ProjectsWidget::updateProjectList()
+{
+  // clear
+  ui.listWidget->setUpdatesEnabled(false);
+  while(ui.listWidget->count() > 0)
+  {
+    QListWidgetItem* item = ui.listWidget->takeItem(0);
+    QWidget* w = ui.listWidget->itemWidget(item);
+    delete w;
+    delete item;
+  }
+  ui.listWidget->setUpdatesEnabled(true);
+
+  // populate
+  ProjectManager& pm = ProjectManager::instance();
+  auto currentProject = pm.currentProject();
+  auto projects = pm.listProjects();
+  for(int i = 0; i < projects.size(); i++)
+  {
+    QListWidgetItem* lwi = new QListWidgetItem(ui.listWidget);
+    lwi->setSizeHint(QSize(0, 28));
+    ProjectMenuItem* pmi = new ProjectMenuItem(projects[i]);
+    connect(pmi, &ProjectMenuItem::itemClicked, this, [=] () {
+      QUuid id = pmi->id();
+      switchToProject(id);
+    });
+    pmi->setCurrentProject(currentProject? currentProject->id : QUuid());
+    ui.listWidget->addItem(lwi);
+    ui.listWidget->setItemWidget(lwi, pmi);    
+  }
+
+  updateSizeFromList();
+}
+
 static int listWidgetHeightForItems(QListWidget* list)
 {
   int h = 0;
 
   for(int i = 0; i < list->count(); ++i)
-    h += list->sizeHintForRow(i);
+    h += 28; // list->sizeHintForRow(i);
 
   // frame + spacing
   h += 2 * list->frameWidth();
@@ -54,7 +78,8 @@ void ProjectsWidget::updateSizeFromList()
   ui.listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   ui.listWidget->setFixedHeight(listHeight);
 
-  adjustSize();
+  setFixedHeight(listHeight + 75);
+  // adjustSize();
 }
 
 bool ProjectsWidget::eventFilter(QObject* obj, QEvent* event)
@@ -62,8 +87,7 @@ bool ProjectsWidget::eventFilter(QObject* obj, QEvent* event)
   if(event->type() == QEvent::MouseButtonPress)
   {
     QMouseEvent* me = static_cast<QMouseEvent*>(event);
-
-    if(isVisible() && !this->geometry().contains(me->globalPosition().toPoint()))
+    if(isVisible() && !this->geometry().contains(me->globalPosition().toPoint()) && !ProjectMenuItem::deletingItem_ && !switchToProject_)
     {
       hide();
       return true;
@@ -86,5 +110,33 @@ void ProjectsWidget::onNewProject()
   // dlg.adjustSize();
   dlg.move(screenGeometry.center() - dlg.rect().center());
 
-  dlg.exec();
+  if(dlg.exec() == QDialog::Accepted)
+  {
+    ProjectManager& pm = ProjectManager::instance();
+    auto project = dlg.project();
+    pm.createProject(project);
+  }
+}
+
+void ProjectsWidget::setCurrentProject(QUuid uid)
+{
+  for(int i = 0; i < ui.listWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.listWidget->item(i);
+    ProjectMenuItem *pmi = (ProjectMenuItem *) ui.listWidget->itemWidget(item);
+    pmi->setCurrentProject(uid);
+  }
+}
+
+void ProjectsWidget::switchToProject(QUuid& _project)
+{
+  switchToProject_ = true;
+  QMessageBox::StandardButton reply = ConfirmationDialog::question(this, "Load project", "Are you sure you want to load project?", QMessageBox::Yes, QMessageBox::No, QMessageBox::No);
+  if(reply == QMessageBox::Yes)
+  {
+    hide();
+    ProjectManager& pm = ProjectManager::instance();
+    pm.loadProject(_project);
+  }
+  switchToProject_ = false;
 }

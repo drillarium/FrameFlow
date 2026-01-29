@@ -11,14 +11,19 @@ public:
   ProjectsWidget(QWidget *_parent = nullptr);
   ~ProjectsWidget();
 
+  void updateProjectList();
+  void setCurrentProject(QUuid uid);
+
 protected:
   void updateSizeFromList();
   bool eventFilter(QObject* obj, QEvent* event) override;
+  void switchToProject(QUuid& _project);
 
 protected slots:
   void onNewProject();
 
 private:
   Ui::ProjectsWidgetClass ui;
+  bool switchToProject_ = false;
 };
 
