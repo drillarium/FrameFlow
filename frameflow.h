@@ -30,10 +30,14 @@ protected slots:
   void onCurrentProjectChange();
   void onProjectListChanged();
   void onProjectDirtyChange();
+  void onCreateScene();
+  void onUpdateNumSources();
+  void onUpdateNumScenes();
 
 private:
   void readSettings();
   void writeSettings();
+  void updateScenes();
 
 private:
   Ui::FrameFlowClass ui;

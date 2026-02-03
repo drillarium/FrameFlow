@@ -106,6 +106,27 @@
     <ClCompile Include="project_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="createscenedialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sourceitemwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="streamserverwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="toggleswitch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="alertwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scenerenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sourcemanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myutils.h">
@@ -182,6 +203,27 @@
     <QtMoc Include="project_manager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="createscenedialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sourceitemwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="streamserverwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="toggleswitch.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="alertwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="scenerenderer.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="sourcemanager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="projectswidget.ui">
@@ -221,6 +263,18 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="selectsourcedialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="createscenedialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="sourceitemwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="streamserverwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="alertwidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

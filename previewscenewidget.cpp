@@ -1,12 +1,27 @@
 #include "previewscenewidget.h"
 #include <QPainter>
 #include <QLinearGradient>
+#include <QMouseEvent>
 
 PreviewSceneWidget::PreviewSceneWidget(QWidget *_parent)
 :QWidget(_parent)
 {
   setAttribute(Qt::WA_OpaquePaintEvent);
   setAttribute(Qt::WA_NoSystemBackground);
+
+  setMouseTracking(true);
+
+  // sample rect to resize and move
+  rects_.append(QRect(50, 50, 120, 80));
+  update();
+
+  // renderer
+  senceneRenderer_ = new SceneRenderer();
+  connect(senceneRenderer_, &SceneRenderer::onNewImage, this, [&](QImage image) {
+    ARGBImage_ = image.copy();
+    update();
+  });
+  senceneRenderer_->start();
 }
 
 PreviewSceneWidget::~PreviewSceneWidget()
@@ -14,7 +29,42 @@ PreviewSceneWidget::~PreviewSceneWidget()
 
 }
 
-void PreviewSceneWidget::paintEvent(QPaintEvent*)
+QRect PreviewSceneWidget::updateRenderRect()
+{
+  if(width() <= 0 || height() <= 0) return QRect();
+
+  const double sx = double(width()) / videoWindowSize_.width();
+  const double sy = double(height()) / videoWindowSize_.height();
+  const double scale = (std::min)(sx, sy);
+
+  const QSize fitted(int(videoWindowSize_.width() * scale), int(videoWindowSize_.height() * scale));
+  const QPoint topLeft((width() - fitted.width()) / 2, (height() - fitted.height()) / 2);
+  return QRect(topLeft, fitted);
+}
+
+int findRectAt(const QVector<QRect>& rects, const QPoint& pos)
+{
+  for(int i = rects.size() - 1; i >= 0; --i)
+  {
+    if(rects[i].contains(pos))
+    {
+      return i;
+    }
+  }
+  return -1;
+}
+
+static Qt::CursorShape cursorForMode(PreviewSceneWidget::Mode mode)
+{
+  switch(mode)
+  {
+    case PreviewSceneWidget::Move:   return Qt::SizeAllCursor;
+    case PreviewSceneWidget::Resize: return Qt::SizeFDiagCursor;
+    default:                         return Qt::ArrowCursor;
+  }
+}
+
+void PreviewSceneWidget::paintEvent(QPaintEvent *_event)
 {
   QPainter p(this);
   p.setRenderHint(QPainter::Antialiasing);
@@ -73,9 +123,27 @@ void PreviewSceneWidget::paintEvent(QPaintEvent*)
     "Preview: Main Scene"
   );
 
+  // render
+  QRect renderRect = PreviewSceneWidget::updateRenderRect();
+  QPen videoPen(Qt::black, 2);
+  p.setPen(videoPen);
+  p.drawRect(renderRect);
+  if(!ARGBImage_.isNull())
+  {
+    p.drawImage(renderRect, ARGBImage_);
+  }
+
+  // rects
+  QPen rectPen(Qt::blue, 2);
+  p.setPen(rectPen);
+  for(const QRect& r : rects_)
+  {
+    p.drawRect(r);
+  }
+
   // boder
   const int borderWidth = 2;
-  const int radius = 10;
+  const int radius = 0;
   QRect rborder = rect();
   rborder.adjust(borderWidth / 2.0, borderWidth / 2.0, -borderWidth / 2.0, -borderWidth / 2.0);
 
@@ -89,4 +157,72 @@ void PreviewSceneWidget::paintEvent(QPaintEvent*)
   painter.setBrush(Qt::NoBrush);
 
   painter.drawRoundedRect(r, radius, radius);
+}
+
+void PreviewSceneWidget::mousePressEvent(QMouseEvent* e)
+{
+  activeRectIndex_ = findRectAt(rects_, e->pos());
+  lastMousePos_ = e->pos();
+  mode_ = None;
+
+  if(activeRectIndex_ >= 0)
+  {
+    QRect& r = rects_[activeRectIndex_];
+    QRect resizeHandle(r.bottomRight() - QPoint(10, 10), r.bottomRight());
+    mode_ = resizeHandle.contains(e->pos()) ? Resize : Move;
+    setCursor(cursorForMode(mode_));
+  }
+}
+
+
+void PreviewSceneWidget::mouseMoveEvent(QMouseEvent* e)
+{
+  if(activeRectIndex_ >= 0)
+  {
+    // dragging
+    QPoint delta = e->pos() - lastMousePos_;
+    QRect& r = rects_[activeRectIndex_];
+
+    if(mode_ == Move)
+    {
+      r.translate(delta);
+    }
+    else if(mode_ == Resize)
+    {
+      r.setBottomRight(r.bottomRight() + delta);
+      r = r.normalized();
+    }
+
+    lastMousePos_ = e->pos();
+    setCursor(cursorForMode(mode_));
+    update();
+    return;
+  }
+
+  // ---- hover logic ----
+  int idx = findRectAt(rects_, e->pos());
+  if(idx < 0) {
+    unsetCursor();
+    return;
+  }
+
+  const QRect& r = rects_[idx];
+
+  QRect resizeHandle(r.bottomRight() - QPoint(10, 10), r.bottomRight());
+
+  Mode hoverMode = resizeHandle.contains(e->pos()) ? Resize : Move;
+  setCursor(cursorForMode(hoverMode));
+}
+
+void PreviewSceneWidget::mouseReleaseEvent(QMouseEvent*)
+{
+  activeRectIndex_ = -1;
+  mode_ = None;
+}
+
+void PreviewSceneWidget::leaveEvent(QEvent*)
+{
+  if(activeRectIndex_ < 0){
+    unsetCursor();
+  }
 }

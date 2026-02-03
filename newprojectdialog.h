@@ -16,6 +16,7 @@ public:
 
 protected slots:
   void onCreateProject();
+  void onSelectionChange();
 
 private:
   Ui::NewProjectDialogClass ui;

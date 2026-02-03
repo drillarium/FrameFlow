@@ -14,6 +14,9 @@ public:
 protected:
   void keyPressEvent(QKeyEvent* event) override;
 
+protected slots:
+  void onAddStreamServer();
+
 private:
   Ui::SettingsDialogClass ui;
 };

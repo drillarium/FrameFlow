@@ -1,11 +1,19 @@
 #include "scenewidget.h"
 #include <QStyle>
+#include <QMenu>
 
-SceneWidget::SceneWidget(QWidget *_parent)
+SceneWidget::SceneWidget(Scene& _scene, QWidget *_parent)
 :QWidget(_parent)
 {
   ui.setupUi(this);
   ui.menuButton->hide();
+  ui.sceneTitleLabel->setText(_scene.name);
+
+  QMenu* menu = new QMenu(ui.menuButton);
+  menu->setCursor(Qt::PointingHandCursor);
+  QAction* renameAction = menu->addAction(QIcon::fromTheme("document-edit"), "Rename");
+  QAction* deleteAction = menu->addAction(QIcon::fromTheme("edit-delete"), "Delete");
+  ui.menuButton->setMenu(menu);
 }
 
 SceneWidget::~SceneWidget()
@@ -51,9 +59,22 @@ void SceneWidget::setSelected(bool _selected)
     background: qlineargradient(\
       x1:0, y1:0,\
       x2:1, y2:1,\
-      stop:0 #ff3b3b,\
-      stop:1 #8b0000\
+      stop:0 #1B5E69,\
+      stop:1 #2A404B\
     );\
+  }\
+    QMenu{\
+      background-color: #2b2b2b;\
+      color: #ffffff;\
+      border: 1px solid #444;\
+      padding: 4px;\
+  }\
+  QMenu::item {\
+      background-color: transparent;\
+  }\
+\
+  QMenu::item:selected {\
+      background-color: #303541;\
   }";
 
   QString color = _selected? "#19BDDE" : "transparent";
@@ -61,4 +82,7 @@ void SceneWidget::setSelected(bool _selected)
   style()->unpolish(this);
   style()->polish(this);
   update();
+
+  if(_selected) ui.statusLabel->show();
+  else ui.statusLabel->hide();
 }

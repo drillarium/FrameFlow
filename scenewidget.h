@@ -2,13 +2,14 @@
 
 #include <QWidget>
 #include "ui_scenewidget.h"
+#include "scene_model.h"
 
 class SceneWidget : public QWidget
 {
 Q_OBJECT
 
 public:
-  SceneWidget(QWidget *parent = nullptr);
+  SceneWidget(Scene &_scene, QWidget *parent = nullptr);
   ~SceneWidget();
   void setSelected(bool _selected);
 

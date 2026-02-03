@@ -63,6 +63,16 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Medialooks\MFormats SDK\Include</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Medialooks\MFormats SDK\Include</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -94,7 +104,9 @@
   <ItemGroup>
     <ClCompile Include="alertbutton.cpp" />
     <ClCompile Include="alertsdialog.cpp" />
+    <ClCompile Include="alertwidget.cpp" />
     <ClCompile Include="confirmationdialog.cpp" />
+    <ClCompile Include="createscenedialog.cpp" />
     <ClCompile Include="db.cpp" />
     <ClCompile Include="effectwidget.cpp" />
     <ClCompile Include="myutils.win.cpp" />
@@ -103,18 +115,25 @@
     <ClCompile Include="projectmenuitem.cpp" />
     <ClCompile Include="projectswidget.cpp" />
     <ClCompile Include="project_manager.cpp" />
+    <ClCompile Include="scenerenderer.cpp" />
     <ClCompile Include="scenewidget.cpp" />
     <ClCompile Include="selectsourcedialog.cpp" />
     <ClCompile Include="settingsdialog.cpp" />
+    <ClCompile Include="sourceitemwidget.cpp" />
+    <ClCompile Include="sourcemanager.cpp" />
     <ClCompile Include="sourcewidget.cpp" />
     <ClCompile Include="splashwidget.cpp" />
+    <ClCompile Include="streamserverwidget.cpp" />
+    <ClCompile Include="toggleswitch.cpp" />
     <ClCompile Include="transitionwidget.cpp" />
     <ClCompile Include="vumetercontrol.cpp" />
     <ClCompile Include="vumeterwidget.cpp" />
     <ClCompile Include="widgetbutton.cpp" />
     <QtRcc Include="frameflow.qrc" />
     <QtUic Include="alertsdialog.ui" />
+    <QtUic Include="alertwidget.ui" />
     <QtUic Include="confirmationdialog.ui" />
+    <QtUic Include="createscenedialog.ui" />
     <QtUic Include="effectwidget.ui" />
     <QtUic Include="frameflow.ui" />
     <QtMoc Include="frameflow.h" />
@@ -127,17 +146,26 @@
     <QtUic Include="scenewidget.ui" />
     <QtUic Include="selectsourcedialog.ui" />
     <QtUic Include="settingsdialog.ui" />
+    <QtUic Include="sourceitemwidget.ui" />
     <QtUic Include="sourcewidget.ui" />
     <QtUic Include="splashwidget.ui" />
+    <QtUic Include="streamserverwidget.ui" />
     <QtUic Include="transitionwidget.ui" />
     <QtUic Include="vumetercontrol.ui" />
     <ResourceCompile Include="FrameFlow.rc" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="toggleswitch.h" />
+    <QtMoc Include="streamserverwidget.h" />
+    <QtMoc Include="createscenedialog.h" />
+    <QtMoc Include="alertwidget.h" />
     <ClInclude Include="db.h" />
     <QtMoc Include="project_manager.h" />
     <ClInclude Include="project_model.h" />
+    <QtMoc Include="scenerenderer.h" />
     <ClInclude Include="scene_model.h" />
+    <QtMoc Include="sourceitemwidget.h" />
+    <QtMoc Include="sourcemanager.h" />
     <ClInclude Include="source_model.h" />
     <QtMoc Include="selectsourcedialog.h" />
     <QtMoc Include="transitionwidget.h" />

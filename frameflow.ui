@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1161</width>
-    <height>873</height>
+    <width>1339</width>
+    <height>1093</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@ QLabel {
   color: #7B899D;
 }
 
-#statusLabel {
+#statusLabel, #streamTimeLabel {
   color: #22C35D;
 }
 
@@ -185,6 +185,14 @@ QPushButton {
 
 #recordingLabel {
   color: red;
+}
+
+#addSourceLabel {
+  color: #19BDDE;
+}
+
+#removeLabel {
+  background: purple;
 }
 </string>
   </property>
@@ -701,6 +709,13 @@ QPushButton {
                  </widget>
                 </item>
                 <item>
+                 <widget class="QLabel" name="scenesCountLabel">
+                  <property name="text">
+                   <string>(2)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <spacer name="horizontalSpacer_11">
                   <property name="orientation">
                    <enum>Qt::Orientation::Horizontal</enum>
@@ -714,7 +729,7 @@ QPushButton {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_3">
+                 <widget class="QPushButton" name="createSceneButton">
                   <property name="cursor">
                    <cursorShape>PointingHandCursor</cursorShape>
                   </property>
@@ -762,7 +777,7 @@ QPushButton {
                <property name="gridSize">
                 <size>
                  <width>100</width>
-                 <height>100</height>
+                 <height>70</height>
                 </size>
                </property>
                <property name="viewMode">
@@ -848,7 +863,7 @@ QPushButton {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_14">
+                 <widget class="QLabel" name="sourcesCountLabel">
                   <property name="text">
                    <string>(2)</string>
                   </property>
@@ -888,6 +903,89 @@ QPushButton {
               </widget>
              </item>
              <item>
+              <widget class="QWidget" name="noSourceWidget" native="true">
+               <layout class="QVBoxLayout" name="verticalLayout_19">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_20">
+                  <item>
+                   <widget class="QLabel" name="label_14">
+                    <property name="minimumSize">
+                     <size>
+                      <width>64</width>
+                      <height>64</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>64</width>
+                      <height>64</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="pixmap">
+                     <pixmap resource="frameflow.qrc">:/FrameFlow/tv.svg</pixmap>
+                    </property>
+                    <property name="scaledContents">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_20">
+                  <property name="text">
+                   <string>Not sources yet</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="addSourceLabel">
+                  <property name="text">
+                   <string>Add your first source</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
               <widget class="ToggleListWidget" name="sourceListWidget">
                <property name="focusPolicy">
                 <enum>Qt::FocusPolicy::NoFocus</enum>
@@ -910,8 +1008,8 @@ QPushButton {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>236</width>
-               <height>317</height>
+               <width>250</width>
+               <height>398</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -2400,6 +2498,54 @@ QPushButton {
               </widget>
              </item>
              <item>
+              <widget class="QWidget" name="horizontalWidget" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_19">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>Stream Time</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_17">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="streamTimeLabel">
+                  <property name="text">
+                   <string>▶ 00:02:35</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
               <widget class="QWidget" name="horizontalWidget_3" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_8">
                 <property name="spacing">
@@ -2954,6 +3100,22 @@ QPushButton {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>createSceneButton</sender>
+   <signal>clicked()</signal>
+   <receiver>FrameFlowClass</receiver>
+   <slot>onCreateScene()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>238</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>580</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSettings()</slot>
@@ -2970,6 +3132,7 @@ QPushButton {
   <slot>onSourceSelectionChanged()</slot>
   <slot>onSceneSelectionChanged()</slot>
   <slot>onAddSource()</slot>
+  <slot>onCreateScene()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="buttonGroup"/>

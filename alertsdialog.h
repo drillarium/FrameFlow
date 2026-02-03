@@ -13,8 +13,14 @@ public:
 
 protected:
   void keyPressEvent(QKeyEvent* event) override;
+  void checkNumNotifications();
+
+protected slots:
+  void onClearAll();
+  void onMarkAll();
+  void onNotificationsSelectionChange();
 
 private:
-    Ui::AlertsDialogClass ui;
+  Ui::AlertsDialogClass ui;
 };
 

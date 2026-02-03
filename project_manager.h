@@ -19,6 +19,7 @@ public:
   bool createProject(Project& project);
   bool loadProject(const QUuid& projectId);
   bool saveCurrentProject();
+  bool addScene(Scene &_scene);
   bool saveProject(Project &_project);
   void closeProject();
   bool deleteProject(const QUuid& projectId);

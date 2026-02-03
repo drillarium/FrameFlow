@@ -15,6 +15,7 @@
 #include "project_manager.h"
 #include <QStandardPaths>
 #include <QDir>
+#include "createscenedialog.h"
 
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
@@ -71,26 +72,39 @@ FrameFlow::FrameFlow(QWidget *_parent)
     }
   });
 
+
+  auto modelScene = ui.sceneListWidget->model();
+  connect(modelScene, &QAbstractItemModel::rowsInserted, this, [this]() { onUpdateNumScenes(); });
+  connect(modelScene, &QAbstractItemModel::rowsRemoved, this, [this]() { onUpdateNumScenes(); });
+  connect(modelScene, &QAbstractItemModel::modelReset, this, [this]() { onUpdateNumScenes(); });
+  onUpdateNumScenes();
+
   // dummy scenes
-  for(int i = 0; i < 5; i++)
+  /* for(int i = 0; i < 5; i++)
   {
     QListWidgetItem* lwi = new QListWidgetItem(ui.sceneListWidget);
-    lwi->setSizeHint(QSize(100, 100));
+    lwi->setSizeHint(QSize(100, 70));
     SceneWidget* sw = new SceneWidget();
     ui.sceneListWidget->addItem(lwi);
     ui.sceneListWidget->setItemWidget(lwi, sw);
   }
-  ui.sceneListWidget->setCurrentRow(0); // first
+  ui.sceneListWidget->setCurrentRow(0); // first */
+
+  auto modelSource = ui.sourceListWidget->model();
+  connect(modelSource, &QAbstractItemModel::rowsInserted, this, [this]() { onUpdateNumSources(); });
+  connect(modelSource, &QAbstractItemModel::rowsRemoved, this, [this]() { onUpdateNumSources(); });
+  connect(modelSource, &QAbstractItemModel::modelReset, this, [this]() { onUpdateNumSources(); });
+  onUpdateNumSources();
 
   // dummy sources
-  for(int i = 0; i < 5; i++)
+  /* for(int i = 0; i < 5; i++)
   {
     QListWidgetItem* lwi = new QListWidgetItem(ui.sourceListWidget);
     lwi->setSizeHint(QSize(0, 35));
     SourceWidget* sw = new SourceWidget();
     ui.sourceListWidget->addItem(lwi);
     ui.sourceListWidget->setItemWidget(lwi, sw);
-  }
+  } */
 
   // dummy transitions
   for(int i = 0; i < 5; i++)
@@ -133,6 +147,9 @@ FrameFlow::FrameFlow(QWidget *_parent)
 FrameFlow::~FrameFlow()
 {
   projectsWidget_->deleteLater();
+
+  if(auto m = ui.sourceListWidget->model()) { disconnect(m, nullptr, this, nullptr);}
+  if(auto m = ui.sceneListWidget->model()) { disconnect(m, nullptr, this, nullptr); }
 }
 
 void FrameFlow::readSettings()
@@ -275,7 +292,7 @@ void FrameFlow::onSceneSelectionChanged()
   {
     QListWidgetItem* item = ui.sceneListWidget->item(i);
     SceneWidget* w = static_cast<SceneWidget*>(ui.sceneListWidget->itemWidget(item));
-    w->setSelected(item->isSelected());
+    if(w) w->setSelected(item->isSelected());
   }
 }
 
@@ -285,7 +302,7 @@ void FrameFlow::onSourceSelectionChanged()
   {
     QListWidgetItem* item = ui.sourceListWidget->item(i);
     SourceWidget* w = static_cast<SourceWidget*>(ui.sourceListWidget->itemWidget(item));
-    w->setSelected(item->isSelected());
+    if(w) w->setSelected(item->isSelected());
   }
 }
 
@@ -295,7 +312,7 @@ void FrameFlow::onTransitionSelectionChanged()
   {
     QListWidgetItem* item = ui.transitionListWidget->item(i);
     TransitionWidget* w = static_cast<TransitionWidget*>(ui.transitionListWidget->itemWidget(item));
-    w->setSelected(item->isSelected());
+    if(w) w->setSelected(item->isSelected());
   }
 }
 
@@ -305,7 +322,7 @@ void FrameFlow::onEffectSelectionChanged()
   {
     QListWidgetItem* item = ui.effectListWidget->item(i);
     EffectWidget* w = static_cast<EffectWidget*>(ui.effectListWidget->itemWidget(item));
-    w->setSelected(item->isSelected());
+    if(w) w->setSelected(item->isSelected());
   }
 }
 
@@ -382,6 +399,7 @@ void FrameFlow::onCurrentProjectChange()
   {
     projectsWidget_->setCurrentProject(project->id);
   }
+  updateScenes();
 }
 
 void FrameFlow::onProjectListChanged()
@@ -398,4 +416,71 @@ void FrameFlow::onProjectListChanged()
 void FrameFlow::onProjectDirtyChange()
 {
 
+}
+
+void FrameFlow::onCreateScene()
+{
+  CreateSceneDialog dlg;
+
+  // center
+  QScreen* screen = QGuiApplication::screenAt(QCursor::pos());
+  if(!screen) screen = QGuiApplication::primaryScreen();
+  QRect screenGeometry = screen->availableGeometry();
+  dlg.move(screenGeometry.center() - dlg.rect().center());
+  if(dlg.exec() == QDialog::Accepted)
+  {
+    QString name = dlg.name();
+    
+    ProjectManager& pm = ProjectManager::instance();
+    auto project = pm.currentProject();
+    if(project)
+    {
+      Scene scene = {};
+      scene.name = name;
+      scene.orderIndex = project->scenes.size();
+      pm.addScene(scene);
+    }
+    
+  }
+}
+
+void FrameFlow::onUpdateNumSources()
+{
+  ui.sourcesCountLabel->setText(QString("(%1)").arg(ui.sourceListWidget->count()));
+  if(ui.sourceListWidget->count() > 0) ui.noSourceWidget->hide();
+  else ui.noSourceWidget->show();
+}
+
+void FrameFlow::onUpdateNumScenes()
+{
+  ui.scenesCountLabel->setText(QString("(%1)").arg(ui.sceneListWidget->count()));
+}
+
+void FrameFlow::updateScenes()
+{
+  ProjectManager& pm = ProjectManager::instance();
+  auto project = pm.currentProject();
+  if(!project) return;
+
+  // clear
+  while(ui.sceneListWidget->count() > 0)
+  {
+    QListWidgetItem* it = ui.sceneListWidget->takeItem(0);
+    delete it;
+  }
+
+  // populate
+  for(int i = 0; i < project->scenes.size(); i++)
+  {
+    Scene scene = project->scenes[i];
+    QListWidgetItem* lwi = new QListWidgetItem(ui.sceneListWidget);
+    lwi->setSizeHint(QSize(100, 70));
+    SceneWidget* sw = new SceneWidget(scene);
+    ui.sceneListWidget->addItem(lwi);
+    ui.sceneListWidget->setItemWidget(lwi, sw);
+  }
+  if(project->scenes.size() > 0)
+  {
+    ui.sceneListWidget->setCurrentRow(0);
+  }
 }

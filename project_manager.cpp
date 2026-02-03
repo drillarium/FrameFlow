@@ -33,6 +33,11 @@ bool ProjectManager::createProject(const QString& name)
 {
   Project p;
   p.name = name;
+  Scene scene = {};
+  scene.id = QUuid::createUuid();
+  scene.name = "Main Scene";
+  scene.orderIndex = 0;
+  p.scenes.push_back(scene);
   return createProject(p);
 }
 
@@ -41,6 +46,10 @@ bool ProjectManager::createProject(Project& project)
   project.id = QUuid::createUuid();
   project.createdAt = QDateTime::currentDateTimeUtc();
   project.modifiedAt = project.createdAt;
+  for(int i = 0; i < project.scenes.size(); i++)
+  {
+    project.scenes[i].projectId = project.id;
+  }
 
   if(!Database::instance().saveProject(project)) return false;
 
@@ -95,6 +104,18 @@ bool ProjectManager::saveProject(Project& _project)
   }
 
   return false;
+}
+
+bool ProjectManager::addScene(Scene& _scene)
+{
+  if(!currentProject_) return false;
+  
+  _scene.projectId = currentProject_->id;
+  currentProject_->scenes.push_back(_scene);
+
+  emit currentProjectChanged();
+
+  return saveCurrentProject();
 }
 
 bool ProjectManager::saveCurrentProject()

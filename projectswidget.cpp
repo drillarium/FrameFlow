@@ -130,6 +130,11 @@ void ProjectsWidget::setCurrentProject(QUuid uid)
 
 void ProjectsWidget::switchToProject(QUuid& _project)
 {
+  // current project
+  ProjectManager& pm = ProjectManager::instance();
+  auto currentProject = pm.currentProject();
+  if(currentProject && currentProject->id == _project) return;
+
   switchToProject_ = true;
   QMessageBox::StandardButton reply = ConfirmationDialog::question(this, "Load project", "Are you sure you want to load project?", QMessageBox::Yes, QMessageBox::No, QMessageBox::No);
   if(reply == QMessageBox::Yes)

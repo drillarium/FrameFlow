@@ -5,13 +5,17 @@
 
 class SelectSourceDialog : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    SelectSourceDialog(QWidget *parent = nullptr);
-    ~SelectSourceDialog();
+  SelectSourceDialog(QWidget *parent = nullptr);
+  ~SelectSourceDialog();
+
+protected slots:
+  void onAccept();
+  void onItemSelectedChange();
 
 private:
-    Ui::SelectSourceDialogClass ui;
+  Ui::SelectSourceDialogClass ui;
 };
 

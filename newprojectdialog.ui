@@ -334,7 +334,7 @@ QComboBox QScrollBar:vertical {
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="vrComboBox">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -353,6 +353,26 @@ QComboBox QScrollBar:vertical {
         <item>
          <property name="text">
           <string>1920 x 1080 (Full HD) 16:9</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2560 x 1440 (2K) 16:9</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3840 x 2160 (4K) 16:9</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1280 x 720 (HD) 16:9</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1080 x 1920 (Vertical HD) 9:16</string>
          </property>
         </item>
         <item>
@@ -440,7 +460,7 @@ QComboBox QScrollBar:vertical {
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_2">
+       <widget class="QComboBox" name="frComboBox">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -464,6 +484,26 @@ QComboBox QScrollBar:vertical {
         <item>
          <property name="text">
           <string>25 fps (PAL)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>30 fps (Standard)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>50 fps (PAL High)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>60 fps (Smooth)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>120 fps (High Speed)</string>
          </property>
         </item>
        </widget>
@@ -652,8 +692,41 @@ QComboBox QScrollBar:vertical {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>frComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>NewProjectDialogClass</receiver>
+   <slot>onSelectionChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>266</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>vrComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>NewProjectDialogClass</receiver>
+   <slot>onSelectionChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onCreateProject()</slot>
+  <slot>onSelectionChange()</slot>
  </slots>
 </ui>
