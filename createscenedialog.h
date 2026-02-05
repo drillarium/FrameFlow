@@ -13,9 +13,6 @@ public:
 
   QString name() { return ui.lineEdit->text(); }
 
-protected slots:
-  void onAccept();
-
 private:
   Ui::CreateSceneDialogClass ui;
 };

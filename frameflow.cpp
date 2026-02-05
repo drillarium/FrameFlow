@@ -16,6 +16,8 @@
 #include <QStandardPaths>
 #include <QDir>
 #include "createscenedialog.h"
+#include "newprojectdialog.h"
+#include "renamedialog.h"
 
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
@@ -72,39 +74,17 @@ FrameFlow::FrameFlow(QWidget *_parent)
     }
   });
 
-
   auto modelScene = ui.sceneListWidget->model();
   connect(modelScene, &QAbstractItemModel::rowsInserted, this, [this]() { onUpdateNumScenes(); });
   connect(modelScene, &QAbstractItemModel::rowsRemoved, this, [this]() { onUpdateNumScenes(); });
   connect(modelScene, &QAbstractItemModel::modelReset, this, [this]() { onUpdateNumScenes(); });
   onUpdateNumScenes();
 
-  // dummy scenes
-  /* for(int i = 0; i < 5; i++)
-  {
-    QListWidgetItem* lwi = new QListWidgetItem(ui.sceneListWidget);
-    lwi->setSizeHint(QSize(100, 70));
-    SceneWidget* sw = new SceneWidget();
-    ui.sceneListWidget->addItem(lwi);
-    ui.sceneListWidget->setItemWidget(lwi, sw);
-  }
-  ui.sceneListWidget->setCurrentRow(0); // first */
-
   auto modelSource = ui.sourceListWidget->model();
   connect(modelSource, &QAbstractItemModel::rowsInserted, this, [this]() { onUpdateNumSources(); });
   connect(modelSource, &QAbstractItemModel::rowsRemoved, this, [this]() { onUpdateNumSources(); });
   connect(modelSource, &QAbstractItemModel::modelReset, this, [this]() { onUpdateNumSources(); });
   onUpdateNumSources();
-
-  // dummy sources
-  /* for(int i = 0; i < 5; i++)
-  {
-    QListWidgetItem* lwi = new QListWidgetItem(ui.sourceListWidget);
-    lwi->setSizeHint(QSize(0, 35));
-    SourceWidget* sw = new SourceWidget();
-    ui.sourceListWidget->addItem(lwi);
-    ui.sourceListWidget->setItemWidget(lwi, sw);
-  } */
 
   // dummy transitions
   for(int i = 0; i < 5; i++)
@@ -115,7 +95,8 @@ FrameFlow::FrameFlow(QWidget *_parent)
     ui.transitionListWidget->addItem(lwi);
     ui.transitionListWidget->setItemWidget(lwi, sw);
   }
-  ui.transitionListWidget->setCurrentRow(0); // cut
+
+  ui.transitionListWidget->item(0)->setSelected(true); // cut
   ui.transitionsStackedWidget->setCurrentIndex(1);
   onExpandTransitions();
 
@@ -292,8 +273,20 @@ void FrameFlow::onSceneSelectionChanged()
   {
     QListWidgetItem* item = ui.sceneListWidget->item(i);
     SceneWidget* w = static_cast<SceneWidget*>(ui.sceneListWidget->itemWidget(item));
-    if(w) w->setSelected(item->isSelected());
+    if(w)
+    {
+      bool selected = item->isSelected();
+      w->setSelected(selected);
+      if(selected)
+      {
+        ProjectManager& pm = ProjectManager::instance();
+        QUuid id = w->id();
+        pm.setCurrentScene(id);
+      }
+    }
   }
+
+  updateSources();
 }
 
 void FrameFlow::onSourceSelectionChanged()
@@ -381,10 +374,14 @@ void FrameFlow::onAddSource()
   QScreen* screen = QGuiApplication::screenAt(QCursor::pos());
   if(!screen) screen = QGuiApplication::primaryScreen();
   QRect screenGeometry = screen->availableGeometry();
-  // dlg.adjustSize();
   dlg.move(screenGeometry.center() - dlg.rect().center());
 
-  dlg.exec();
+  if(dlg.exec() == QDialog::Accepted)
+  {
+    Source source = dlg.source();
+    ProjectManager& pm = ProjectManager::instance();
+    pm.addSource(source);
+  }
 }
 
 void FrameFlow::onCurrentProjectChange()
@@ -439,8 +436,7 @@ void FrameFlow::onCreateScene()
       scene.name = name;
       scene.orderIndex = project->scenes.size();
       pm.addScene(scene);
-    }
-    
+    }    
   }
 }
 
@@ -476,11 +472,87 @@ void FrameFlow::updateScenes()
     QListWidgetItem* lwi = new QListWidgetItem(ui.sceneListWidget);
     lwi->setSizeHint(QSize(100, 70));
     SceneWidget* sw = new SceneWidget(scene);
+    connect(sw, &SceneWidget::onDeleteScene, this, [this, scene] () { deleteScene(scene); });
+    connect(sw, &SceneWidget::onRenameScene, this, [this, scene]() { renameScene(scene); });
     ui.sceneListWidget->addItem(lwi);
     ui.sceneListWidget->setItemWidget(lwi, sw);
   }
-  if(project->scenes.size() > 0)
+
+  bool selected = false;
+  QUuid sceneId = pm.currentSceneId();
+  for(int i = 0; i < project->scenes.size() && !selected; i++)
   {
-    ui.sceneListWidget->setCurrentRow(0);
+    if(project->scenes[i].id == sceneId)
+    {
+      ui.sceneListWidget->item(i)->setSelected(true);
+      selected = true;
+    }
+  }
+  if(!selected)
+  {
+    ui.sceneListWidget->item(0)->setSelected(true);
+  }
+}
+
+void FrameFlow::updateSources()
+{
+  ProjectManager& pm = ProjectManager::instance();
+  auto project = pm.currentProject();
+  if(!project) return;
+
+  // clear
+  while(ui.sourceListWidget->count() > 0)
+  {
+    QListWidgetItem* it = ui.sourceListWidget->takeItem(0);
+    delete it;
+  }
+
+  QUuid sceneID = pm.currentSceneId();
+  // populate
+  for(int i = 0; i < project->scenes.size(); i++)
+  {
+    Scene scene = project->scenes[i];
+    if(scene.id == sceneID)
+    {
+      for(int j = 0; j < scene.sources.size(); j++)
+      {
+        QListWidgetItem* lwi = new QListWidgetItem(ui.sourceListWidget);
+        lwi->setSizeHint(QSize(0, 30));
+        SourceWidget* sw = new SourceWidget(scene.sources[j]);
+        ui.sourceListWidget->addItem(lwi);
+        ui.sourceListWidget->setItemWidget(lwi, sw);
+      }
+    }
+  }
+}
+
+void FrameFlow::deleteScene(const Scene& _scene)
+{
+  if(ui.sceneListWidget->count() == 1) return;
+
+  QMessageBox::StandardButton reply = ConfirmationDialog::question(this, "Remove scene", "Are you sure you want to remove this scene?", QMessageBox::Yes, QMessageBox::No, QMessageBox::No);
+  if(reply == QMessageBox::Yes)
+  {
+    ProjectManager& pm = ProjectManager::instance();
+    pm.removeScene(_scene.id);
+  }
+}
+
+void FrameFlow::renameScene(const Scene& _scene)
+{
+  RenameDialog dlg(_scene.name, this);
+  dlg.setWindowModality(Qt::ApplicationModal);
+
+  // center
+  QScreen* screen = QGuiApplication::screenAt(QCursor::pos());
+  if(!screen) screen = QGuiApplication::primaryScreen();
+  QRect screenGeometry = screen->availableGeometry();
+  dlg.move(screenGeometry.center() - dlg.rect().center());
+
+  if(dlg.exec() == QDialog::Accepted)
+  {
+    ProjectManager& pm = ProjectManager::instance();
+    auto newName = dlg.newName();
+    pm.renameScene(_scene.id, newName);
   }
 }

@@ -35,7 +35,7 @@ void SceneRenderer::workerThread()
   BOOL enableAudio = FALSE;
 
   CComPtr<IMFFactory> factory;
-  CComBSTR colorParameters = L"solid_color='Red(255)'";
+  CComBSTR colorParameters = L"solid_color='FF00FF(255)'";
   M_VID_PROPS vProps = { eMVF_HD1080_25p };
   M_AUD_PROPS aProps = { 2, 48000, 16, 0 };
   M_AV_PROPS avProps = { vProps, aProps };

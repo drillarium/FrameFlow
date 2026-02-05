@@ -21,6 +21,18 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
+    <Filter Include="models">
+      <UniqueIdentifier>{290849c0-698f-4434-afee-83cf1eeab6e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="renderers">
+      <UniqueIdentifier>{ed22a72c-0a7c-4790-b291-f9060a476a4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dialogs">
+      <UniqueIdentifier>{9a07997c-bfb4-47cd-9067-041800af1771}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="widgets">
+      <UniqueIdentifier>{84bb259c-95b1-47e1-8470-ee8f6743ec5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="frameflow.qrc">
@@ -49,180 +61,222 @@
     <ClCompile Include="myutils.win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="widgetbutton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="projectswidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="newprojectdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="previewscenewidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="projectmenuitem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="alertbutton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="settingsdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="alertsdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="confirmationdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="vumetercontrol.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="vumeterwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scenewidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sourcewidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="splashwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="transitionwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="effectwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="selectsourcedialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="db.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="project_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="createscenedialog.cpp">
+    <ClCompile Include="renderermanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sourceitemwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="streamserverwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="toggleswitch.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="alertbutton.cpp">
+      <Filter>widgets</Filter>
     </ClCompile>
     <ClCompile Include="alertwidget.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="colorpickerwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="effectwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="pathpickerwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="previewscenewidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="urlpickerwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="vumeterwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="vumetercontrol.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="widgetbutton.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="transitionwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="toggleswitch.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="streamserverwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="splashwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="sourcewidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="sourceitemwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="scenewidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="projectswidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="projectmenuitem.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="alertsdialog.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="confirmationdialog.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="createscenedialog.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="newprojectdialog.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="renamedialog.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="selectsourcedialog.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="settingsdialog.cpp">
+      <Filter>dialogs</Filter>
     </ClCompile>
     <ClCompile Include="scenerenderer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>renderers</Filter>
     </ClCompile>
-    <ClCompile Include="sourcemanager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="sourcecolorbaserenderer.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="baserenderer.cpp">
+      <Filter>renderers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myutils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="project_model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scene_model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source_model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="db.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="project_model.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="source_model.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="sourcerenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="scene_model.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="baserenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="sourcecolorbaserenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="basesourcewidget.h">
+      <Filter>widgets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="widgetbutton.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="projectswidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="newprojectdialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="previewscenewidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="projectmenuitem.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="alertbutton.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="settingsdialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="alertsdialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="confirmationdialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="vumetercontrol.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="vumeterwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="scenewidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sourcewidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="togglelistwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="splashwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="transitionwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="effectwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="selectsourcedialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="project_manager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="createscenedialog.h">
+    <QtMoc Include="renderermanager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="sourceitemwidget.h">
-      <Filter>Header Files</Filter>
+    <QtMoc Include="widgetbutton.h">
+      <Filter>widgets</Filter>
     </QtMoc>
-    <QtMoc Include="streamserverwidget.h">
-      <Filter>Header Files</Filter>
+    <QtMoc Include="vumeterwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="vumetercontrol.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="urlpickerwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="transitionwidget.h">
+      <Filter>widgets</Filter>
     </QtMoc>
     <QtMoc Include="toggleswitch.h">
-      <Filter>Header Files</Filter>
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="togglelistwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="streamserverwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="sourcewidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="splashwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="settingsdialog.h">
+      <Filter>dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="selectsourcedialog.h">
+      <Filter>dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="scenewidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="sourceitemwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="pathpickerwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="previewscenewidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="projectswidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="alertbutton.h">
+      <Filter>widgets</Filter>
     </QtMoc>
     <QtMoc Include="alertwidget.h">
-      <Filter>Header Files</Filter>
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="colorpickerwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="effectwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="createscenedialog.h">
+      <Filter>dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="confirmationdialog.h">
+      <Filter>dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="alertsdialog.h">
+      <Filter>dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="newprojectdialog.h">
+      <Filter>dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="renamedialog.h">
+      <Filter>dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="projectmenuitem.h">
+      <Filter>widgets</Filter>
     </QtMoc>
     <QtMoc Include="scenerenderer.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="sourcemanager.h">
-      <Filter>Header Files</Filter>
+      <Filter>renderers</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +329,18 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="alertwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="renamedialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="colorpickerwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="pathpickerwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="urlpickerwidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

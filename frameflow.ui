@@ -267,7 +267,7 @@ QPushButton {
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="frameflow.qrc">:/FrameFlow/frameflow.svg</pixmap>
+          <pixmap resource="frameflow.qrc">:/FrameFlow/frameflow.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>

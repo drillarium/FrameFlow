@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_frameflow.h"
+#include "scene_model.h"
 
 class FrameFlow : public QMainWindow
 {
@@ -38,6 +39,9 @@ private:
   void readSettings();
   void writeSettings();
   void updateScenes();
+  void deleteScene(const Scene &_scene);
+  void renameScene(const Scene &_scene);
+  void updateSources();
 
 private:
   Ui::FrameFlowClass ui;

@@ -20,9 +20,14 @@ public:
   bool loadProject(const QUuid& projectId);
   bool saveCurrentProject();
   bool addScene(Scene &_scene);
+  bool removeScene(const QUuid& sceneId);
+  bool renameScene(const QUuid& sceneId, const QString &_newName);
   bool saveProject(Project &_project);
   void closeProject();
   bool deleteProject(const QUuid& projectId);
+  void setCurrentScene(const QUuid &_id) { currentSceneId_ = _id; }
+  QUuid currentSceneId() { return currentSceneId_; }
+  bool addSource(Source &_source);
 
   // Queries
   QVector<Project> listProjects() const;
@@ -46,4 +51,5 @@ private:
   std::optional<Project> currentProject_;
   QVector<Project> cachedProjects_;
   bool dirty_ = false;
+  QUuid currentSceneId_;
 };

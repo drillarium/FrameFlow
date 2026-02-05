@@ -32,7 +32,8 @@
 
 #descLabel {
   color: #7B899D;
-}</string>
+}
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -89,7 +90,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="frameflow.qrc">:/FrameFlow/liveblue.svg</pixmap>
+         <pixmap resource="frameflow.qrc">:/FrameFlow/tv.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

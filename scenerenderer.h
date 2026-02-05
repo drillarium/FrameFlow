@@ -1,5 +1,7 @@
 #pragma once
 
+#include "baserenderer.h"
+
 #include <QObject>
 #include <thread>
 #include <MFormats.h>

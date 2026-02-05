@@ -12,12 +12,18 @@ public:
   SceneWidget(Scene &_scene, QWidget *parent = nullptr);
   ~SceneWidget();
   void setSelected(bool _selected);
+  QUuid id() { return scene_.id; }
 
 protected:
   void enterEvent(QEnterEvent*) override;
   void leaveEvent(QEvent*) override;
 
+signals:
+  void onDeleteScene();
+  void onRenameScene();
+
 private:
+  Scene scene_;
   Ui::SceneWidgetClass ui;
 };
 

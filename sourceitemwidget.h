@@ -2,20 +2,20 @@
 
 #include <QWidget>
 #include "ui_sourceitemwidget.h"
-#include "sourcemanager.h"
+#include "source_model.h"
 
 class SourceItemWidget : public QWidget
 {
 Q_OBJECT
 
 public:
-  SourceItemWidget(ESourceType type, QWidget *parent = nullptr);
+  SourceItemWidget(SourceType type, QWidget *parent = nullptr);
   ~SourceItemWidget();
 
   void setSelected(bool _selected);
 
 private:
-  ESourceType type_;
+  SourceType type_;
   Ui::SourceItemWidgetClass ui;
 };
 

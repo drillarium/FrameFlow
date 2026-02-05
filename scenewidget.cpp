@@ -1,9 +1,11 @@
 #include "scenewidget.h"
 #include <QStyle>
 #include <QMenu>
+#include "project_manager.h"
 
 SceneWidget::SceneWidget(Scene& _scene, QWidget *_parent)
 :QWidget(_parent)
+,scene_(_scene)
 {
   ui.setupUi(this);
   ui.menuButton->hide();
@@ -11,9 +13,18 @@ SceneWidget::SceneWidget(Scene& _scene, QWidget *_parent)
 
   QMenu* menu = new QMenu(ui.menuButton);
   menu->setCursor(Qt::PointingHandCursor);
-  QAction* renameAction = menu->addAction(QIcon::fromTheme("document-edit"), "Rename");
-  QAction* deleteAction = menu->addAction(QIcon::fromTheme("edit-delete"), "Delete");
+  QAction* renameAction = menu->addAction(QIcon(":/FrameFlow/pencilwhite.svg"), "Rename");
+  QAction *deleteAction = menu->addAction(QIcon(":/FrameFlow/trash.svg"), "Delete");
   ui.menuButton->setMenu(menu);
+
+  connect(renameAction, &QAction::triggered, this, &SceneWidget::onRenameScene);
+  connect(deleteAction, &QAction::triggered, this, &SceneWidget::onDeleteScene);
+  connect(menu, &QMenu::aboutToShow, this, [&, deleteAction](){ 
+    ProjectManager& pm = ProjectManager::instance();
+    auto project = pm.currentProject();
+    if(!project) return;
+    deleteAction->setEnabled(project->scenes.size() > 1);
+  });
 }
 
 SceneWidget::~SceneWidget()
@@ -35,24 +46,20 @@ void SceneWidget::setSelected(bool _selected)
   QString ss = "#sceneTitleLabel {\
     color: white;\
   }\
-  \
   #mainSceneWidget {\
     background: #171B22;\
     border: 2px solid %1;\
     border-radius: 8px;\
   }\
-  \
   #mainSceneWidget:hover {\
     background: #1E2430;\
     color: white;\
     border: 2px solid %1;\
     border-radius: 8px;\
   }\
-  \
   #statusLabel {\
     color: green;\
   }\
-  \
   #centerWidget {\
     border: 2px solid transparent;\
    border-radius: 12px;\
@@ -72,10 +79,10 @@ void SceneWidget::setSelected(bool _selected)
   QMenu::item {\
       background-color: transparent;\
   }\
-\
   QMenu::item:selected {\
       background-color: #303541;\
-  }";
+  }\
+  ";
 
   QString color = _selected? "#19BDDE" : "transparent";
   setStyleSheet(QString(ss).arg(color));

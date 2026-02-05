@@ -12,4 +12,3 @@ struct Scene {
   QJsonObject settings; // resolution, fps, layout...
   QVector<Source> sources;
 };
-

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>738</width>
-    <height>622</height>
+    <width>790</width>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -387,21 +387,64 @@ QStackedWidget QWidget {
        </widget>
       </item>
       <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Orientation::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QStackedWidget" name="customStackedWidget">
-        <widget class="QWidget" name="page"/>
+        <widget class="ColorPickerWidget" name="page">
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+         </layout>
+        </widget>
+        <widget class="PathPickerWidget" name="page_2">
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+         </layout>
+        </widget>
+        <widget class="UrlPickerWidget" name="page_3">
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+         </layout>
+        </widget>
        </widget>
       </item>
       <item>
@@ -494,6 +537,26 @@ QStackedWidget QWidget {
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ColorPickerWidget</class>
+   <extends>QWidget</extends>
+   <header>colorpickerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>PathPickerWidget</class>
+   <extends>QWidget</extends>
+   <header>pathpickerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>UrlPickerWidget</class>
+   <extends>QWidget</extends>
+   <header>urlpickerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="frameflow.qrc"/>
  </resources>

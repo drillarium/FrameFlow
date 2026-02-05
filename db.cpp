@@ -327,6 +327,9 @@ std::optional<Project> Database::loadProject(const QUuid& projectId)
     }
 
     p.scenes.push_back(s);
+
+    // sort by order index
+    std::sort(p.scenes.begin(), p.scenes.end(), [](const Scene& a, const Scene& b) { return a.orderIndex < b.orderIndex; });
   }
 
   return p;
@@ -422,4 +425,17 @@ QVector<Project> Database::listProjects()
   }
 
   return projects;
+}
+
+bool Database::deleteScene(const QUuid& sceneId)
+{
+  QSqlQuery q;
+  q.prepare("DELETE FROM scenes WHERE id = ?");
+  q.addBindValue(sceneId.toString(QUuid::WithoutBraces));
+
+  if(!q.exec()) {
+    qWarning() << "Delete scene failed:" << q.lastError();
+    return false;
+  }
+  return true;
 }

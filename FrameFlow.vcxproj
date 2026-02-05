@@ -60,8 +60,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -105,33 +107,40 @@
     <ClCompile Include="alertbutton.cpp" />
     <ClCompile Include="alertsdialog.cpp" />
     <ClCompile Include="alertwidget.cpp" />
+    <ClCompile Include="baserenderer.cpp" />
+    <ClCompile Include="colorpickerwidget.cpp" />
     <ClCompile Include="confirmationdialog.cpp" />
     <ClCompile Include="createscenedialog.cpp" />
     <ClCompile Include="db.cpp" />
     <ClCompile Include="effectwidget.cpp" />
     <ClCompile Include="myutils.win.cpp" />
     <ClCompile Include="newprojectdialog.cpp" />
+    <ClCompile Include="pathpickerwidget.cpp" />
     <ClCompile Include="previewscenewidget.cpp" />
     <ClCompile Include="projectmenuitem.cpp" />
     <ClCompile Include="projectswidget.cpp" />
     <ClCompile Include="project_manager.cpp" />
+    <ClCompile Include="renamedialog.cpp" />
     <ClCompile Include="scenerenderer.cpp" />
     <ClCompile Include="scenewidget.cpp" />
     <ClCompile Include="selectsourcedialog.cpp" />
     <ClCompile Include="settingsdialog.cpp" />
+    <ClCompile Include="sourcecolorbaserenderer.cpp" />
     <ClCompile Include="sourceitemwidget.cpp" />
-    <ClCompile Include="sourcemanager.cpp" />
+    <ClCompile Include="renderermanager.cpp" />
     <ClCompile Include="sourcewidget.cpp" />
     <ClCompile Include="splashwidget.cpp" />
     <ClCompile Include="streamserverwidget.cpp" />
     <ClCompile Include="toggleswitch.cpp" />
     <ClCompile Include="transitionwidget.cpp" />
+    <ClCompile Include="urlpickerwidget.cpp" />
     <ClCompile Include="vumetercontrol.cpp" />
     <ClCompile Include="vumeterwidget.cpp" />
     <ClCompile Include="widgetbutton.cpp" />
     <QtRcc Include="frameflow.qrc" />
     <QtUic Include="alertsdialog.ui" />
     <QtUic Include="alertwidget.ui" />
+    <QtUic Include="colorpickerwidget.ui" />
     <QtUic Include="confirmationdialog.ui" />
     <QtUic Include="createscenedialog.ui" />
     <QtUic Include="effectwidget.ui" />
@@ -141,8 +150,10 @@
     <ClCompile Include="main.cpp" />
     <None Include="FrameFlow.ico" />
     <QtUic Include="newprojectdialog.ui" />
+    <QtUic Include="pathpickerwidget.ui" />
     <QtUic Include="projectmenuitem.ui" />
     <QtUic Include="projectswidget.ui" />
+    <QtUic Include="renamedialog.ui" />
     <QtUic Include="scenewidget.ui" />
     <QtUic Include="selectsourcedialog.ui" />
     <QtUic Include="settingsdialog.ui" />
@@ -151,21 +162,30 @@
     <QtUic Include="splashwidget.ui" />
     <QtUic Include="streamserverwidget.ui" />
     <QtUic Include="transitionwidget.ui" />
+    <QtUic Include="urlpickerwidget.ui" />
     <QtUic Include="vumetercontrol.ui" />
     <ResourceCompile Include="FrameFlow.rc" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="urlpickerwidget.h" />
     <QtMoc Include="toggleswitch.h" />
     <QtMoc Include="streamserverwidget.h" />
     <QtMoc Include="createscenedialog.h" />
     <QtMoc Include="alertwidget.h" />
+    <QtMoc Include="colorpickerwidget.h" />
+    <ClInclude Include="baserenderer.h" />
+    <ClInclude Include="basesourcewidget.h" />
     <ClInclude Include="db.h" />
     <QtMoc Include="project_manager.h" />
+    <QtMoc Include="pathpickerwidget.h" />
     <ClInclude Include="project_model.h" />
     <QtMoc Include="scenerenderer.h" />
+    <QtMoc Include="renamedialog.h" />
     <ClInclude Include="scene_model.h" />
     <QtMoc Include="sourceitemwidget.h" />
-    <QtMoc Include="sourcemanager.h" />
+    <QtMoc Include="renderermanager.h" />
+    <ClInclude Include="sourcecolorbaserenderer.h" />
+    <ClInclude Include="sourcerenderer.h" />
     <ClInclude Include="source_model.h" />
     <QtMoc Include="selectsourcedialog.h" />
     <QtMoc Include="transitionwidget.h" />

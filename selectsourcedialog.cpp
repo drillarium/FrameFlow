@@ -1,6 +1,6 @@
 #include "selectsourcedialog.h"
 #include "sourceitemwidget.h"
-#include "sourcemanager.h"
+#include "source_model.h"
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
 #include <QPainter>
@@ -66,16 +66,15 @@ SelectSourceDialog::SelectSourceDialog(QWidget *parent)
   setAttribute(Qt::WA_TranslucentBackground);
 
   /* sources */  
-  for(int i = 0; i < ESourceType::EST_LAST; i++)
+  for(int i = 0; i < (int) SourceType::EST_LAST; i++)
   {
     QListWidgetItem* lwi = new QListWidgetItem(ui.listWidget);
     lwi->setSizeHint(QSize(150, 75));
-    SourceItemWidget* siw = new SourceItemWidget((ESourceType) i);
+    SourceItemWidget* siw = new SourceItemWidget((SourceType) i);
     ui.listWidget->addItem(lwi);
     ui.listWidget->setItemWidget(lwi, siw);
   }
-
-  ui.listWidget->setCurrentRow(0);
+  ui.listWidget->item(0)->setSelected(true);
 
   connect(ui.buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, [this](QAbstractButton* button) {
     if(button == ui.newSourceButton) {
@@ -105,12 +104,27 @@ SelectSourceDialog::~SelectSourceDialog()
 
 void SelectSourceDialog::onAccept()
 {
-  accept();
+  for(int i = 0; i < ui.listWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.listWidget->item(i);
+    if(item->isSelected())
+    {
+      if(i < ui.customStackedWidget->count())
+      {
+        BaseSourceWidget* w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget(i));
+        source_ = w->source();
+        accept();
+        return;
+      }
+    }
+  }
+
+  reject();
 }
 
 void SelectSourceDialog::onItemSelectedChange()
 {
-  int selected = 0;
+  int selected = -1;
   for(int i = 0; i < ui.listWidget->count(); ++i)
   {
     QListWidgetItem* item = ui.listWidget->item(i);
@@ -119,8 +133,17 @@ void SelectSourceDialog::onItemSelectedChange()
     if(item->isSelected()) selected = i;
   }
 
-  ui.customStackedWidget->setCurrentIndex(0);
-  ui.customStackedWidget->setFixedHeight(selected % 2? 100 : 0);
+  if(selected >= 0 && selected < ui.customStackedWidget->count())
+  {
+    ui.customStackedWidget->setCurrentIndex(selected);
+    BaseSourceWidget *w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget(selected));   
+    ui.customStackedWidget->setFixedHeight(w->h());
+  }
+  else
+  {
+    ui.customStackedWidget->setCurrentIndex(0);
+    ui.customStackedWidget->setFixedHeight(0);
+  }
   setFixedWidth(width());
-  setFixedHeight(ui.listWidget->height() + ui.customStackedWidget->height() + 200);
+  setFixedHeight(ui.listWidget->height() + ui.customStackedWidget->height() + 120);
 }

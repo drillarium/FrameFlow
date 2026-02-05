@@ -2,13 +2,14 @@
 
 #include <QWidget>
 #include "ui_sourcewidget.h"
+#include "source_model.h"
 
 class SourceWidget : public QWidget
 {
 Q_OBJECT
 
 public:
-  SourceWidget(QWidget *_parent = nullptr);
+  SourceWidget(const Source &_source, QWidget *_parent = nullptr);
   ~SourceWidget();
   void setSelected(bool _selected);
 
@@ -17,6 +18,7 @@ protected:
   void leaveEvent(QEvent*) override;
 
 private:
+  Source source_;
   Ui::SourceWidgetClass ui;
 };
 

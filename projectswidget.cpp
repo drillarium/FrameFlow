@@ -107,7 +107,6 @@ void ProjectsWidget::onNewProject()
   QScreen* screen = QGuiApplication::screenAt(QCursor::pos());
   if(!screen) screen = QGuiApplication::primaryScreen();
   QRect screenGeometry = screen->availableGeometry();
-  // dlg.adjustSize();
   dlg.move(screenGeometry.center() - dlg.rect().center());
 
   if(dlg.exec() == QDialog::Accepted)

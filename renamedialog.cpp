@@ -1,15 +1,16 @@
-#include "createscenedialog.h"
+#include "renamedialog.h"
 
-CreateSceneDialog::CreateSceneDialog(QWidget *parent)
+RenameDialog::RenameDialog(const QString& _name, QWidget *parent)
 :QDialog(parent)
 {
   ui.setupUi(this);
+  ui.lineEdit->setText(_name);
 
   setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
   setAttribute(Qt::WA_TranslucentBackground);
 }
 
-CreateSceneDialog::~CreateSceneDialog()
+RenameDialog::~RenameDialog()
 {
 
 }

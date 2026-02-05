@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>602</width>
-    <height>52</height>
+    <height>50</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -102,7 +102,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="frameflow.qrc">:/FrameFlow/video.svg</pixmap>
+         <pixmap resource="frameflow.qrc">:/FrameFlow/tv.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

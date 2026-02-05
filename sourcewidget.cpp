@@ -1,14 +1,16 @@
 #include "sourcewidget.h"
 #include <QStyle>
 
-SourceWidget::SourceWidget(QWidget *_parent)
+SourceWidget::SourceWidget(const Source& _source, QWidget *_parent)
 :QWidget(_parent)
+,source_(_source)
 {
   ui.setupUi(this);
 
   ui.lockButton->hide();
   ui.eyeButton->hide();
   ui.menuButton->hide();
+  ui.titleLabel->setText(source_.name);
 }
 
 SourceWidget::~SourceWidget()

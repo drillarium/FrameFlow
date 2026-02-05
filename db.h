@@ -22,6 +22,7 @@ public:
   std::optional<Project> loadProject(const QUuid& projectId);
   bool deleteProject(const QUuid& projectId);
   QVector<Project> listProjects();
+  bool deleteScene(const QUuid& sceneId);
 
 private:
   Database();

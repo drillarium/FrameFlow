@@ -11,11 +11,14 @@ public:
   SelectSourceDialog(QWidget *parent = nullptr);
   ~SelectSourceDialog();
 
+  Source source() { return source_; }
+
 protected slots:
   void onAccept();
   void onItemSelectedChange();
 
 private:
   Ui::SelectSourceDialogClass ui;
+  Source source_;
 };
 

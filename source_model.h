@@ -4,12 +4,18 @@
 #include <QJsonObject>
 
 enum class SourceType
- {
-  Camera,
-  Rtsp,
-  MediaFile,
-  AudioInput,
-  Plugin
+{
+  EST_COLOR,
+  EST_FILE,
+  EST_URL,
+  EST_LIVE_SOURCE,
+  EST_NDI,
+  EST_DEVICE,
+  EST_WEBCAM,
+  EST_BROWSER,
+  EST_SCREEN_CAPTURE,
+  EST_TEXT,
+  EST_LAST
 };
 
 struct Source
