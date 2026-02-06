@@ -1,4 +1,38 @@
 #include "baserenderer.h"
+#include "sourcecolorbaserenderer.h"
+
+QString BaseRenderer::getVideoFormatString(int w, int h, double fr)
+{
+  if(w == 1920 && h == 1080 && fr == 24) return "1080p24";
+  if(w == 1920 && h == 1080 && fr == 25) return "1080p25";
+  if(w == 1920 && h == 1080 && fr == 30) return "1080p30";
+  if(w == 1920 && h == 1080 && fr == 50) return "1080p50";
+  if(w == 1920 && h == 1080 && fr == 60) return "1080p60";
+  if(w == 1920 && h == 1080 && fr == 120) return "1080p120";
+
+  if(w == 2560 && h == 1440 && fr == 24) return "2Kp24";
+  if(w == 2560 && h == 1440 && fr == 25) return "2Kp25";
+  if(w == 2560 && h == 1440 && fr == 30) return "2Kp30";
+  if(w == 2560 && h == 1440 && fr == 50) return "2Kp50";
+  if(w == 2560 && h == 1440 && fr == 60) return "2Kp60";
+  if(w == 2560 && h == 1440 && fr == 120) return "2Kp120";
+
+  if(w == 3840 && h == 2160 && fr == 24) return "4Kp24";
+  if(w == 3840 && h == 2160 && fr == 25) return "4Kp25";
+  if(w == 3840 && h == 2160 && fr == 30) return "4Kp30";
+  if(w == 3840 && h == 2160 && fr == 50) return "4Kp50";
+  if(w == 3840 && h == 2160 && fr == 60) return "4Kp60";
+  if(w == 3840 && h == 2160 && fr == 120) return "4Kp120";
+
+  if(w == 1280 && h == 720 && fr == 24) return "720p24";
+  if(w == 1280 && h == 720 && fr == 25) return "720p25";
+  if(w == 1280 && h == 720 && fr == 30) return "720p30";
+  if(w == 1280 && h == 720 && fr == 50) return "720p50";
+  if(w == 1280 && h == 720 && fr == 60) return "720p60";
+  if(w == 1280 && h == 720 && fr == 120) return "720p120";
+
+  return QString("%1x%2p%3").arg(w).arg(h).arg(fr);
+}
 
 M_VID_PROPS BaseRenderer::getMVideoFormat(int w, int h, double fr)
 {
@@ -48,4 +82,10 @@ void BaseRenderer::getFactors(double fr, int& num, int& den)
   if(fr == 50) { num = 50; den = 1; }
   if(fr == 60) { num = 60; den = 1; }
   if(fr == 120) { num = 120; den = 1; }
+}
+
+BaseRenderer* BaseRenderer::build(SourceType type)
+{
+  if(type == SourceType::EST_COLOR) return new SourceColorBaseRenderer;
+  return nullptr;
 }

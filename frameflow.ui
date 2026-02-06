@@ -2018,7 +2018,7 @@ QPushButton {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_5">
+                 <widget class="QLabel" name="previewSceneLabel">
                   <property name="text">
                    <string>1920x1080     60fps     8.500 kbps</string>
                   </property>

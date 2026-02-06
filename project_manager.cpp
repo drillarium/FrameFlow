@@ -1,6 +1,5 @@
 #include "project_manager.h"
 #include "db.h"
-
 #include <QDateTime>
 
 ProjectManager& ProjectManager::instance()

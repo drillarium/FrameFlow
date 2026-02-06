@@ -2,6 +2,8 @@
 #include <QPainter>
 #include <QLinearGradient>
 #include <QMouseEvent>
+#include "project_manager.h"
+#include "renderermanager.h"
 
 PreviewSceneWidget::PreviewSceneWidget(QWidget *_parent)
 :QWidget(_parent)
@@ -14,14 +16,6 @@ PreviewSceneWidget::PreviewSceneWidget(QWidget *_parent)
   // sample rect to resize and move
   rects_.append(QRect(50, 50, 120, 80));
   update();
-
-  // renderer
-  senceneRenderer_ = new SceneRenderer();
-  connect(senceneRenderer_, &SceneRenderer::onNewImage, this, [&](QImage image) {
-    ARGBImage_ = image.copy();
-    update();
-  });
-  senceneRenderer_->start();
 }
 
 PreviewSceneWidget::~PreviewSceneWidget()
@@ -29,15 +23,41 @@ PreviewSceneWidget::~PreviewSceneWidget()
 
 }
 
+void PreviewSceneWidget::setPreviewMode(EPreviewMode _mode)
+{
+  RendererManager &rm = RendererManager::instance();
+
+  previewMode_ = _mode;
+  if(previewMode_ == EPreviewMode::PM_PREVIEW)
+  {
+    connect(&rm, &RendererManager::onNewPreviewImage, this, [&](QImage image) {
+      ARGBImage_ = image.copy();
+      update();
+    });
+  }
+  else if(previewMode_ == EPreviewMode::PM_PROGRAM)
+  {
+    connect(&rm, &RendererManager::onNewProgramImage, this, [&](QImage image) {
+      ARGBImage_ = image.copy();
+      update();
+    });
+  }
+}
+
 QRect PreviewSceneWidget::updateRenderRect()
 {
   if(width() <= 0 || height() <= 0) return QRect();
 
-  const double sx = double(width()) / videoWindowSize_.width();
-  const double sy = double(height()) / videoWindowSize_.height();
+  ProjectManager &pm = ProjectManager::instance();
+  auto currentProject = pm.currentProject();
+  if(!currentProject) return QRect();
+  QSize videoWindowSize = { currentProject->width, currentProject->height };
+
+  const double sx = double(width()) / videoWindowSize.width();
+  const double sy = double(height()) / videoWindowSize.height();
   const double scale = (std::min)(sx, sy);
 
-  const QSize fitted(int(videoWindowSize_.width() * scale), int(videoWindowSize_.height() * scale));
+  const QSize fitted(int(videoWindowSize.width() * scale), int(videoWindowSize.height() * scale));
   const QPoint topLeft((width() - fitted.width()) / 2, (height() - fitted.height()) / 2);
   return QRect(topLeft, fitted);
 }
@@ -125,9 +145,6 @@ void PreviewSceneWidget::paintEvent(QPaintEvent *_event)
 
   // render
   QRect renderRect = PreviewSceneWidget::updateRenderRect();
-  QPen videoPen(Qt::black, 2);
-  p.setPen(videoPen);
-  p.drawRect(renderRect);
   if(!ARGBImage_.isNull())
   {
     p.drawImage(renderRect, ARGBImage_);

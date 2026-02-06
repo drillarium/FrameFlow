@@ -67,9 +67,6 @@
     <ClCompile Include="project_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="renderermanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="alertbutton.cpp">
       <Filter>widgets</Filter>
     </ClCompile>
@@ -157,6 +154,9 @@
     <ClCompile Include="baserenderer.cpp">
       <Filter>renderers</Filter>
     </ClCompile>
+    <ClCompile Include="renderermanager.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myutils.h">
@@ -171,9 +171,6 @@
     <ClInclude Include="source_model.h">
       <Filter>models</Filter>
     </ClInclude>
-    <ClInclude Include="sourcerenderer.h">
-      <Filter>renderers</Filter>
-    </ClInclude>
     <ClInclude Include="scene_model.h">
       <Filter>models</Filter>
     </ClInclude>
@@ -186,12 +183,12 @@
     <ClInclude Include="basesourcewidget.h">
       <Filter>widgets</Filter>
     </ClInclude>
+    <ClInclude Include="scenerenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="project_manager.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="renderermanager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="widgetbutton.h">
@@ -275,7 +272,7 @@
     <QtMoc Include="projectmenuitem.h">
       <Filter>widgets</Filter>
     </QtMoc>
-    <QtMoc Include="scenerenderer.h">
+    <QtMoc Include="renderermanager.h">
       <Filter>renderers</Filter>
     </QtMoc>
   </ItemGroup>

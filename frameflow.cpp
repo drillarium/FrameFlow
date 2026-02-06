@@ -18,6 +18,7 @@
 #include "createscenedialog.h"
 #include "newprojectdialog.h"
 #include "renamedialog.h"
+#include "renderermanager.h"
 
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
@@ -112,6 +113,7 @@ FrameFlow::FrameFlow(QWidget *_parent)
   ui.effectsStackedWidget->setCurrentIndex(1);
   onExpandEffects();
 
+  // Program | Preview
   connect(ui.buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, [this] (QAbstractButton* button) {
     if(button == ui.directButton) {
       ui.stackedWidget->setCurrentIndex(0);
@@ -121,14 +123,20 @@ FrameFlow::FrameFlow(QWidget *_parent)
     }
   });
 
+  ui.previewSceneWidget->setPreviewMode(EPreviewMode::PM_PROGRAM);
   ui.PGCWidget->setPreviewMode(EPreviewMode::PM_PROGRAM);
   ui.PREVIEWWidget->setPreviewMode(EPreviewMode::PM_PREVIEW);
 }
 
 FrameFlow::~FrameFlow()
 {
+  // unload renderers
+  RendererManager& rm = RendererManager::instance();
+  rm.unload();
+
   projectsWidget_->deleteLater();
 
+  // mandatory. invalid signals received
   if(auto m = ui.sourceListWidget->model()) { disconnect(m, nullptr, this, nullptr);}
   if(auto m = ui.sceneListWidget->model()) { disconnect(m, nullptr, this, nullptr); }
 }
@@ -397,6 +405,13 @@ void FrameFlow::onCurrentProjectChange()
     projectsWidget_->setCurrentProject(project->id);
   }
   updateScenes();
+
+  // notify to renderer
+  RendererManager &rm = RendererManager::instance();
+  rm.reloadProjec();
+
+  ui.outputValueLabel->setText(BaseRenderer::getVideoFormatString(project->width, project->height, project->framerate));
+  ui.previewSceneLabel->setText(QString("%1x%2  %3fps  8.500 kbps").arg(project->width).arg(project->height).arg(project->framerate));
 }
 
 void FrameFlow::onProjectListChanged()
@@ -488,7 +503,7 @@ void FrameFlow::updateScenes()
       selected = true;
     }
   }
-  if(!selected)
+  if(!selected && ui.sceneListWidget->count() > 0)
   {
     ui.sceneListWidget->item(0)->setSelected(true);
   }

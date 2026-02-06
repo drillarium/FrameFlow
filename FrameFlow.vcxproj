@@ -179,13 +179,12 @@
     <QtMoc Include="project_manager.h" />
     <QtMoc Include="pathpickerwidget.h" />
     <ClInclude Include="project_model.h" />
-    <QtMoc Include="scenerenderer.h" />
+    <ClInclude Include="scenerenderer.h" />
     <QtMoc Include="renamedialog.h" />
     <ClInclude Include="scene_model.h" />
     <QtMoc Include="sourceitemwidget.h" />
     <QtMoc Include="renderermanager.h" />
     <ClInclude Include="sourcecolorbaserenderer.h" />
-    <ClInclude Include="sourcerenderer.h" />
     <ClInclude Include="source_model.h" />
     <QtMoc Include="selectsourcedialog.h" />
     <QtMoc Include="transitionwidget.h" />

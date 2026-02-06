@@ -15,6 +15,7 @@ enum class SourceType
   EST_BROWSER,
   EST_SCREEN_CAPTURE,
   EST_TEXT,
+  EST_SCENE,
   EST_LAST
 };
 

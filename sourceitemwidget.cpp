@@ -15,6 +15,7 @@ QString sourceTitle(SourceType type)
     case SourceType::EST_BROWSER: return "Browser";
     case SourceType::EST_SCREEN_CAPTURE: return "Screen Capture";
     case SourceType::EST_TEXT: return "Text";
+    case SourceType::EST_SCENE: return "Scene";
     default: break;
   }
 
@@ -35,6 +36,7 @@ QString sourceDescription(SourceType type)
   case SourceType::EST_BROWSER: return "Render a web page as a video source";
   case SourceType::EST_SCREEN_CAPTURE: return "Capture the screen or a window";
   case SourceType::EST_TEXT: return "Render text as a video source";
+  case SourceType::EST_SCENE: return "Exisitng scene as video source";
     default: break;
   }
 

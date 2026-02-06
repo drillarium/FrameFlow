@@ -1,32 +1,32 @@
 #pragma once
 
 #include "baserenderer.h"
-
-#include <QObject>
 #include <thread>
 #include <MFormats.h>
 #include <atlbase.h> // CComPtr
-#include <QImage>
+#include <mutex>
 
-class SceneRenderer : public QObject
+enum EPreviewMode { PM_PREVIEW, PM_PROGRAM };
+
+class SceneRenderer : public BaseRenderer
 {
-Q_OBJECT
-
 public:
-  SceneRenderer(QObject *parent = nullptr);
+  SceneRenderer(EPreviewMode mode);
   ~SceneRenderer();
 
-  bool start();
-  bool stop();
+  SourceType type() override { return SourceType::EST_SCENE; }
+  bool start() override;
+  bool stop() override;
+  bool isRunning() override { return running_; }
+  bool getFrame(CComPtr<IMFFrame>& _frame) override;
 
 protected:
   void workerThread();
 
-signals:
-  void onNewImage(const QImage image);
-
 protected:
   bool running_ = false;
   std::thread workerThread_;
-  CComPtr<IMPreview> preview_;
+  CComPtr<IMFFrame> lastFrame_;
+  std::mutex lastFrameMutex_;
+  EPreviewMode mode_ = EPreviewMode::PM_PROGRAM;
 };
