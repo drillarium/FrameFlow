@@ -42,6 +42,8 @@ private:
   void deleteScene(const Scene &_scene);
   void renameScene(const Scene &_scene);
   void updateSources();
+  void deleteSource(const Source& _source);
+  void renameSource(const Source& _source);
 
 private:
   Ui::FrameFlowClass ui;

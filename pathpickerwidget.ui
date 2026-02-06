@@ -116,6 +116,9 @@ QLineEdit:focus {
           <height>30</height>
          </size>
         </property>
+        <property name="text">
+         <string>NewSource</string>
+        </property>
         <property name="placeholderText">
          <string>New Source</string>
         </property>

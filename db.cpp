@@ -413,7 +413,8 @@ QVector<Project> Database::listProjects()
 
   QSqlQuery q("SELECT * FROM projects ORDER BY modified_at DESC");
 
-  while(q.next()) {
+  while(q.next())
+  {
     Project p;
     p.id = QUuid(q.value("id").toString());
     p.name = q.value("name").toString();
@@ -433,8 +434,23 @@ bool Database::deleteScene(const QUuid& sceneId)
   q.prepare("DELETE FROM scenes WHERE id = ?");
   q.addBindValue(sceneId.toString(QUuid::WithoutBraces));
 
-  if(!q.exec()) {
+  if(!q.exec())
+  {
     qWarning() << "Delete scene failed:" << q.lastError();
+    return false;
+  }
+  return true;
+}
+
+bool Database::deleteSource(const QUuid& sourceId)
+{
+  QSqlQuery q;
+  q.prepare("DELETE FROM sources WHERE id = ?");
+  q.addBindValue(sourceId.toString(QUuid::WithoutBraces));
+
+  if(!q.exec())
+  {
+    qWarning() << "Delete source failed:" << q.lastError();
     return false;
   }
   return true;

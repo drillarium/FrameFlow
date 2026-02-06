@@ -22,3 +22,8 @@ Source UrlPickerWidget::source()
 
   return source;
 }
+
+bool UrlPickerWidget::isValid()
+{
+  return (ui.nameLineEdit->text().size() > 0) && (ui.pathLineEdit->text().size() > 0);
+}

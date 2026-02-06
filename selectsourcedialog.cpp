@@ -4,6 +4,7 @@
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
 #include <QPainter>
+#include <QTimer>
 
 class SourceItemDelegate : public QStyledItemDelegate
 {
@@ -112,8 +113,16 @@ void SelectSourceDialog::onAccept()
       if(i < ui.customStackedWidget->count())
       {
         BaseSourceWidget* w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget(i));
-        source_ = w->source();
-        accept();
+        if(w->isValid())
+        {
+          source_ = w->source();
+          accept();
+        }
+        else
+        {
+          ui.errorLabel->setText("ERROR: Check parameters");
+          QTimer::singleShot(5000, [&](){ ui.errorLabel->clear(); });
+        }
         return;
       }
     }

@@ -36,3 +36,8 @@ void PathPickerWidget::onPickPath()
     ui.pathLineEdit->setText(file);
   }
 }
+
+bool PathPickerWidget::isValid()
+{
+  return (ui.nameLineEdit->text().size() > 0) && (ui.pathLineEdit->text().size() > 0);
+}

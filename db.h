@@ -23,6 +23,7 @@ public:
   bool deleteProject(const QUuid& projectId);
   QVector<Project> listProjects();
   bool deleteScene(const QUuid& sceneId);
+  bool deleteSource(const QUuid& sourceId);
 
 private:
   Database();

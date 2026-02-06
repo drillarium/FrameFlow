@@ -24,6 +24,11 @@ Source ColorPickerWidget::source()
   return source;
 }
 
+bool ColorPickerWidget::isValid()
+{
+  return (ui.nameLineEdit->text().size() > 0);
+}
+
 void ColorPickerWidget::onPickColor()
 {
   QColor initialColor(ui.colorLineEdit->text());

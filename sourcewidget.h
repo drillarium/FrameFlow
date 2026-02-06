@@ -12,10 +12,15 @@ public:
   SourceWidget(const Source &_source, QWidget *_parent = nullptr);
   ~SourceWidget();
   void setSelected(bool _selected);
+  QUuid id() { return source_.id; }
 
 protected:
   void enterEvent(QEnterEvent*) override;
   void leaveEvent(QEvent*) override;
+
+signals:
+  void onDeleteSource();
+  void onRenameSource();
 
 private:
   Source source_;

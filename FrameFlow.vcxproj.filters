@@ -157,6 +157,9 @@
     <ClCompile Include="renderermanager.cpp">
       <Filter>renderers</Filter>
     </ClCompile>
+    <ClCompile Include="editsourcedialog.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myutils.h">
@@ -275,6 +278,9 @@
     <QtMoc Include="renderermanager.h">
       <Filter>renderers</Filter>
     </QtMoc>
+    <QtMoc Include="editsourcedialog.h">
+      <Filter>dialogs</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="projectswidget.ui">
@@ -338,6 +344,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="urlpickerwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="editsourcedialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

@@ -112,6 +112,7 @@
     <ClCompile Include="confirmationdialog.cpp" />
     <ClCompile Include="createscenedialog.cpp" />
     <ClCompile Include="db.cpp" />
+    <ClCompile Include="editsourcedialog.cpp" />
     <ClCompile Include="effectwidget.cpp" />
     <ClCompile Include="myutils.win.cpp" />
     <ClCompile Include="newprojectdialog.cpp" />
@@ -143,6 +144,7 @@
     <QtUic Include="colorpickerwidget.ui" />
     <QtUic Include="confirmationdialog.ui" />
     <QtUic Include="createscenedialog.ui" />
+    <QtUic Include="editsourcedialog.ui" />
     <QtUic Include="effectwidget.ui" />
     <QtUic Include="frameflow.ui" />
     <QtMoc Include="frameflow.h" />
@@ -178,6 +180,7 @@
     <ClInclude Include="db.h" />
     <QtMoc Include="project_manager.h" />
     <QtMoc Include="pathpickerwidget.h" />
+    <QtMoc Include="editsourcedialog.h" />
     <ClInclude Include="project_model.h" />
     <ClInclude Include="scenerenderer.h" />
     <QtMoc Include="renamedialog.h" />

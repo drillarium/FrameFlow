@@ -28,6 +28,10 @@ public:
   void setCurrentScene(const QUuid &_id) { currentSceneId_ = _id; }
   QUuid currentSceneId() { return currentSceneId_; }
   bool addSource(Source &_source);
+  bool removeSource(const QUuid& sourceId);
+  void setCurrentSource(const QUuid& _id) { currentSourceId_ = _id; }
+  QUuid currentSourceId() { return currentSourceId_; }
+  bool updateSource(const Source &_source);
 
   // Queries
   QVector<Project> listProjects() const;
@@ -52,4 +56,5 @@ private:
   QVector<Project> cachedProjects_;
   bool dirty_ = false;
   QUuid currentSceneId_;
+  QUuid currentSourceId_;
 };

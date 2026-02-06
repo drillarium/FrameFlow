@@ -19,6 +19,7 @@
 #include "newprojectdialog.h"
 #include "renamedialog.h"
 #include "renderermanager.h"
+#include "editsourcedialog.h"
 
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
@@ -303,7 +304,17 @@ void FrameFlow::onSourceSelectionChanged()
   {
     QListWidgetItem* item = ui.sourceListWidget->item(i);
     SourceWidget* w = static_cast<SourceWidget*>(ui.sourceListWidget->itemWidget(item));
-    if(w) w->setSelected(item->isSelected());
+    if(w)
+    {
+      bool selected = item->isSelected();
+      w->setSelected(selected);
+      if(selected)
+      {
+        ProjectManager& pm = ProjectManager::instance();
+        QUuid id = w->id();
+        pm.setCurrentSource(id);
+      }
+    }
   }
 }
 
@@ -411,7 +422,7 @@ void FrameFlow::onCurrentProjectChange()
   rm.reloadProjec();
 
   ui.outputValueLabel->setText(BaseRenderer::getVideoFormatString(project->width, project->height, project->framerate));
-  ui.previewSceneLabel->setText(QString("%1x%2  %3fps  8.500 kbps").arg(project->width).arg(project->height).arg(project->framerate));
+  ui.previewSceneLabel->setText(QString("%1x%2  %3fps  0 kbps").arg(project->width).arg(project->height).arg(project->framerate));
 }
 
 void FrameFlow::onProjectListChanged()
@@ -474,11 +485,13 @@ void FrameFlow::updateScenes()
   if(!project) return;
 
   // clear
+  ui.sceneListWidget->blockSignals(true);
   while(ui.sceneListWidget->count() > 0)
   {
     QListWidgetItem* it = ui.sceneListWidget->takeItem(0);
     delete it;
   }
+  ui.sceneListWidget->blockSignals(false);
 
   // populate
   for(int i = 0; i < project->scenes.size(); i++)
@@ -516,11 +529,13 @@ void FrameFlow::updateSources()
   if(!project) return;
 
   // clear
+  ui.sourceListWidget->blockSignals(true);
   while(ui.sourceListWidget->count() > 0)
   {
     QListWidgetItem* it = ui.sourceListWidget->takeItem(0);
     delete it;
   }
+  ui.sourceListWidget->blockSignals(false);
 
   QUuid sceneID = pm.currentSceneId();
   // populate
@@ -533,10 +548,24 @@ void FrameFlow::updateSources()
       {
         QListWidgetItem* lwi = new QListWidgetItem(ui.sourceListWidget);
         lwi->setSizeHint(QSize(0, 30));
-        SourceWidget* sw = new SourceWidget(scene.sources[j]);
+        Source source = scene.sources[j];
+        SourceWidget* sw = new SourceWidget(source);
+        connect(sw, &SourceWidget::onDeleteSource, this, [this, source]() { deleteSource(source); });
+        connect(sw, &SourceWidget::onRenameSource, this, [this, source]() { renameSource(source); });
         ui.sourceListWidget->addItem(lwi);
         ui.sourceListWidget->setItemWidget(lwi, sw);
       }
+
+      QUuid sourceId = pm.currentSourceId();
+      for(int j = 0; j < scene.sources.size(); j++)
+      {
+        if(scene.sources[j].id == sourceId)
+        {
+          ui.sourceListWidget->item(j)->setSelected(true);
+          break;
+        }
+      }
+      break;
     }
   }
 }
@@ -569,5 +598,34 @@ void FrameFlow::renameScene(const Scene& _scene)
     ProjectManager& pm = ProjectManager::instance();
     auto newName = dlg.newName();
     pm.renameScene(_scene.id, newName);
+  }
+}
+
+void FrameFlow::deleteSource(const Source& _source)
+{ 
+  QMessageBox::StandardButton reply = ConfirmationDialog::question(this, "Remove source", "Are you sure you want to remove this source?", QMessageBox::Yes, QMessageBox::No, QMessageBox::No);
+  if(reply == QMessageBox::Yes)
+  {
+    ProjectManager& pm = ProjectManager::instance();
+    pm.removeSource(_source.id);
+  }
+}
+
+void FrameFlow::renameSource(const Source& _source)
+{
+  EditSourceDialog dlg(_source, this);
+  dlg.setWindowModality(Qt::ApplicationModal);
+
+  // center
+  QScreen* screen = QGuiApplication::screenAt(QCursor::pos());
+  if(!screen) screen = QGuiApplication::primaryScreen();
+  QRect screenGeometry = screen->availableGeometry();
+  dlg.move(screenGeometry.center() - dlg.rect().center());
+
+  if(dlg.exec() == QDialog::Accepted)
+  {
+    ProjectManager& pm = ProjectManager::instance();
+    auto newSource = dlg.newSource();
+    pm.updateSource(newSource);
   }
 }

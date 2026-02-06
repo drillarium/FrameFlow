@@ -1,5 +1,6 @@
 #include "sourcewidget.h"
 #include <QStyle>
+#include <QMenu>
 
 SourceWidget::SourceWidget(const Source& _source, QWidget *_parent)
 :QWidget(_parent)
@@ -11,6 +12,15 @@ SourceWidget::SourceWidget(const Source& _source, QWidget *_parent)
   ui.eyeButton->hide();
   ui.menuButton->hide();
   ui.titleLabel->setText(source_.name);
+
+  QMenu* menu = new QMenu(ui.menuButton);
+  menu->setCursor(Qt::PointingHandCursor);
+  QAction* renameAction = menu->addAction(QIcon(":/FrameFlow/pencilwhite.svg"), "Edit");
+  QAction* deleteAction = menu->addAction(QIcon(":/FrameFlow/trash.svg"), "Delete");
+  ui.menuButton->setMenu(menu);
+
+  connect(renameAction, &QAction::triggered, this, &SourceWidget::onRenameSource);
+  connect(deleteAction, &QAction::triggered, this, &SourceWidget::onDeleteSource);
 }
 
 SourceWidget::~SourceWidget()

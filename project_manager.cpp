@@ -242,3 +242,51 @@ bool ProjectManager::addSource(Source &_source)
 
   return false;
 }
+
+bool ProjectManager::removeSource(const QUuid& sourceId)
+{
+  if(!currentProject_) return false;
+
+  for(int i = 0; i < currentProject_->scenes.size(); ++i)
+  {
+    auto it = std::find_if(currentProject_->scenes[i].sources.begin(), currentProject_->scenes[i].sources.end(), [sourceId](const Source& s) { return s.id == sourceId; });
+    if(it != currentProject_->scenes[i].sources.end())
+    {
+      currentProject_->scenes[i].sources.erase(it);
+
+      // normalize order index
+      for(int j = 0; j < currentProject_->scenes[i].sources.size(); ++j) currentProject_->scenes[i].sources[j].orderIndex = j;
+
+      saveCurrentProject();
+      Database::instance().deleteSource(sourceId);
+
+      emit currentProjectChanged();
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool ProjectManager::updateSource(const Source& _source)
+{
+  if(!currentProject_) return false;
+
+  QUuid sourceId = _source.id;
+  for(int i = 0; i < currentProject_->scenes.size(); ++i)
+  {
+    auto it = std::find_if(currentProject_->scenes[i].sources.begin(), currentProject_->scenes[i].sources.end(), [sourceId](const Source& s) { return s.id == sourceId; });
+    if(it != currentProject_->scenes[i].sources.end())
+    {
+      *it = _source;
+
+      saveCurrentProject();
+      emit currentProjectChanged();
+
+      return true;
+    }
+  }
+
+  return false;
+}
