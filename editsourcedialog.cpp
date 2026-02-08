@@ -1,4 +1,5 @@
 #include "editsourcedialog.h"
+#include <QTimer>
 
 EditSourceDialog::EditSourceDialog(const Source &_source, QWidget *parent)
 :QDialog(parent)
@@ -10,7 +11,7 @@ EditSourceDialog::EditSourceDialog(const Source &_source, QWidget *parent)
   setAttribute(Qt::WA_TranslucentBackground);
 
   ui.customStackedWidget->setCurrentIndex((int) _source.type);
-  BaseSourceWidget* w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget((int)_source.type));
+  BaseSourceWidget* w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget((int) source_.type));
   w->editSource(_source);
   ui.customStackedWidget->setFixedHeight(w->h());
 
@@ -25,7 +26,15 @@ EditSourceDialog::~EditSourceDialog()
 
 void EditSourceDialog::onAccept()
 {
-  // TODO
-
-  accept();
+  BaseSourceWidget* w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget((int) source_.type));
+  if(w->isValid())
+  {
+    source_ = w->source();
+    accept();
+  }
+  else
+  {
+    ui.errorLabel->setText("ERROR: Check parameters");
+    QTimer::singleShot(5000, [&]() { ui.errorLabel->clear(); });
+  }
 }

@@ -13,11 +13,13 @@ PathPickerWidget::~PathPickerWidget()
 
 Source PathPickerWidget::source()
 {
+  Source s = Source();
+  Source& source = editing_ ? source_ : s;
+
   QJsonObject jsonConfig;
   jsonConfig.insert("path", ui.pathLineEdit->text());
   jsonConfig.insert("loop", ui.loopCheckBox->text());
 
-  Source source;
   source.name = ui.nameLineEdit->text();
   source.type = type();
   source.config = jsonConfig;
@@ -40,4 +42,23 @@ void PathPickerWidget::onPickPath()
 bool PathPickerWidget::isValid()
 {
   return (ui.nameLineEdit->text().size() > 0) && (ui.pathLineEdit->text().size() > 0);
+}
+
+void PathPickerWidget::editSource(const Source& _source)
+{
+  BaseSourceWidget::editSource(_source);
+
+  ui.nameLineEdit->setText(source_.name);
+  
+  if(source_.config.contains("path") && source_.config.value("path").isString())
+  {
+    QString path = source_.config.value("path").toString();
+    ui.pathLineEdit->setText(path);
+  }
+
+  if(source_.config.contains("loop") && source_.config.value("loop").isBool())
+  {
+    bool loop = source_.config.value("loop").toBool();
+    ui.loopCheckBox->setChecked(loop);
+  }
 }

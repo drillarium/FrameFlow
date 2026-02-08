@@ -16,7 +16,7 @@ public:
   bool start() override;
   bool stop() override;
   bool isRunning() override { return running_; }
-  bool getFrame(CComPtr<IMFFrame>& _frame) override;
+  bool getFrame(CComPtr<IMFFrame>& _frame, QRect& _rect) override;
   bool setSource(Source _source);
 
 protected:

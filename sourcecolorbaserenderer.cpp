@@ -52,6 +52,23 @@ bool SourceColorBaseRenderer::setSource(Source _source)
       }
     }
   }
+
+  if(_source.config.contains("x") && _source.config.value("x").isDouble())
+  {
+    rect_.setX(_source.config["x"].toInt());
+  }
+  if(_source.config.contains("y") && _source.config.value("y").isDouble())
+  {
+    rect_.setY(_source.config["y"].toInt());
+  }
+  if(_source.config.contains("width") && _source.config.value("width").isDouble())
+  {
+    rect_.setWidth(_source.config["width"].toInt());
+  }
+  if(_source.config.contains("height") && _source.config.value("height").isDouble())
+  {
+    rect_.setHeight(_source.config["height"].toInt());
+  }
   
   return true;
 }
@@ -124,12 +141,13 @@ cleanup:
   }
 }
 
-bool SourceColorBaseRenderer::getFrame(CComPtr<IMFFrame>& _frame)
+bool SourceColorBaseRenderer::getFrame(CComPtr<IMFFrame>& _frame, QRect& _rect)
 {
   std::lock_guard<std::mutex> lock(lastFrameMutex_);
   if(!lastFrame_) return false;
 
   lastFrame_->MFClone(&_frame, eMFrameClone::eMFC_Full, eMFCC::eMFCC_Default);
+  _rect = rect_;
 
   return true;
 }

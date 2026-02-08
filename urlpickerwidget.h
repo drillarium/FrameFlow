@@ -16,7 +16,7 @@ public:
   int h() override { return 125; }
   Source source() override;
   bool isValid() override;
-  void editSource(const Source& _source) override {}
+  void editSource(const Source& _source) override;
 
 private:
   Ui::UrlPickerWidgetClass ui;

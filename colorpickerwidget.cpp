@@ -13,10 +13,20 @@ ColorPickerWidget::~ColorPickerWidget()
 
 Source ColorPickerWidget::source()
 {
+  Source s = Source();
+  Source &source = editing_? source_ : s;
+
   QJsonObject jsonConfig;
   jsonConfig.insert("color", ui.colorLineEdit->text());
+  if(!editing_)
+  {
+    jsonConfig["x"] = 10;
+    jsonConfig["y"] = 10;
+    jsonConfig["width"] = 320;
+    jsonConfig["height"] = 240;
+  }
 
-  Source source;
+  // Source source;
   source.name = ui.nameLineEdit->text();
   source.type = type();
   source.config = jsonConfig;
@@ -27,6 +37,20 @@ Source ColorPickerWidget::source()
 bool ColorPickerWidget::isValid()
 {
   return (ui.nameLineEdit->text().size() > 0);
+}
+
+void ColorPickerWidget::editSource(const Source& _source)
+{
+  BaseSourceWidget::editSource(_source);
+
+  ui.nameLineEdit->setText(source_.name);
+  if(source_.config.contains("color") && source_.config.value("color").isString())
+  {
+    QString c = source_.config.value("color").toString();
+    QColor color(c);
+    ui.colorLineEdit->setText(c);
+    ui.colorPickerButton->setStyleSheet(QString("border: 1px solid #647081; border-radius: 4px; background-color: rgba(%1,%2,%3,%4);").arg(color.red()).arg(color.green()).arg(color.blue()).arg(color.alpha()));
+  }
 }
 
 void ColorPickerWidget::onPickColor()

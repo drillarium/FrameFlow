@@ -98,15 +98,24 @@ void SceneRenderer::workerThread()
     for(int i = 0; i < scene.sources.size(); i++)
     {
       CComPtr<IMFFrame> sourceFrame;
-      rm.getFrame(scene.sources[i].id, sourceFrame);
+      QRect rect;     
+      rm.getFrame(scene.sources[i].id, sourceFrame, rect);
       if(sourceFrame)
       {
-        int posX = 0;
-        int posY = 0;
-        double alpha = 1.;
+        int resizeField = -1;
+        CComPtr<IMFFrame> sourceFrameResized;
         CComBSTR props;
         CComBSTR converter;
-        frame->MFOverlay(sourceFrame, NULL, posX, posY, alpha, props, converter);
+        sourceFrame->MFResize(eMFCC::eMFCC_Default, rect.width(), rect.height(), resizeField, &sourceFrameResized, props, converter);
+        if(sourceFrameResized)
+        {
+          int posX = rect.x();
+          int posY = rect.y();
+          double alpha = 1.;
+          CComBSTR props;
+          CComBSTR converter;
+          frame->MFOverlay(sourceFrameResized, NULL, posX, posY, alpha, props, converter);
+        }
       }
     }
 
@@ -131,7 +140,7 @@ cleanup:
   }
 }
 
-bool SceneRenderer::getFrame(CComPtr<IMFFrame>& _frame)
+bool SceneRenderer::getFrame(CComPtr<IMFFrame>& _frame, QRect& _rect)
 {
   std::lock_guard<std::mutex> lock(lastFrameMutex_);
   if(!lastFrame_) return false;
@@ -139,4 +148,10 @@ bool SceneRenderer::getFrame(CComPtr<IMFFrame>& _frame)
   lastFrame_->MFClone(&_frame, eMFrameClone::eMFC_Full, eMFCC::eMFCC_Default);
 
   return true;
+}
+
+bool SceneRenderer::getFrame(CComPtr<IMFFrame>& _frame)
+{
+  QRect r;
+  return getFrame(_frame, r);
 }

@@ -12,7 +12,7 @@ public:
   static RendererManager& instance();
   bool reloadProjec();
   bool unload();
-  bool getFrame(QUuid sourceId, CComPtr<IMFFrame> &_frame);
+  bool getFrame(QUuid sourceId, CComPtr<IMFFrame> &_frame, QRect& _rect);
 
 signals:
   void onNewPreviewImage(QImage image);

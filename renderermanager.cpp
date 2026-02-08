@@ -42,7 +42,7 @@ QImage convertFrame(CComPtr<IMFFrame>& _frame)
   else
   {
     img = QImage((uint8_t*)vPtr.lpVideoPlanes[0], avProps.vidProps.nWidth, height, bytesPerLine, QImage::Format_ARGB32);
-    img = img.mirrored(false, true);
+    // img = img.mirrored(false, true);
   }
 
   return img;
@@ -113,7 +113,7 @@ bool RendererManager::unload()
   return true;
 }
 
-bool RendererManager::getFrame(QUuid sourceId, CComPtr<IMFFrame>& _frame)
+bool RendererManager::getFrame(QUuid sourceId, CComPtr<IMFFrame>& _frame, QRect &_rect)
 {
   // clear source renderers
   for(int i = 0; i < renderers_.size(); i++)
@@ -123,7 +123,7 @@ bool RendererManager::getFrame(QUuid sourceId, CComPtr<IMFFrame>& _frame)
     {
       if(renderer->id() == sourceId)
       {
-        renderer->getFrame(_frame);
+        renderer->getFrame(_frame, _rect);
         break;
       }
     }
