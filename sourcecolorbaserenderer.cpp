@@ -53,22 +53,7 @@ bool SourceColorBaseRenderer::setSource(Source _source)
     }
   }
 
-  if(_source.config.contains("x") && _source.config.value("x").isDouble())
-  {
-    rect_.setX(_source.config["x"].toInt());
-  }
-  if(_source.config.contains("y") && _source.config.value("y").isDouble())
-  {
-    rect_.setY(_source.config["y"].toInt());
-  }
-  if(_source.config.contains("width") && _source.config.value("width").isDouble())
-  {
-    rect_.setWidth(_source.config["width"].toInt());
-  }
-  if(_source.config.contains("height") && _source.config.value("height").isDouble())
-  {
-    rect_.setHeight(_source.config["height"].toInt());
-  }
+  rect_ = getSourceRect(_source);
   
   return true;
 }

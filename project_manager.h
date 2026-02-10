@@ -4,12 +4,14 @@
 #include <QVector>
 #include <optional>
 #include "project_model.h"
+#include <QRect>
 
 class ProjectManager : public QObject
 {
   Q_OBJECT
 
 public:
+  enum WorkingMode { CONT, STUDIO };
   static ProjectManager& instance();
 
   bool openDatabase(const QString& dbPath);
@@ -25,13 +27,19 @@ public:
   bool saveProject(Project &_project);
   void closeProject();
   bool deleteProject(const QUuid& projectId);
-  void setCurrentScene(const QUuid &_id) { currentSceneId_ = _id; }
+  void setCurrentScene(const QUuid &_id);
   QUuid currentSceneId() { return currentSceneId_; }
   bool addSource(Source &_source);
   bool removeSource(const QUuid& sourceId);
   void setCurrentSource(const QUuid& _id) { currentSourceId_ = _id; }
   QUuid currentSourceId() { return currentSourceId_; }
   bool updateSource(const Source &_source);
+  bool updateSourceRect(const QRect&_r);
+  void setWorkingMode(ProjectManager::WorkingMode _mode) { mode_ = _mode; }
+  ProjectManager::WorkingMode workingMode() { return mode_; }
+  void setCurrentStudioSceneId(QUuid id) { studioSceneId_ = id; }
+  QUuid currentStudioSceneId() { return studioSceneId_; }
+  bool moveSource(const QUuid &source, bool up);
 
   // Queries
   QVector<Project> listProjects() const;
@@ -57,4 +65,6 @@ private:
   bool dirty_ = false;
   QUuid currentSceneId_;
   QUuid currentSourceId_;
+  QUuid studioSceneId_;
+  ProjectManager::WorkingMode mode_ = WorkingMode::CONT;
 };

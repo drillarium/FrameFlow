@@ -21,6 +21,8 @@ protected:
 signals:
   void onDeleteSource();
   void onRenameSource();
+  void onUpSource();
+  void onDownSource();
 
 private:
   Source source_;

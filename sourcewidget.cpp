@@ -21,20 +21,22 @@ SourceWidget::SourceWidget(const Source& _source, QWidget *_parent)
 
   connect(renameAction, &QAction::triggered, this, &SourceWidget::onRenameSource);
   connect(deleteAction, &QAction::triggered, this, &SourceWidget::onDeleteSource);
+  connect(ui.upButton, &QPushButton::clicked, this, &SourceWidget::onUpSource);
+  connect(ui.downButton, &QPushButton::clicked, this, &SourceWidget::onDownSource);
 }
 
 SourceWidget::~SourceWidget()
 {
 }
 
-void SourceWidget::enterEvent(QEnterEvent*)
+void SourceWidget::enterEvent(QEnterEvent* e)
 {
   ui.lockButton->show();
   ui.eyeButton->show();
   ui.menuButton->show();
 }
 
-void SourceWidget::leaveEvent(QEvent*)
+void SourceWidget::leaveEvent(QEvent* e)
 {
   ui.lockButton->hide();
   ui.eyeButton->hide();

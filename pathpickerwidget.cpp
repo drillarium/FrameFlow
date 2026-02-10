@@ -16,9 +16,16 @@ Source PathPickerWidget::source()
   Source s = Source();
   Source& source = editing_ ? source_ : s;
 
-  QJsonObject jsonConfig;
+  QJsonObject jsonConfig = editing_ ? source_.config : QJsonObject();
   jsonConfig.insert("path", ui.pathLineEdit->text());
   jsonConfig.insert("loop", ui.loopCheckBox->text());
+  if(!editing_)
+  {
+    jsonConfig["x"] = 800;
+    jsonConfig["y"] = 800;
+    jsonConfig["width"] = 320;
+    jsonConfig["height"] = 240;
+  }
 
   source.name = ui.nameLineEdit->text();
   source.type = type();

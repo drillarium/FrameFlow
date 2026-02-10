@@ -27,7 +27,6 @@ FrameFlow::FrameFlow(QWidget *_parent)
   ui.setupUi(this);
   
   readSettings();
-  onSetWindowTitleVisible();
 
   // system state
   QTimer* timer = new QTimer(this);
@@ -55,7 +54,14 @@ FrameFlow::FrameFlow(QWidget *_parent)
   projects = pm.listProjects();
   if(projects.size() > 0)
   {
-    pm.loadProject(projects[0].id);
+    if(nextProjectUID_.isNull())
+    {
+      pm.loadProject(projects[0].id);
+    }
+    else
+    {
+      pm.loadProject(nextProjectUID_);
+    }
   }
   
   // project button
@@ -117,9 +123,17 @@ FrameFlow::FrameFlow(QWidget *_parent)
   // Program | Preview
   connect(ui.buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, [this] (QAbstractButton* button) {
     if(button == ui.directButton) {
+      ProjectManager &pm = ProjectManager::instance();
+      pm.setWorkingMode(ProjectManager::CONT);
       ui.stackedWidget->setCurrentIndex(0);
+
+      // select scene from Studio
+      QUuid studio = pm.currentStudioSceneId();
+      selectScene(studio);
     }
     else if(button == ui.previewButton) {
+      ProjectManager& pm = ProjectManager::instance();
+      pm.setWorkingMode(ProjectManager::STUDIO);
       ui.stackedWidget->setCurrentIndex(1);
     }
   });
@@ -127,6 +141,9 @@ FrameFlow::FrameFlow(QWidget *_parent)
   ui.previewSceneWidget->setPreviewMode(EPreviewMode::PM_PROGRAM);
   ui.PGCWidget->setPreviewMode(EPreviewMode::PM_PROGRAM);
   ui.PREVIEWWidget->setPreviewMode(EPreviewMode::PM_PREVIEW);
+
+  connect(ui.previewSceneWidget, &PreviewSceneWidget::onCurrentSourceRectChange, this, &FrameFlow::onCurrentSourceRectChange);
+  connect(ui.PREVIEWWidget, &PreviewSceneWidget::onCurrentSourceRectChange, this, &FrameFlow::onCurrentSourceRectChange);
 }
 
 FrameFlow::~FrameFlow()
@@ -168,17 +185,29 @@ void FrameFlow::readSettings()
   }
   else if(mode == "fullscreen")
   {
-    showFullScreen();
+    showMaximized();
+    onSetWindowTitleVisible();
   }
   else
   {
     showNormal();
   }
+
+  ProjectManager &pm = ProjectManager::instance();
+  if(settings.contains("current_project"))
+  {
+    nextProjectUID_ = QUuid::fromString(settings.value("current_project").toString());
+  }
+  if(settings.contains("current_scene"))
+  {
+    QUuid scene = QUuid::fromString(settings.value("current_scene").toString());
+    pm.setCurrentScene(scene);
+  }
 }
 
 void FrameFlow::writeSettings()
 {
-  QSettings settings("MyCompany", "MyApp");
+  QSettings settings("AVIO", "FrameFlow");
 
   settings.setValue("geometry", saveGeometry());
   settings.setValue("windowState", saveState());
@@ -195,6 +224,14 @@ void FrameFlow::writeSettings()
   else
   {
     settings.setValue("mode", "normal");
+  }
+
+  ProjectManager &pm = ProjectManager::instance();
+  auto project = pm.currentProject();
+  if(project)
+  {
+    settings.setValue("current_project", project->id.toString());
+    settings.setValue("current_scene", pm.currentSceneId().toString());
   }
 }
 
@@ -300,6 +337,7 @@ void FrameFlow::onSceneSelectionChanged()
 
 void FrameFlow::onSourceSelectionChanged()
 {
+  QUuid selectedSource;
   for(int i = 0; i < ui.sourceListWidget->count(); ++i)
   {
     QListWidgetItem* item = ui.sourceListWidget->item(i);
@@ -310,12 +348,16 @@ void FrameFlow::onSourceSelectionChanged()
       w->setSelected(selected);
       if(selected)
       {
-        ProjectManager& pm = ProjectManager::instance();
-        QUuid id = w->id();
-        pm.setCurrentSource(id);
+        selectedSource = w->id();
       }
     }
   }
+
+  ProjectManager& pm = ProjectManager::instance();
+  pm.setCurrentSource(selectedSource);
+
+  ui.previewSceneWidget->updateSelectedSource();
+  ui.PREVIEWWidget->updateSelectedSource();
 }
 
 void FrameFlow::onTransitionSelectionChanged()
@@ -552,19 +594,34 @@ void FrameFlow::updateSources()
         SourceWidget* sw = new SourceWidget(source);
         connect(sw, &SourceWidget::onDeleteSource, this, [this, source]() { deleteSource(source); });
         connect(sw, &SourceWidget::onRenameSource, this, [this, source]() { renameSource(source); });
+        connect(sw, &SourceWidget::onUpSource, this, [this, source]() { moveSource(source, true); });
+        connect(sw, &SourceWidget::onDownSource, this, [this, source]() { moveSource(source, false); });
         ui.sourceListWidget->addItem(lwi);
         ui.sourceListWidget->setItemWidget(lwi, sw);
       }
 
       QUuid sourceId = pm.currentSourceId();
-      for(int j = 0; j < scene.sources.size(); j++)
+      bool selected = false;
+      for(int j = 0; j < scene.sources.size() && !selected; j++)
       {
-        if(scene.sources[j].id == sourceId)
+        selected = (scene.sources[j].id == sourceId);
+        if(selected)
         {
           ui.sourceListWidget->item(j)->setSelected(true);
           break;
         }
       }
+      
+      if(!selected)
+      {
+        QUuid selectedUid;
+        ProjectManager& pm = ProjectManager::instance();
+        pm.setCurrentSource(selectedUid);
+
+        ui.previewSceneWidget->updateSelectedSource();
+        ui.PREVIEWWidget->updateSelectedSource();
+      }
+
       break;
     }
   }
@@ -628,4 +685,46 @@ void FrameFlow::renameSource(const Source& _source)
     auto newSource = dlg.newSource();
     pm.updateSource(newSource);
   }
+}
+
+void FrameFlow::onCurrentSourceRectChange(const QRect& _r)
+{
+  ProjectManager& pm = ProjectManager::instance();
+  pm.updateSourceRect(_r);
+}
+
+void FrameFlow::onTake()
+{
+  ProjectManager& pm = ProjectManager::instance();
+  QUuid nextScene = pm.currentSceneId();
+  QUuid studioScene = pm.currentStudioSceneId();
+  
+  // switch. Force selection of studioScene
+  selectScene(studioScene);
+
+
+  // set scene
+  pm.setCurrentStudioSceneId(nextScene);
+}
+
+void FrameFlow::selectScene(QUuid scene)
+{
+  for(int i = 0; i < ui.sceneListWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.sceneListWidget->item(i);
+    SceneWidget* w = static_cast<SceneWidget*>(ui.sceneListWidget->itemWidget(item));
+    if(w)
+    {
+      if(w->id() == scene)
+      {
+        item->setSelected(true);
+      }
+    }
+  }
+}
+
+void FrameFlow::moveSource(const Source& _source, bool up)
+{
+  ProjectManager& pm = ProjectManager::instance();
+  pm.moveSource(_source.id, up);
 }

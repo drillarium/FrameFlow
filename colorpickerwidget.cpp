@@ -16,7 +16,7 @@ Source ColorPickerWidget::source()
   Source s = Source();
   Source &source = editing_? source_ : s;
 
-  QJsonObject jsonConfig;
+  QJsonObject jsonConfig = editing_ ? source_.config : QJsonObject();
   jsonConfig.insert("color", ui.colorLineEdit->text());
   if(!editing_)
   {

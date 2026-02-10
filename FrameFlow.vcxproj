@@ -129,6 +129,7 @@
     <ClCompile Include="sourcecolorbaserenderer.cpp" />
     <ClCompile Include="sourceitemwidget.cpp" />
     <ClCompile Include="renderermanager.cpp" />
+    <ClCompile Include="sourcereaderbaserenderer.cpp" />
     <ClCompile Include="sourcewidget.cpp" />
     <ClCompile Include="splashwidget.cpp" />
     <ClCompile Include="streamserverwidget.cpp" />
@@ -188,6 +189,7 @@
     <QtMoc Include="sourceitemwidget.h" />
     <QtMoc Include="renderermanager.h" />
     <ClInclude Include="sourcecolorbaserenderer.h" />
+    <ClInclude Include="sourcereaderbaserenderer.h" />
     <ClInclude Include="source_model.h" />
     <QtMoc Include="selectsourcedialog.h" />
     <QtMoc Include="transitionwidget.h" />

@@ -49,10 +49,6 @@ void SceneRenderer::workerThread()
   // from current project
   ProjectManager& pm = ProjectManager::instance();
   auto project = pm.currentProject();
-  QUuid sceneUID;
-  if(mode_ == EPreviewMode::PM_PROGRAM) sceneUID = pm.currentSceneId();
-  else {} /* TODO */
-  Scene scene;
   if(project)
   {
     avProps.vidProps = getMVideoFormat(project->width, project->height, project->framerate);
@@ -60,14 +56,6 @@ void SceneRenderer::workerThread()
     int fpsNum = 0, fpsDen = 0;
     getFactors(project->framerate, fpsNum, fpsDen);
     samples = (aProps.nSamplesPerSec * fpsDen) / fpsNum;
-    for(int i = 0; i < project->scenes.size(); i++)
-    {
-      if(project->scenes[i].id == sceneUID)
-      {
-        scene = project->scenes[i];
-        break;
-      }
-    }
   }
 
   // coinit
@@ -89,6 +77,45 @@ void SceneRenderer::workerThread()
 
   while(running_)
   {
+    ProjectManager::WorkingMode workingMode = pm.workingMode();
+
+    // current scene
+    Scene scene;
+    QUuid sceneUID;
+    if(mode_ == EPreviewMode::PM_PROGRAM)
+    {
+      if(workingMode == ProjectManager::CONT)
+      {
+        sceneUID = pm.currentSceneId();
+      }
+      else if(workingMode == ProjectManager::STUDIO)
+      {
+        sceneUID = pm.currentStudioSceneId();
+      }
+    }
+    else if(mode_ == EPreviewMode::PM_PREVIEW)
+    {
+      if(workingMode == ProjectManager::CONT)
+      {
+        // NOOP
+      }
+      else if(workingMode == ProjectManager::STUDIO)
+      {
+        sceneUID = pm.currentSceneId();
+      }
+    }
+    if(project)
+    {
+      for(int i = 0; i < project->scenes.size(); i++)
+      {
+        if(project->scenes[i].id == sceneUID)
+        {
+          scene = project->scenes[i];
+          break;
+        }
+      }
+    }
+
     CComPtr<IMFFrame> frame;
     blackFrame->MFClone(&frame, eMFrameClone::eMFC_Full, eMFCC::eMFCC_Default);
     if(!frame) continue;

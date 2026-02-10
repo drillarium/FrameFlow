@@ -32,11 +32,7 @@ bool ProjectManager::createProject(const QString& name)
 {
   Project p;
   p.name = name;
-  Scene scene = {};
-  scene.id = QUuid::createUuid();
-  scene.name = "Main Scene";
-  scene.orderIndex = p.scenes.size();
-  p.scenes.push_back(scene);
+
   return createProject(p);
 }
 
@@ -45,6 +41,15 @@ bool ProjectManager::createProject(Project& project)
   project.id = QUuid::createUuid();
   project.createdAt = QDateTime::currentDateTimeUtc();
   project.modifiedAt = project.createdAt;
+  if(project.scenes.size() == 0)
+  {
+    Scene scene = {};
+    scene.id = QUuid::createUuid();
+    scene.name = "Main Scene";
+    scene.orderIndex = project.scenes.size();
+    project.scenes.push_back(scene);
+  }
+
   for(int i = 0; i < project.scenes.size(); i++)
   {
     project.scenes[i].projectId = project.id;
@@ -114,7 +119,6 @@ bool ProjectManager::addScene(Scene& _scene)
   currentProject_->scenes.push_back(_scene);
 
   saveCurrentProject();
-
   emit currentProjectChanged();
 
   return true;
@@ -131,8 +135,8 @@ bool ProjectManager::removeScene(const QUuid& sceneId)
   // normalize order index
   for(int i = 0; i < currentProject_->scenes.size(); ++i) currentProject_->scenes[i].orderIndex = i;
 
-  saveCurrentProject();
   Database::instance().deleteScene(sceneId);
+  saveCurrentProject();
 
   emit currentProjectChanged();
 
@@ -147,7 +151,7 @@ bool ProjectManager::renameScene(const QUuid& sceneId, const QString& _newName)
   if(it == currentProject_->scenes.end()) return false;
   it->name = _newName;
 
-  saveCurrentProject();
+  saveCurrentProject();  
   emit currentProjectChanged();
 
   return true;
@@ -233,7 +237,6 @@ bool ProjectManager::addSource(Source &_source)
       currentProject_->scenes[i].sources.push_back(_source);
 
       saveCurrentProject();
-
       emit currentProjectChanged();
       
       return true;
@@ -257,9 +260,8 @@ bool ProjectManager::removeSource(const QUuid& sourceId)
       // normalize order index
       for(int j = 0; j < currentProject_->scenes[i].sources.size(); ++j) currentProject_->scenes[i].sources[j].orderIndex = j;
 
-      saveCurrentProject();
       Database::instance().deleteSource(sourceId);
-
+      saveCurrentProject();
       emit currentProjectChanged();
 
       return true;
@@ -283,6 +285,75 @@ bool ProjectManager::updateSource(const Source& _source)
 
       saveCurrentProject();
       emit currentProjectChanged();
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool ProjectManager::updateSourceRect(const QRect& _r)
+{
+  if(!currentProject_) return false;
+
+  QUuid sourceId = currentSourceId_;
+  for(int i = 0; i < currentProject_->scenes.size(); ++i)
+  {
+    auto it = std::find_if(currentProject_->scenes[i].sources.begin(), currentProject_->scenes[i].sources.end(), [sourceId](const Source& s) { return s.id == sourceId; });
+    if(it != currentProject_->scenes[i].sources.end())
+    {
+      // update source rect
+      setSourceRect(*it, _r);
+
+      saveCurrentProject();
+      emit currentProjectChanged();
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
+void ProjectManager::setCurrentScene(const QUuid& _id)
+{
+  currentSceneId_ = _id;
+  if(mode_ == WorkingMode::CONT)
+  {
+    studioSceneId_ = currentSceneId_;
+  }
+}
+
+bool ProjectManager::moveSource(const QUuid& sourceId, bool up)
+{
+  if(!currentProject_) return false;
+
+  for(int i = 0; i < currentProject_->scenes.size(); ++i)
+  {
+    auto it = std::find_if(currentProject_->scenes[i].sources.begin(), currentProject_->scenes[i].sources.end(), [sourceId](const Source& s) { return s.id == sourceId; });
+    if(it != currentProject_->scenes[i].sources.end())
+    {
+      bool save = false;
+      if(up && it != currentProject_->scenes[i].sources.begin())
+      {
+        std::iter_swap(it, it - 1);
+        save = true;
+      }
+      else if(!up && it + 1 != currentProject_->scenes[i].sources.end())
+      {
+        std::iter_swap(it, it + 1);
+        save = true;
+      }
+      
+      if(save)
+      {
+        // normalize order index
+        for(int j = 0; j < currentProject_->scenes[i].sources.size(); ++j) currentProject_->scenes[i].sources[j].orderIndex = j;
+
+        saveCurrentProject();
+        emit currentProjectChanged();
+      }
 
       return true;
     }

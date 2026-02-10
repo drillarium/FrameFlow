@@ -990,6 +990,9 @@ QPushButton {
                <property name="focusPolicy">
                 <enum>Qt::FocusPolicy::NoFocus</enum>
                </property>
+               <property name="editTriggers">
+                <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+               </property>
               </widget>
              </item>
             </layout>
@@ -3116,6 +3119,22 @@ QPushButton {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>takeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>FrameFlowClass</receiver>
+   <slot>onTake()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>286</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>669</x>
+     <y>546</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSettings()</slot>
@@ -3133,6 +3152,7 @@ QPushButton {
   <slot>onSceneSelectionChanged()</slot>
   <slot>onAddSource()</slot>
   <slot>onCreateScene()</slot>
+  <slot>onTake()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="buttonGroup"/>

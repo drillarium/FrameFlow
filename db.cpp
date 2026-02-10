@@ -411,7 +411,8 @@ QVector<Project> Database::listProjects()
 {
   QVector<Project> projects;
 
-  QSqlQuery q("SELECT * FROM projects ORDER BY modified_at DESC");
+  // QSqlQuery q("SELECT * FROM projects ORDER BY modified_at DESC");
+  QSqlQuery q("SELECT * FROM projects ORDER BY created_at ASC");
 
   while(q.next())
   {

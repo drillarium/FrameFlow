@@ -15,6 +15,7 @@ public:
 protected:
   void closeEvent(QCloseEvent* event) override;
   void keyPressEvent(QKeyEvent* event) override;
+  void selectScene(QUuid scene);
 
 protected slots:
   void updateSystemStats();
@@ -34,6 +35,8 @@ protected slots:
   void onCreateScene();
   void onUpdateNumSources();
   void onUpdateNumScenes();
+  void onCurrentSourceRectChange(const QRect& _r);
+  void onTake();
 
 private:
   void readSettings();
@@ -44,10 +47,12 @@ private:
   void updateSources();
   void deleteSource(const Source& _source);
   void renameSource(const Source& _source);
+  void moveSource(const Source& _source, bool up);
 
 private:
   Ui::FrameFlowClass ui;
   class ProjectsWidget* projectsWidget_;
   bool windowTitleVisible_ = true;
+  QUuid nextProjectUID_;
 };
 

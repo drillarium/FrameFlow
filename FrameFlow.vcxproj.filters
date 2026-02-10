@@ -160,6 +160,9 @@
     <ClCompile Include="editsourcedialog.cpp">
       <Filter>dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="sourcereaderbaserenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myutils.h">
@@ -188,6 +191,9 @@
     </ClInclude>
     <ClInclude Include="scenerenderer.h">
       <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="sourcereaderbaserenderer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

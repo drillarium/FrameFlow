@@ -131,3 +131,4 @@ bool RendererManager::getFrame(QUuid sourceId, CComPtr<IMFFrame>& _frame, QRect 
 
   return true;
 }
+
