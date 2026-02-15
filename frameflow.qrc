@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="/FrameFlow">
+    <file>shield.svg</file>
+    <file>refresh.svg</file>
+    <file>copy.svg</file>
+    <file>help.svg</file>
     <file>up.svg</file>
     <file>frameflow.png</file>
     <file>pluswhite.svg</file>

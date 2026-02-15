@@ -161,6 +161,33 @@
       <Filter>dialogs</Filter>
     </ClCompile>
     <ClCompile Include="sourcereaderbaserenderer.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="webcamwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="sourcedevicebaserenderer.cpp">
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="license_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="helpdialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="livesourcewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="textwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="screencapturewidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="ndiwidget.cpp">
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="textrenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -193,6 +220,15 @@
       <Filter>renderers</Filter>
     </ClInclude>
     <ClInclude Include="sourcereaderbaserenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="sourcedevicebaserenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="textrenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -287,6 +323,27 @@
     <QtMoc Include="editsourcedialog.h">
       <Filter>dialogs</Filter>
     </QtMoc>
+    <QtMoc Include="webcamwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="license_manager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="helpdialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="livesourcewidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="textwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="screencapturewidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="ndiwidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="projectswidget.ui">
@@ -355,5 +412,26 @@
     <QtUic Include="editsourcedialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="webcamwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="helpdialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="ndiwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="livesourcewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="screencapturewidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="textwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="HOW_TO_LICENSE.txt" />
   </ItemGroup>
 </Project>

@@ -1,26 +1,25 @@
-#include "sourcecolorbaserenderer.h"
+#include "textrenderer.h"
 #include "project_manager.h"
 
-SourceColorBaseRenderer::SourceColorBaseRenderer()
+TextRenderer::TextRenderer()
 :BaseRenderer()
 {
 
 }
 
-SourceColorBaseRenderer::~SourceColorBaseRenderer()
+TextRenderer::~TextRenderer()
 {
   stop();
 }
 
-
-bool SourceColorBaseRenderer::start()
+bool TextRenderer::start()
 {
   stop();
   workerThread_ = std::thread([&] { running_ = true; workerThread(); });
   return true;
 }
 
-bool SourceColorBaseRenderer::stop()
+bool TextRenderer::stop()
 {
   if(workerThread_.joinable())
   {
@@ -30,33 +29,84 @@ bool SourceColorBaseRenderer::stop()
   return true;
 }
 
-bool SourceColorBaseRenderer::setSource(Source _source)
+bool TextRenderer::setSource(Source _source)
 {
   BaseRenderer::setSource(_source);
 
+  if(_source.config.contains("font") && _source.config.value("font").isString())
+  {
+    font_ = _source.config.value("font").toString();
+  }
+  if(_source.config.contains("text") && _source.config.value("text").isString())
+  {
+    text_ = _source.config.value("text").toString();
+  }
   if(_source.config.contains("color") && _source.config.value("color").isString())
   {
-    QString color = _source.config.value("color").toString();
-
-    // Expect format: #AARRGGBB
-    if(color.size() == 9 && color.startsWith('#'))
-    {
-      QString aaHex = color.mid(1, 2);
-      QString rrggbb = color.mid(3, 6);
-
-      bool ok = false;
-      int alphaDec = aaHex.toInt(&ok, 16);
-      if(ok)
-      {
-        colorParams_ = QString("solid_color = '%1(%2)'").arg(rrggbb, QString::number(alphaDec)).toStdString();
-      }
-    }
+    color_ = QColor(_source.config.value("color").toString());
   }
-  
+
   return true;
 }
 
-void SourceColorBaseRenderer::workerThread()
+#include <QImage>
+#include <QPainter>
+#include <QFont>
+#include <QFontMetrics>
+#include <QColor>
+
+QImage createTextImage(
+  const QSize& size,
+  const QString& text,
+  const QString& fontFamily,
+  const QColor& color)
+{
+  // Create transparent image
+  QImage image(size, QImage::Format_ARGB32_Premultiplied);
+  image.fill(Qt::transparent);
+
+  QPainter painter(&image);
+  painter.setRenderHint(QPainter::Antialiasing);
+  painter.setRenderHint(QPainter::TextAntialiasing);
+
+  // Start with a large font size (we'll shrink if needed)
+  int fontSize = size.height();
+  QFont font(fontFamily);
+  font.setPixelSize(fontSize);
+
+  QRect targetRect = image.rect();
+
+  // Shrink font until text fits inside image
+  while(fontSize > 1) {
+    font.setPixelSize(fontSize);
+    QFontMetrics fm(font);
+
+    QRect textRect = fm.boundingRect(targetRect,
+      Qt::AlignCenter,
+      text);
+
+    if(textRect.width() <= size.width() &&
+      textRect.height() <= size.height())
+    {
+      break;
+    }
+
+    fontSize--;
+  }
+
+  painter.setFont(font);
+  painter.setPen(color);
+
+  painter.drawText(targetRect,
+    Qt::AlignCenter | Qt::TextWordWrap,
+    text);
+
+  painter.end();
+
+  return image;
+}
+
+void TextRenderer::workerThread()
 {
   CComPtr<IMPreview> preview;
   CComBSTR channel;
@@ -64,20 +114,27 @@ void SourceColorBaseRenderer::workerThread()
   BOOL enableAudio = FALSE;
 
   CComPtr<IMFFactory> factory;
-  std::wstring wstr(colorParams_.begin(), colorParams_.end());
-  CComBSTR colorParameters = CComBSTR(wstr.c_str());
+  CComBSTR colorParameters= L"solid_color='Black(0)'";
   M_VID_PROPS vProps = { eMVF_HD1080_25p };
   M_AUD_PROPS aProps = { 2, 48000, 16, 0 };
   M_AV_PROPS avProps = { vProps, aProps };
   uint32_t samples = (aProps.nSamplesPerSec * 1) / 25;
   CComPtr<IMFFrame> blackFrame;
 
+  QImage image;
+  int width = 0, height = 0;
+
   // from current project
-  ProjectManager &pm = ProjectManager::instance();
+  ProjectManager& pm = ProjectManager::instance();
   auto project = pm.currentProject();
   if(project)
   {
-    avProps.vidProps = getMVideoFormat(project->width, project->height, project->framerate);
+    QRect r = getSourceRect(source_);
+    width = project->width; // r.width();
+    height = project->height; // r.height();
+
+    avProps.vidProps = getMVideoFormat(width, height, project->framerate);
+    avProps.vidProps.fccType = eMFCC::eMFCC_ARGB32;
     avProps.audProps = getMAudioProps();
     int fpsNum = 0, fpsDen = 0;
     getFactors(project->framerate, fpsNum, fpsDen);
@@ -112,6 +169,18 @@ void SourceColorBaseRenderer::workerThread()
     blackFrame->MFTimeSet(&mTime);
   }
 
+  // create image and copy to frame
+  image = createTextImage(QSize(width, height), text_, font_, color_);
+  if(!image.isNull())
+  {
+    MF_VID_PTR vPtr;
+    blackFrame->MFVideoGetBytesEx(&vPtr);
+
+    BYTE* pData = (BYTE*)(vPtr.lpVideoPlanes[0]);
+    const uchar* src = image.constBits();
+    memcpy(pData, src, vPtr.cbVideoRowBytes[0] * image.height());
+  }
+
   while(running_)
   {
     // save last frame in ARGB format
@@ -135,7 +204,7 @@ cleanup:
   }
 }
 
-bool SourceColorBaseRenderer::getFrame(CComPtr<IMFFrame>& _frame)
+bool TextRenderer::getFrame(CComPtr<IMFFrame>& _frame)
 {
   std::lock_guard<std::mutex> lock(lastFrameMutex_);
   if(!lastFrame_) return false;

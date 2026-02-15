@@ -67,13 +67,21 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Medialooks\MFormats SDK\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\deps\OpenSSL-Win64\include;C:\Program Files (x86)\Medialooks\MFormats SDK\Include</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>.\deps\OpenSSL-Win64\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;libcrypto_static.lib;libssl_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Medialooks\MFormats SDK\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\deps\OpenSSL-Win64\include;C:\Program Files (x86)\Medialooks\MFormats SDK\Include</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>.\deps\OpenSSL-Win64\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;libcrypto_static.lib;libssl_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
@@ -114,7 +122,11 @@
     <ClCompile Include="db.cpp" />
     <ClCompile Include="editsourcedialog.cpp" />
     <ClCompile Include="effectwidget.cpp" />
+    <ClCompile Include="helpdialog.cpp" />
+    <ClCompile Include="license_manager.cpp" />
+    <ClCompile Include="livesourcewidget.cpp" />
     <ClCompile Include="myutils.win.cpp" />
+    <ClCompile Include="ndiwidget.cpp" />
     <ClCompile Include="newprojectdialog.cpp" />
     <ClCompile Include="pathpickerwidget.cpp" />
     <ClCompile Include="previewscenewidget.cpp" />
@@ -124,20 +136,25 @@
     <ClCompile Include="renamedialog.cpp" />
     <ClCompile Include="scenerenderer.cpp" />
     <ClCompile Include="scenewidget.cpp" />
+    <ClCompile Include="screencapturewidget.cpp" />
     <ClCompile Include="selectsourcedialog.cpp" />
     <ClCompile Include="settingsdialog.cpp" />
     <ClCompile Include="sourcecolorbaserenderer.cpp" />
+    <ClCompile Include="sourcedevicebaserenderer.cpp" />
     <ClCompile Include="sourceitemwidget.cpp" />
     <ClCompile Include="renderermanager.cpp" />
     <ClCompile Include="sourcereaderbaserenderer.cpp" />
     <ClCompile Include="sourcewidget.cpp" />
     <ClCompile Include="splashwidget.cpp" />
     <ClCompile Include="streamserverwidget.cpp" />
+    <ClCompile Include="textrenderer.cpp" />
+    <ClCompile Include="textwidget.cpp" />
     <ClCompile Include="toggleswitch.cpp" />
     <ClCompile Include="transitionwidget.cpp" />
     <ClCompile Include="urlpickerwidget.cpp" />
     <ClCompile Include="vumetercontrol.cpp" />
     <ClCompile Include="vumeterwidget.cpp" />
+    <ClCompile Include="webcamwidget.cpp" />
     <ClCompile Include="widgetbutton.cpp" />
     <QtRcc Include="frameflow.qrc" />
     <QtUic Include="alertsdialog.ui" />
@@ -152,24 +169,37 @@
     <ClCompile Include="frameflow.cpp" />
     <ClCompile Include="main.cpp" />
     <None Include="FrameFlow.ico" />
+    <QtUic Include="helpdialog.ui" />
+    <QtUic Include="livesourcewidget.ui" />
+    <QtUic Include="ndiwidget.ui" />
     <QtUic Include="newprojectdialog.ui" />
     <QtUic Include="pathpickerwidget.ui" />
     <QtUic Include="projectmenuitem.ui" />
     <QtUic Include="projectswidget.ui" />
     <QtUic Include="renamedialog.ui" />
     <QtUic Include="scenewidget.ui" />
+    <QtUic Include="screencapturewidget.ui" />
     <QtUic Include="selectsourcedialog.ui" />
     <QtUic Include="settingsdialog.ui" />
     <QtUic Include="sourceitemwidget.ui" />
     <QtUic Include="sourcewidget.ui" />
     <QtUic Include="splashwidget.ui" />
     <QtUic Include="streamserverwidget.ui" />
+    <QtUic Include="textwidget.ui" />
     <QtUic Include="transitionwidget.ui" />
     <QtUic Include="urlpickerwidget.ui" />
     <QtUic Include="vumetercontrol.ui" />
+    <QtUic Include="webcamwidget.ui" />
     <ResourceCompile Include="FrameFlow.rc" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="ndiwidget.h" />
+    <QtMoc Include="livesourcewidget.h" />
+    <QtMoc Include="screencapturewidget.h" />
+    <QtMoc Include="textwidget.h" />
+    <ClInclude Include="textrenderer.h" />
+    <ClInclude Include="version.h" />
+    <QtMoc Include="webcamwidget.h" />
     <QtMoc Include="urlpickerwidget.h" />
     <QtMoc Include="toggleswitch.h" />
     <QtMoc Include="streamserverwidget.h" />
@@ -182,6 +212,8 @@
     <QtMoc Include="project_manager.h" />
     <QtMoc Include="pathpickerwidget.h" />
     <QtMoc Include="editsourcedialog.h" />
+    <QtMoc Include="license_manager.h" />
+    <QtMoc Include="helpdialog.h" />
     <ClInclude Include="project_model.h" />
     <ClInclude Include="scenerenderer.h" />
     <QtMoc Include="renamedialog.h" />
@@ -189,6 +221,7 @@
     <QtMoc Include="sourceitemwidget.h" />
     <QtMoc Include="renderermanager.h" />
     <ClInclude Include="sourcecolorbaserenderer.h" />
+    <ClInclude Include="sourcedevicebaserenderer.h" />
     <ClInclude Include="sourcereaderbaserenderer.h" />
     <ClInclude Include="source_model.h" />
     <QtMoc Include="selectsourcedialog.h" />
@@ -210,6 +243,9 @@
     <QtMoc Include="newprojectdialog.h" />
     <QtMoc Include="projectswidget.h" />
     <QtMoc Include="widgetbutton.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="HOW_TO_LICENSE.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

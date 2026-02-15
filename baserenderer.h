@@ -18,7 +18,7 @@ public:
   virtual bool start() = 0;
   virtual bool stop() = 0;
   virtual bool isRunning() = 0;
-  virtual bool getFrame(CComPtr<IMFFrame>& _frame, QRect& _rect) = 0;
+  virtual bool getFrame(CComPtr<IMFFrame>& _frame) = 0;
 
   static QString getVideoFormatString(int w, int h, double fr);
 
@@ -29,5 +29,4 @@ protected:
 
 protected:
   Source source_;
-  QRect rect_;
 };

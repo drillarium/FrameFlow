@@ -2,17 +2,16 @@
 
 #include "baserenderer.h"
 #include <thread>
-#include <string>
 #include <mutex>
+#include <QColor>
 
-// SourceColorBaseRenderer
-class SourceColorBaseRenderer : public BaseRenderer
+class TextRenderer : public BaseRenderer
 {
 public:
-  SourceColorBaseRenderer();
-  ~SourceColorBaseRenderer();
+  TextRenderer();
+  ~TextRenderer();
 
-  SourceType type() override { return SourceType::EST_COLOR; }
+  SourceType type() override { return SourceType::EST_TEXT; }
   bool start() override;
   bool stop() override;
   bool isRunning() override { return running_; }
@@ -25,7 +24,9 @@ protected:
 protected:
   bool running_ = false;
   std::thread workerThread_;
-  std::string colorParams_ = "solid_color = 'FF00FF(255)'";
   CComPtr<IMFFrame> lastFrame_;
   std::mutex lastFrameMutex_;
+  QColor color_;
+  QString text_;
+  QString font_;
 };

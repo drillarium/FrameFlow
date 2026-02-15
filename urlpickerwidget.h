@@ -12,6 +12,7 @@ public:
   UrlPickerWidget(QWidget *parent = nullptr);
   ~UrlPickerWidget();
 
+  void init() override { }
   SourceType type() override { return SourceType::EST_URL; }
   int h() override { return 125; }
   Source source() override;

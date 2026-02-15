@@ -20,11 +20,16 @@
 #include "renamedialog.h"
 #include "renderermanager.h"
 #include "editsourcedialog.h"
+#include "helpdialog.h"
 
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
 {
   ui.setupUi(this);
+
+  LicenseManager &lm = LicenseManager::instance();
+  connect(&lm, &LicenseManager::statusChanged, this, &FrameFlow::onLicenseChanged);
+  showLicenseStatus(lm.status());
   
   readSettings();
 
@@ -42,7 +47,6 @@ FrameFlow::FrameFlow(QWidget *_parent)
   ProjectManager& pm = ProjectManager::instance();
   connect(&pm, &ProjectManager::currentProjectChanged, this, &FrameFlow::onCurrentProjectChange);
   connect(&pm, &ProjectManager::projectListChanged, this, &FrameFlow::onProjectListChanged);
-  connect(&pm, &ProjectManager::dirtyChanged, this, &FrameFlow::onProjectDirtyChange);
 
   // open DB and create a first project case no project available
   pm.openDatabase(dbPath);
@@ -168,12 +172,11 @@ void FrameFlow::readSettings()
   {
     restoreGeometry(settings.value("geometry").toByteArray());
     restoreState(settings.value("windowState").toByteArray());
+    showNormal();
   }
   else
   {
-    // First run: start maximized
     showMaximized();
-    return;
   }
 
   // Restore window mode
@@ -187,10 +190,6 @@ void FrameFlow::readSettings()
   {
     showMaximized();
     onSetWindowTitleVisible();
-  }
-  else
-  {
-    showNormal();
   }
 
   ProjectManager &pm = ProjectManager::instance();
@@ -463,6 +462,8 @@ void FrameFlow::onCurrentProjectChange()
   RendererManager &rm = RendererManager::instance();
   rm.reloadProjec();
 
+  pm.resetDirty();
+
   ui.outputValueLabel->setText(BaseRenderer::getVideoFormatString(project->width, project->height, project->framerate));
   ui.previewSceneLabel->setText(QString("%1x%2  %3fps  0 kbps").arg(project->width).arg(project->height).arg(project->framerate));
 }
@@ -476,11 +477,6 @@ void FrameFlow::onProjectListChanged()
   {
     projectsWidget_->updateProjectList();
   }
-}
-
-void FrameFlow::onProjectDirtyChange()
-{
-
 }
 
 void FrameFlow::onCreateScene()
@@ -727,4 +723,28 @@ void FrameFlow::moveSource(const Source& _source, bool up)
 {
   ProjectManager& pm = ProjectManager::instance();
   pm.moveSource(_source.id, up);
+}
+
+void FrameFlow::onLicenseChanged(LicenseManager::Status newStatus)
+{
+  showLicenseStatus(newStatus);
+}
+
+void FrameFlow::showLicenseStatus(LicenseManager::Status status)
+{
+
+}
+
+void FrameFlow::onHelp()
+{
+  HelpDialog dlg(this);
+  dlg.setWindowModality(Qt::ApplicationModal);
+
+  // center
+  QScreen* screen = QGuiApplication::screenAt(QCursor::pos());
+  if(!screen) screen = QGuiApplication::primaryScreen();
+  QRect screenGeometry = screen->availableGeometry();
+  dlg.move(screenGeometry.center() - dlg.rect().center());
+
+  dlg.exec();
 }

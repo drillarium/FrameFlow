@@ -58,6 +58,23 @@ public:
   }
 };
 
+bool isTypeEnabled(SourceType type)
+{
+  switch(type)
+  {
+    case SourceType::EST_COLOR:
+    case SourceType::EST_FILE:
+    case SourceType::EST_URL:
+    case SourceType::EST_LIVE_SOURCE:
+    case SourceType::EST_NDI:
+    case SourceType::EST_DEVICE:
+    case SourceType::EST_SCREEN_CAPTURE:
+    case SourceType::EST_TEXT: return true;
+  }
+
+  return false;
+}
+
 SelectSourceDialog::SelectSourceDialog(QWidget *parent)
 :QDialog(parent)
 {
@@ -72,6 +89,7 @@ SelectSourceDialog::SelectSourceDialog(QWidget *parent)
     QListWidgetItem* lwi = new QListWidgetItem(ui.listWidget);
     lwi->setSizeHint(QSize(150, 75));
     SourceItemWidget* siw = new SourceItemWidget((SourceType) i);
+    siw->setEnabled(isTypeEnabled((SourceType) i));
     ui.listWidget->addItem(lwi);
     ui.listWidget->setItemWidget(lwi, siw);
   }
@@ -138,14 +156,17 @@ void SelectSourceDialog::onItemSelectedChange()
   {
     QListWidgetItem* item = ui.listWidget->item(i);
     SourceItemWidget* w = static_cast<SourceItemWidget*>(ui.listWidget->itemWidget(item));
-    if(w) w->setSelected(item->isSelected());
+    if(w) w->setSelected(item->isSelected() && isTypeEnabled((SourceType) i));
     if(item->isSelected()) selected = i;
   }
+
+  if(!isTypeEnabled((SourceType) selected)) return;
 
   if(selected >= 0 && selected < ui.customStackedWidget->count())
   {
     ui.customStackedWidget->setCurrentIndex(selected);
-    BaseSourceWidget *w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget(selected));   
+    BaseSourceWidget *w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget(selected));
+    w->init();
     ui.customStackedWidget->setFixedHeight(w->h());
   }
   else

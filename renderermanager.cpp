@@ -32,20 +32,15 @@ QImage convertFrame(CComPtr<IMFFrame>& _frame)
   MF_VID_PTR vPtr;
   ARGBFrame->MFVideoGetBytesEx(&vPtr);
 
-  QImage img;
+  const uint8_t *data =  (const uint8_t *) vPtr.lpVideoPlanes[0];
   int bytesPerLine = avProps.vidProps.nWidth * 4;
+  int width = avProps.vidProps.nWidth;
   int height = abs(avProps.vidProps.nHeight);
-  if(avProps.vidProps.nHeight > 0)
-  {
-    img = QImage((uint8_t*)vPtr.lpVideoPlanes[0], avProps.vidProps.nWidth, height, bytesPerLine, QImage::Format_ARGB32);
-  }
-  else
-  {
-    img = QImage((uint8_t*)vPtr.lpVideoPlanes[0], avProps.vidProps.nWidth, height, bytesPerLine, QImage::Format_ARGB32);
-    // img = img.mirrored(false, true);
-  }
 
-  return img;
+  // copy, do not use MFormats memory
+  QImage image(width, height, QImage::Format_ARGB32);
+  memcpy(image.bits(), data, bytesPerLine * height);
+  return image;
 }
 
 void RendererManager::onTimeout()
@@ -63,19 +58,86 @@ void RendererManager::onTimeout()
 
 bool RendererManager::reloadProjec()
 {
-  unload();
-
-  ProjectManager &pm = ProjectManager::instance();
+  ProjectManager& pm = ProjectManager::instance();
   auto project = pm.currentProject();
   if(!project) return false;
 
-  // create source renderers
-  for(int i = 0; i < project->scenes.size(); i++)
+  if(currentProjectUid_ != project->id)
   {
-    for(int j = 0; j < project->scenes[i].sources.size(); j++)
+    unload();
+
+    // create source renderers
+    for(int i = 0; i < project->scenes.size(); i++)
     {
-      Source source = project->scenes[i].sources[j];
-      BaseRenderer *br = BaseRenderer::build(source.type);
+      for(int j = 0; j < project->scenes[i].sources.size(); j++)
+      {
+        Source source = project->scenes[i].sources[j];
+        BaseRenderer *br = BaseRenderer::build(source.type);
+        if(br)
+        {
+          br->setSource(source);
+          br->start();
+          renderers_.push_back(br);
+        }
+      }
+    }
+
+    // Start scene renderers
+    previewRenderer_.start();
+    programRenderer_.start();
+  }
+  else
+  {
+    QMap<QUuid, Source> sources;
+    for(int i = 0; i < project->scenes.size(); i++)
+    {
+      for(int j = 0; j < project->scenes[i].sources.size(); j++)
+      {
+        sources.insert(project->scenes[i].sources[j].id, project->scenes[i].sources[j]);
+      }
+    }
+
+    // unload | update renderes
+    for(auto it = renderers_.begin(); it != renderers_.end(); )
+    {
+      BaseRenderer* renderer = *it;
+      if(renderer)
+      {
+        bool detroyRenderer = !sources.contains(renderer->id());
+
+        if(!detroyRenderer)
+        {
+          Source source = sources[renderer->id()];
+          detroyRenderer = source.dirty;
+          if(!detroyRenderer)
+          {
+            // remove from sources
+            sources.remove(renderer->id());
+
+            // next one
+            it++;
+          }
+        }
+
+        // destroy
+        if(detroyRenderer)
+        {
+          // stop and delete
+          renderer->stop();
+          delete renderer;
+
+          // next one
+          it = renderers_.erase(it);
+        }
+      }
+    }
+
+    // create source renderers
+    QList<Source> s = sources.values();
+    for(int i = 0; i < s.size(); i++)
+    {
+      Source source = s[i];
+      BaseRenderer* br = BaseRenderer::build(source.type);
       if(br)
       {
         br->setSource(source);
@@ -83,11 +145,14 @@ bool RendererManager::reloadProjec()
         renderers_.push_back(br);
       }
     }
+
+    // update current project
+    previewRenderer_.update();
+    programRenderer_.update();
   }
 
-  // Start scene renderers
-  previewRenderer_.start();
-  programRenderer_.start();
+  // save current project
+  currentProjectUid_ = project->id;
 
   return true;
 }
@@ -113,7 +178,7 @@ bool RendererManager::unload()
   return true;
 }
 
-bool RendererManager::getFrame(QUuid sourceId, CComPtr<IMFFrame>& _frame, QRect &_rect)
+bool RendererManager::getFrame(QUuid sourceId, CComPtr<IMFFrame>& _frame)
 {
   // clear source renderers
   for(int i = 0; i < renderers_.size(); i++)
@@ -123,7 +188,7 @@ bool RendererManager::getFrame(QUuid sourceId, CComPtr<IMFFrame>& _frame, QRect 
     {
       if(renderer->id() == sourceId)
       {
-        renderer->getFrame(_frame, _rect);
+        renderer->getFrame(_frame);
         break;
       }
     }

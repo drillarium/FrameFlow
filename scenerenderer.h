@@ -18,8 +18,9 @@ public:
   bool start() override;
   bool stop() override;
   bool isRunning() override { return running_; }
-  bool getFrame(CComPtr<IMFFrame>& _frame, QRect& _rect) override;
-  bool getFrame(CComPtr<IMFFrame>& _frame);
+  bool getFrame(CComPtr<IMFFrame>& _frame) override;
+  
+  void update() { update_ = true; }
 
 protected:
   void workerThread();
@@ -30,4 +31,5 @@ protected:
   CComPtr<IMFFrame> lastFrame_;
   std::mutex lastFrameMutex_;
   EPreviewMode mode_ = EPreviewMode::PM_PROGRAM;
+  bool update_ = false;
 };

@@ -12,7 +12,6 @@ enum class SourceType
   EST_LIVE_SOURCE,
   EST_NDI,
   EST_DEVICE,
-  EST_WEBCAM,
   EST_BROWSER,
   EST_SCREEN_CAPTURE,
   EST_TEXT,
@@ -29,6 +28,7 @@ struct Source
   int orderIndex;
   QJsonObject config;   // persisted parameters
   QJsonObject state;    // optional, maybe not persisted
+  bool dirty = false;
 };
 
 static QRect getSourceRect(const Source& _source)

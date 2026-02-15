@@ -12,6 +12,7 @@ public:
   ColorPickerWidget(QWidget *parent = nullptr);
   ~ColorPickerWidget();
 
+  void init() override { }
   SourceType type() override { return SourceType::EST_COLOR; }
   int h() override { return 125; }
   Source source() override;

@@ -426,6 +426,44 @@ QPushButton {
         </spacer>
        </item>
        <item>
+        <widget class="QPushButton" name="helpButton">
+         <property name="minimumSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>Help</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="frameflow.qrc">
+           <normaloff>:/FrameFlow/help.svg</normaloff>:/FrameFlow/help.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="AlertButton" name="alertButton">
          <property name="minimumSize">
           <size>
@@ -3135,6 +3173,22 @@ QPushButton {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>helpButton</sender>
+   <signal>clicked()</signal>
+   <receiver>FrameFlowClass</receiver>
+   <slot>onHelp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1158</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>669</x>
+     <y>546</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSettings()</slot>
@@ -3153,6 +3207,7 @@ QPushButton {
   <slot>onAddSource()</slot>
   <slot>onCreateScene()</slot>
   <slot>onTake()</slot>
+  <slot>onHelp()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="buttonGroup"/>

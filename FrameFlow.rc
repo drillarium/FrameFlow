@@ -1,1 +1,25 @@
 IDI_ICON1		ICON		DISCARDABLE	"FrameFlow.ico"
+
+#define VS_VERSION_INFO     1
+#include "version.h"
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     APP_VERSION_NUM
+PRODUCTVERSION  APP_VERSION_NUM
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+            VALUE "FileDescription",    APP_NAME " Application"
+            VALUE "FileVersion",        APP_VERSION_STR
+            VALUE "LegalCopyright",     "Copyright © " APP_COMPANY ", S.A. " APP_YEAR
+            VALUE "OriginalFilename",   APP_MODULE ".exe"
+            VALUE "ProductName",        APP_PRODUCT
+            VALUE "ProductVersion",     APP_VERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END

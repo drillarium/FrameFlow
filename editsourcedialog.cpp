@@ -12,6 +12,7 @@ EditSourceDialog::EditSourceDialog(const Source &_source, QWidget *parent)
 
   ui.customStackedWidget->setCurrentIndex((int) _source.type);
   BaseSourceWidget* w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget((int) source_.type));
+  w->init();
   w->editSource(_source);
   ui.customStackedWidget->setFixedHeight(w->h());
 

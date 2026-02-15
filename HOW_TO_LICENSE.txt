@@ -1,0 +1,84 @@
+﻿https://www.cryptool.org/en/cto/openssl/
+
+1️- Generate key pair (one time only)
+openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
+
+private.pem
+
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCmPcUNeb/vP/tr
+3YFugK1eyCX0SPvXvd2E5lhltVzDU2Map0HL4utYc7pYwxkMGmejNrDSWKjoNiYG
+8CuQ9wGpJjApdy1kKpOhP3OFH6UbYlVcPIwfFhyX7l0LifBHIlWVvE9nJN5ewrdx
+CQLaYRHbdxM+Jlxie2W88E4qnE/E/lCUSM2aKCoTQsbG1K8AeM7p7PR/1cqScIE1
+mDFRnxB/zaVlU+yZHTAzPZpGnO7RUd6KKVRW0zZ6RPqwi98JFk8RSnPFL5hLpAI/
+4/ivYF63jF8FNhUKz3Q2WFmqh7e7b8mEq9pagQ7bE83cbFiLeV0fKCg31CrDHGMt
+gjmjvh+DAgMBAAECggEALAYkpoZs/UNw5iZRTf22q+iOIIypYP9PaBAGLd0jFTkC
+gD717jQIRjLTkQkNm4Zslqz3k6TWCjS4ylKU/v1iy7QowfplI2chFG00vvbb5w4Z
+8+S26M6WwOdnbZRYdMYTayVk07hQSUEAimcsAb/+FiQJDQbkpVHvZeMvmBowB8cy
+CMgVXSUuqnN0nF/jlQzojXFvkgTlZXnl17xV2fVkmcPK8s3NYBSVaZbWsyCFEZGa
+eDbZHKRvgBvMCwA0GjAU68KqMfVzsGEDaNcqbzoGfGZnB6ehwiNd68n8ybTxtK4A
+9XabdTavO3xTKchICl1alyjwcaaA29trOnfw/xiRcQKBgQDaPdaDhm5Te17zLBx8
+klWUe+49RKTApF+IFq2u/BDoJRCqrFBF8jrNeCeEKVx6J491fII1xDTVZ2PqxWbP
+218oXX4DoLusXQXycdzqfPv8bMk7t90nTilWoBoDlMje+uP1DElzUUjaoQay77Xs
+pmMqfnkIWbtxlz6N3cbbC55dkQKBgQDDAMgtuTWpumWKV4CJgKZC+OoDbqnYdYeC
+fxBOPw6xA6dSnIFnEJYHzpcFv84SM/9QZpmnp8jlIDHAd/pGOoI3xzk65ElbdGo/
+L2TEkmzLwDp78ZF18fg4/aM2gGUEq2YCCsBVgB7CqyYXENvy8nO85bzL6h5wX3s5
+zMw6zUpx0wKBgEZXNgOwWXDYy7Ku3gOcmq6//vqKXFum3w+a16IVplFcWPHZlgnl
+V+SPvJTRS/gnNgrU9ZbkxW6e40pxE4EdIJ9++rWqobKdTORmpKCDZihm27k+uq4H
+eDVuZtQOqWuNC9oYergLU+L7kZAsyMMcocu5dcMmQM8Mw2GwQH6rUQCxAoGAQsQ2
+xej/JbDraVWSbgH9azrcrPYr8zAyiIzG4XOXrSYKGS/64nX8WIn0jYRhozvoc/fd
+Llk1YLYIMtUhfQA1a7Grt61ILKcMZbvtbZyQ4aZcn+lTG6YQjjrRsix96f5he9uA
+hQXMAm0lKoqcNG+tDwU+AjeT2nfmsiCb4Jo/nf8CgYEA2QwZoCpsB2CTVUvNr2F2
+hjPMxBYIYm3Ybjrkcf57UD1TeIxii56YSuyG65Qep8cLeD+XPylkdaTvKFo/BhZo
+KR/TtNVf49OIUgiB/aMiwI64HbFftTARqbWaV5xQg/BxLRDXUc/MLtc6TNGNXS5k
+J15g/+4tOQ5BS8eEtY32yH8=
+-----END PRIVATE KEY-----
+
+Extract public key:
+openssl rsa -pubout -in private.pem -out public.pem
+
+
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApj3FDXm/7z/7a92BboCt
+Xsgl9Ej7173dhOZYZbVcw1NjGqdBy+LrWHO6WMMZDBpnozaw0lio6DYmBvArkPcB
+qSYwKXctZCqToT9zhR+lG2JVXDyMHxYcl+5dC4nwRyJVlbxPZyTeXsK3cQkC2mER
+23cTPiZcYntlvPBOKpxPxP5QlEjNmigqE0LGxtSvAHjO6ez0f9XKknCBNZgxUZ8Q
+f82lZVPsmR0wMz2aRpzu0VHeiilUVtM2ekT6sIvfCRZPEUpzxS+YS6QCP+P4r2Be
+t4xfBTYVCs90NlhZqoe3u2/JhKvaWoEO2xPN3GxYi3ldHygoN9QqwxxjLYI5o74f
+gwIDAQAB
+-----END PUBLIC KEY-----
+
+Put public.pem contents inside your Qt app (PUBLIC_KEY_PEM).
+Keep private.pem secret.
+
+qDebug() << LicenseManager::currentMachineId();
+
+ab02802ef64b91be186bf483683d618f2294d66d9baad9302bf90b0dcafc0e62
+
+Your canonical format is:
+license_id|tier|machine_id|valid_from|valid_until
+
+test123|pro|ab02802ef64b91be186bf483683d618f2294d66d9baad9302bf90b0dcafc0e62|2026-02-01|2026-03-01
+
+save as payload.txt -> No newline at end if possible (important).
+
+openssl dgst -sha256 -sign private.pem payload.txt | base64 > signature.txt
+
+AUJMQFSPCu8BNkeTVX61GAtM2geIaEmWA0ZAC9Ls2IdZVaof3D+65E4HBB0qbwDw8itmeFvT8l2Y
+amwRT1SaUx6kMHF1vChsUCiSnbz1RK5KrfC1ubn9FJd3s5Nicpb9Mstp0BMyQEIxz++I0X15L0F9
+Cl2Z2tOeoQAthgd6P+JnvIYt2PLjXt+ILBrmXYvLzovc1ug7jL0zG4GU5WdVhxfUMBE/y7JgpA/H
+3jXqavSuEvbBn4jeQ4KK1fyol4N6gZK7E3MUUDLz56+bYPTkubkHZj8+owFqNFIzKHsv4ufI9nUb
+xHx1lI+UOKacXelqtYr1+Wl5yevxLZ04au6Taw==
+
+{
+  "license_id": "test123",
+  "tier": "pro",
+  "machine_id": "a3f1c9e47b8d...",
+  "valid_from": "2026-02-01",
+  "valid_until": "2026-03-01",
+  "signature": "AUJMQFSPCu8BNkeTVX61GAtM2geIaEmWA0ZAC9Ls2IdZVaof3D+65E4HBB0qbwDw8itmeFvT8l2YamwRT1SaUx6kMHF1vChsUCiSnbz1RK5KrfC1ubn9FJd3s5Nicpb9Mstp0BMyQEIxz++I0X15L0F9Cl2Z2tOeoQAthgd6P+JnvIYt2PLjXt+ILBrmXYvLzovc1ug7jL0zG4GU5WdVhxfUMBE/y7JgpA/H3jXqavSuEvbBn4jeQ4KK1fyol4N6gZK7E3MUUDLz56+bYPTkubkHZj8+owFqNFIzKHsv4ufI9nUbxHx1lI+UOKacXelqtYr1+Wl5yevxLZ04au6Taw=="
+}
+
+C:/Users/carles/AppData/Roaming/AVIO/FrameFlow/license.json
+
+

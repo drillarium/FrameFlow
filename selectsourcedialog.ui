@@ -101,6 +101,9 @@ QStackedWidget QWidget {
    <item>
     <widget class="QWidget" name="mainSourceWidget" native="true">
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>3</number>
+      </property>
       <property name="leftMargin">
        <number>9</number>
       </property>
@@ -393,63 +396,15 @@ QStackedWidget QWidget {
       </item>
       <item>
        <widget class="QStackedWidget" name="customStackedWidget">
-        <widget class="ColorPickerWidget" name="page">
-         <layout class="QVBoxLayout" name="verticalLayout_5">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-         </layout>
-        </widget>
-        <widget class="PathPickerWidget" name="page_2">
-         <layout class="QVBoxLayout" name="verticalLayout_6">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-         </layout>
-        </widget>
-        <widget class="UrlPickerWidget" name="page_3">
-         <layout class="QVBoxLayout" name="verticalLayout_7">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-         </layout>
-        </widget>
+        <widget class="ColorPickerWidget" name="AcolorPage"/>
+        <widget class="PathPickerWidget" name="BpathPage"/>
+        <widget class="UrlPickerWidget" name="CurPage"/>
+        <widget class="LiveSourceWidget" name="DlivePage"/>
+        <widget class="NDIWidget" name="EndiPage"/>
+        <widget class="WebcamWidget" name="FwebcamPage"/>
+        <widget class="QWidget" name="GbrowserPage"/>
+        <widget class="ScreenCaptureWidget" name="HscreenPAge"/>
+        <widget class="TextWidget" name="ITextPage"/>
        </widget>
       </item>
       <item>
@@ -553,6 +508,36 @@ QStackedWidget QWidget {
    <class>UrlPickerWidget</class>
    <extends>QWidget</extends>
    <header>urlpickerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WebcamWidget</class>
+   <extends>QWidget</extends>
+   <header>webcamwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NDIWidget</class>
+   <extends>QWidget</extends>
+   <header>ndiwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>LiveSourceWidget</class>
+   <extends>QWidget</extends>
+   <header>livesourcewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ScreenCaptureWidget</class>
+   <extends>QWidget</extends>
+   <header>screencapturewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TextWidget</class>
+   <extends>QWidget</extends>
+   <header>textwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

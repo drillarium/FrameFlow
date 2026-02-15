@@ -12,6 +12,7 @@ public:
   PathPickerWidget(QWidget *parent = nullptr);
   ~PathPickerWidget();
 
+  void init() override { }
   SourceType type() override { return SourceType::EST_FILE; }
   int h() override { return 125; }
   Source source() override;

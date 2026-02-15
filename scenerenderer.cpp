@@ -77,6 +77,14 @@ void SceneRenderer::workerThread()
 
   while(running_)
   {
+    // update current project
+    if(update_)
+    {
+      project = pm.currentProject();
+      update_ = false;
+    }
+
+    // mode
     ProjectManager::WorkingMode workingMode = pm.workingMode();
 
     // current scene
@@ -125,8 +133,8 @@ void SceneRenderer::workerThread()
     for(int i = 0; i < scene.sources.size(); i++)
     {
       CComPtr<IMFFrame> sourceFrame;
-      QRect rect;     
-      rm.getFrame(scene.sources[i].id, sourceFrame, rect);
+      QRect rect = getSourceRect(scene.sources[i]);
+      rm.getFrame(scene.sources[i].id, sourceFrame);
       if(sourceFrame)
       {
         int resizeField = -1;
@@ -161,13 +169,14 @@ void SceneRenderer::workerThread()
 
 cleanup:
   {
+    preview->PreviewEnable(channel, FALSE, FALSE);
     preview = NULL;
     blackFrame = NULL;
     factory = NULL;
   }
 }
 
-bool SceneRenderer::getFrame(CComPtr<IMFFrame>& _frame, QRect& _rect)
+bool SceneRenderer::getFrame(CComPtr<IMFFrame>& _frame)
 {
   std::lock_guard<std::mutex> lock(lastFrameMutex_);
   if(!lastFrame_) return false;
@@ -177,8 +186,3 @@ bool SceneRenderer::getFrame(CComPtr<IMFFrame>& _frame, QRect& _rect)
   return true;
 }
 
-bool SceneRenderer::getFrame(CComPtr<IMFFrame>& _frame)
-{
-  QRect r;
-  return getFrame(_frame, r);
-}

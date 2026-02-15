@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WebcamWidgetClass</class>
+ <widget class="QWidget" name="WebcamWidgetClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>181</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WebcamWidget</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#mainWebcamWidget {
+  background: #171B22;
+}
+
+QLabel {
+  color: white;
+}
+
+QLineEdit {
+  background: #171B22;
+  color: white;
+  border: 1px solid #647081;
+  border-radius: 4px;
+  padding-left: 8px;
+}
+
+QLineEdit:focus {
+    border: 1px solid #19BDDE;
+}
+
+
+QComboBox {
+  background: #171B22;
+  color: white;
+  border: 1px solid #647081;
+  border-radius: 8px;
+  padding-left: 8px;
+}
+
+QComboBox:focus {
+    border: 1px solid #19BDDE;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 22px;
+    border-left: 0px solid #444;
+}
+
+QComboBox::down-arrow {
+    image: url(:/FrameFlow/down.svg);
+    width: 10px;
+    height: 10px;
+}
+
+QComboBox QAbstractItemView {
+  background-color: #171B22;
+  border: 1px solid white;
+  selection-background-color: #00c853;
+  selection-color: white;
+  outline: none;
+  color: white;
+}
+
+QComboBox QAbstractItemView::item {
+    padding: 10px 0px;
+}
+
+QComboBox QAbstractItemView::item:hover {
+  background-color: #2d2d2d;
+}
+
+QComboBox QScrollBar:vertical {
+  width: 6px;
+  background: transparent;
+}
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="mainWebcamWidget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>5</number>
+      </property>
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="topMargin">
+       <number>9</number>
+      </property>
+      <property name="rightMargin">
+       <number>9</number>
+      </property>
+      <property name="bottomMargin">
+       <number>9</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="nameLineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>NewSource</string>
+        </property>
+        <property name="placeholderText">
+         <string>New Source</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Device</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="deviceComboBox">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Format</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="formatComboBox">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>deviceComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>WebcamWidgetClass</receiver>
+   <slot>onDeviceSelectionChange()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>90</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onDeviceSelectionChange()</slot>
+ </slots>
+</ui>

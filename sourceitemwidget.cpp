@@ -11,7 +11,6 @@ QString sourceTitle(SourceType type)
     case SourceType::EST_LIVE_SOURCE: return "Live Source";
     case SourceType::EST_NDI: return "NDI";
     case SourceType::EST_DEVICE: return "Device";
-    case SourceType::EST_WEBCAM: return "Webcam";
     case SourceType::EST_BROWSER: return "Browser";
     case SourceType::EST_SCREEN_CAPTURE: return "Screen Capture";
     case SourceType::EST_TEXT: return "Text";
@@ -32,7 +31,6 @@ QString sourceDescription(SourceType type)
   case SourceType::EST_LIVE_SOURCE: return "Capture from a live video input";
   case SourceType::EST_NDI: return "Receive video from NDI network sources";
   case SourceType::EST_DEVICE: return "Capture from a connected device";
-  case SourceType::EST_WEBCAM: return "Capture from the local webcam";
   case SourceType::EST_BROWSER: return "Render a web page as a video source";
   case SourceType::EST_SCREEN_CAPTURE: return "Capture the screen or a window";
   case SourceType::EST_TEXT: return "Render text as a video source";

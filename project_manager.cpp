@@ -59,11 +59,9 @@ bool ProjectManager::createProject(Project& project)
 
   currentProject_ = project;
   cachedProjects_ = Database::instance().listProjects();
-  dirty_ = false;
 
   emit currentProjectChanged();
   emit projectListChanged();
-  emit dirtyChanged(false);
 
   return true;
 }
@@ -74,10 +72,8 @@ bool ProjectManager::loadProject(const QUuid& projectId)
   if(!project) return false;
 
   currentProject_ = *project;
-  dirty_ = false;
 
   emit currentProjectChanged();
-  emit dirtyChanged(false);
 
   return true;
 }
@@ -91,7 +87,6 @@ bool ProjectManager::saveProject(Project& _project)
       _project.modifiedAt = QDateTime::currentDateTimeUtc();
       if(!Database::instance().saveProject(_project)) return false;
 
-      dirty_ = false;
       cachedProjects_ = Database::instance().listProjects();
 
       // current project
@@ -99,7 +94,6 @@ bool ProjectManager::saveProject(Project& _project)
       {
         currentProject_ = _project;
         emit currentProjectChanged();
-        emit dirtyChanged(false);
       }
       emit projectListChanged();
 
@@ -165,10 +159,8 @@ bool ProjectManager::saveCurrentProject()
 
   if(!Database::instance().saveProject(*currentProject_)) return false;
 
-  dirty_ = false;
   cachedProjects_ = Database::instance().listProjects();
 
-  emit dirtyChanged(false);
   emit projectListChanged();
 
   return true;
@@ -204,23 +196,8 @@ void ProjectManager::closeProject()
   if(!currentProject_) return;
 
   currentProject_.reset();
-  dirty_ = false;
 
   emit currentProjectChanged();
-  emit dirtyChanged(false);
-}
-
-bool ProjectManager::isDirty() const
-{
-  return dirty_;
-}
-
-void ProjectManager::setDirty(bool dirty)
-{
-  if(dirty_ == dirty) return;
-
-  dirty_ = dirty;
-  emit dirtyChanged(dirty_);
 }
 
 bool ProjectManager::addSource(Source &_source)
@@ -282,6 +259,7 @@ bool ProjectManager::updateSource(const Source& _source)
     if(it != currentProject_->scenes[i].sources.end())
     {
       *it = _source;
+      (*it).dirty = true;
 
       saveCurrentProject();
       emit currentProjectChanged();
@@ -291,6 +269,19 @@ bool ProjectManager::updateSource(const Source& _source)
   }
 
   return false;
+}
+
+void ProjectManager::resetDirty()
+{
+  if(!currentProject_) return;
+
+  for(int i = 0; i < currentProject_->scenes.size(); ++i)
+  {
+    for(int j = 0; j < currentProject_->scenes[i].sources.size(); ++j)
+    {
+      currentProject_->scenes[i].sources[j].dirty = false;
+    }    
+  }
 }
 
 bool ProjectManager::updateSourceRect(const QRect& _r)

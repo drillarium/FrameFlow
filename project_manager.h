@@ -40,18 +40,15 @@ public:
   void setCurrentStudioSceneId(QUuid id) { studioSceneId_ = id; }
   QUuid currentStudioSceneId() { return studioSceneId_; }
   bool moveSource(const QUuid &source, bool up);
+  void resetDirty();
 
   // Queries
   QVector<Project> listProjects() const;
   std::optional<Project> currentProject() const { return currentProject_; }
 
-  bool isDirty() const;
-  void setDirty(bool dirty = true);
-
 signals:
   void currentProjectChanged();
   void projectListChanged();
-  void dirtyChanged(bool dirty);
 
 private:
   explicit ProjectManager(QObject* parent = nullptr);
@@ -62,7 +59,6 @@ private:
 private:
   std::optional<Project> currentProject_;
   QVector<Project> cachedProjects_;
-  bool dirty_ = false;
   QUuid currentSceneId_;
   QUuid currentSourceId_;
   QUuid studioSceneId_;

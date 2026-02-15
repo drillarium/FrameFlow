@@ -12,7 +12,7 @@ public:
   static RendererManager& instance();
   bool reloadProjec();
   bool unload();
-  bool getFrame(QUuid sourceId, CComPtr<IMFFrame> &_frame, QRect& _rect);
+  bool getFrame(QUuid sourceId, CComPtr<IMFFrame> &_frame);
 
 signals:
   void onNewPreviewImage(QImage image);
@@ -31,5 +31,6 @@ protected:
   SceneRenderer previewRenderer_;    // preview
   SceneRenderer programRenderer_;    // program
   QList<BaseRenderer *> renderers_;  // renderers involved in current project
+  QUuid currentProjectUid_;
 };
 

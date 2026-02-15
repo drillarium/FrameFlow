@@ -3,6 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_frameflow.h"
 #include "scene_model.h"
+#include "license_manager.h"
 
 class FrameFlow : public QMainWindow
 {
@@ -31,12 +32,13 @@ protected slots:
   void onAddSource();
   void onCurrentProjectChange();
   void onProjectListChanged();
-  void onProjectDirtyChange();
   void onCreateScene();
   void onUpdateNumSources();
   void onUpdateNumScenes();
   void onCurrentSourceRectChange(const QRect& _r);
   void onTake();
+  void onLicenseChanged(LicenseManager::Status newStatus);
+  void onHelp();
 
 private:
   void readSettings();
@@ -48,6 +50,7 @@ private:
   void deleteSource(const Source& _source);
   void renameSource(const Source& _source);
   void moveSource(const Source& _source, bool up);
+  void showLicenseStatus(LicenseManager::Status status);
 
 private:
   Ui::FrameFlowClass ui;

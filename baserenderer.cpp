@@ -1,6 +1,8 @@
 #include "baserenderer.h"
 #include "sourcecolorbaserenderer.h"
 #include "sourcereaderbaserenderer.h"
+#include "sourcedevicebaserenderer.h"
+#include "textrenderer.h"
 
 QString BaseRenderer::getVideoFormatString(int w, int h, double fr)
 {
@@ -90,5 +92,10 @@ BaseRenderer* BaseRenderer::build(SourceType type)
   if(type == SourceType::EST_COLOR) return new SourceColorBaseRenderer;
   if(type == SourceType::EST_FILE) return new SourceReaderBaseRenderer(type);
   if(type == SourceType::EST_URL) return new SourceReaderBaseRenderer(type);
+  if(type == SourceType::EST_DEVICE) return new SourceDeviceBaseRenderer(type);
+  if(type == SourceType::EST_NDI) return new SourceDeviceBaseRenderer(type);
+  if(type == SourceType::EST_LIVE_SOURCE) return new SourceReaderBaseRenderer(type);
+  if(type == SourceType::EST_SCREEN_CAPTURE) return new SourceDeviceBaseRenderer(type);
+  if(type == SourceType::EST_TEXT) return new TextRenderer;
   return nullptr;
 }
