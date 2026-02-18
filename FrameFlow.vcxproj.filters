@@ -231,6 +231,12 @@
     <ClInclude Include="textrenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="transition_model.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="server_model.h">
+      <Filter>models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="project_manager.h">

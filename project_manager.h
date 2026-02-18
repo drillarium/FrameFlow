@@ -5,6 +5,8 @@
 #include <optional>
 #include "project_model.h"
 #include <QRect>
+#include "transition_model.h"
+#include "server_model.h"
 
 class ProjectManager : public QObject
 {
@@ -41,10 +43,15 @@ public:
   QUuid currentStudioSceneId() { return studioSceneId_; }
   bool moveSource(const QUuid &source, bool up);
   void resetDirty();
+  QVector<Transition> listTransitions();
+  QVector<StreamingServer> listStreamingServers();
+  bool addStreamingServer(StreamingServer &_streamingServer);
 
   // Queries
   QVector<Project> listProjects() const;
   std::optional<Project> currentProject() const { return currentProject_; }
+  std::optional<Transition> currentTransition() { return currentTransition_; }
+  bool setCurrentTransition(const QUuid &_transition);
 
 signals:
   void currentProjectChanged();
@@ -63,4 +70,7 @@ private:
   QUuid currentSourceId_;
   QUuid studioSceneId_;
   ProjectManager::WorkingMode mode_ = WorkingMode::CONT;
+  QVector<Transition> cachedTransitions_;
+  std::optional<Transition> currentTransition_;
+  QVector<StreamingServer> cachedStreamingServers_;
 };

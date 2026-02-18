@@ -197,7 +197,9 @@
     <QtMoc Include="livesourcewidget.h" />
     <QtMoc Include="screencapturewidget.h" />
     <QtMoc Include="textwidget.h" />
+    <ClInclude Include="server_model.h" />
     <ClInclude Include="textrenderer.h" />
+    <ClInclude Include="transition_model.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="webcamwidget.h" />
     <QtMoc Include="urlpickerwidget.h" />

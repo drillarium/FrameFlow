@@ -4,6 +4,8 @@
 #include <QMutex>
 #include <optional>
 #include "project_model.h"
+#include "transition_model.h"
+#include "server_model.h"
 
 class Database
 {
@@ -24,6 +26,9 @@ public:
   QVector<Project> listProjects();
   bool deleteScene(const QUuid& sceneId);
   bool deleteSource(const QUuid& sourceId);
+  QVector<Transition> listTransitions();
+  QVector<StreamingServer> listStreamingServers();
+  bool saveStreamingServer(StreamingServer &_streamingServer);
 
 private:
   Database();
@@ -37,6 +42,8 @@ private:
   QStringList schemaV1Statements() const;
 
   bool migrateV1ToV2();
+  bool migrateV2ToV3();
+  bool migrateV3ToV4();
 
 private:
   QSqlDatabase db_;

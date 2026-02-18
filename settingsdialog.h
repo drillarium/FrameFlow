@@ -2,6 +2,7 @@
 
 #include <QDialog>
 #include "ui_settingsdialog.h"
+#include "server_model.h"
 
 class SettingsDialog : public QDialog
 {
@@ -13,6 +14,7 @@ public:
 
 protected:
   void keyPressEvent(QKeyEvent* event) override;
+  void addStreamingServer(const StreamingServer& _ss);
 
 protected slots:
   void onAddStreamServer();

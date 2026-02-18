@@ -1,7 +1,8 @@
 #include "streamserverwidget.h"
 
-StreamServerWidget::StreamServerWidget(QWidget *parent)
+StreamServerWidget::StreamServerWidget(const StreamingServer& _ss, QWidget *parent)
 :QWidget(parent)
+,streamingServer_(_ss)
 {
   ui.setupUi(this);
 

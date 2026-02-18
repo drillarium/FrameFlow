@@ -2,13 +2,14 @@
 
 #include <QWidget>
 #include "ui_streamserverwidget.h"
+#include "server_model.h"
 
 class StreamServerWidget : public QWidget
 {
 Q_OBJECT
 
 public:
-  StreamServerWidget(QWidget *parent = nullptr);
+  StreamServerWidget(const StreamingServer &_ss, QWidget *parent = nullptr);
   ~StreamServerWidget();
 
 protected slots:
@@ -19,5 +20,6 @@ signals:
 
 private:
   Ui::StreamServerWidgetClass ui;
+  StreamingServer streamingServer_;
 };
 

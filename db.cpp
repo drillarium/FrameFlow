@@ -4,7 +4,7 @@
 #include <QJsonDocument>
 #include <QDebug>
 
-static constexpr int CURRENT_SCHEMA_VERSION = 2;
+static constexpr int CURRENT_SCHEMA_VERSION = 4;
 
 Database& Database::instance()
 {
@@ -87,6 +87,14 @@ bool Database::createSchemaIfNeeded()
         if(!migrateV1ToV2())  return false;
         version = 2;
       break;
+      case 2:
+        if(!migrateV2ToV3())  return false;
+        version = 3;
+      break;
+      case 3:
+        if(!migrateV3ToV4())  return false;
+        version = 4;
+      break;
       default:
         qCritical() << "Unknown schema version:" << version;
       return false;
@@ -121,6 +129,65 @@ bool Database::migrateV1ToV2()
   }
 
   if(!setSchemaVersion(2))
+  {
+    db_.rollback();
+    return false;
+  }
+
+  return db_.commit();
+}
+
+bool Database::migrateV2ToV3()
+{
+  qDebug() << "Migrating schema v2 => v3";
+
+  db_.transaction();
+
+  QSqlQuery q(db_);
+
+  // 1 Create table
+  if(!q.exec(R"(
+        CREATE TABLE IF NOT EXISTS transitions (
+            id TEXT PRIMARY KEY,
+            type INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            ms_duration INTEGER NOT NULL
+        )
+    )")) {
+    db_.rollback();
+    qWarning() << "Failed to create transitions table:" << q.lastError();
+    return false;
+  }
+
+  // 2 Insert default transitions
+  auto insertTransition = [&](TransitionType type,
+    const QString& name,
+    int duration)
+    {
+      QSqlQuery iq(db_);
+      iq.prepare(R"(
+            INSERT INTO transitions (id, type, name, ms_duration)
+            VALUES (?, ?, ?, ?)
+        )");
+
+      iq.addBindValue(QUuid::createUuid().toString(QUuid::WithoutBraces));
+      iq.addBindValue(static_cast<int>(type));
+      iq.addBindValue(name);
+      iq.addBindValue(duration);
+
+      return iq.exec();
+    };
+
+  if(!insertTransition(TransitionType::TT_CUT, "Cut", 0) ||
+    !insertTransition(TransitionType::TT_FADE, "Fade", 200) ||
+    !insertTransition(TransitionType::TT_SLIDE, "Slide", 300))
+  {
+    db_.rollback();
+    qWarning() << "Failed inserting default transitions";
+    return false;
+  }
+
+  if(!setSchemaVersion(3))
   {
     db_.rollback();
     return false;
@@ -455,4 +522,123 @@ bool Database::deleteSource(const QUuid& sourceId)
     return false;
   }
   return true;
+}
+
+QVector<Transition> Database::listTransitions()
+{
+  QVector<Transition> transitions;
+
+  QSqlQuery q("SELECT * FROM transitions");
+
+  while(q.next())
+  {
+    Transition t;
+    t.id = QUuid(q.value("id").toString());
+    t.name = q.value("name").toString();
+    t.type = static_cast<TransitionType>(q.value("type").toInt());
+    t.msDuration = q.value("ms_duration").toInt();
+
+    transitions.push_back(t);
+  }
+
+  return transitions;
+}
+
+bool Database::migrateV3ToV4()
+{
+  qDebug() << "Migrating schema v3 => v4";
+
+  db_.transaction();
+
+  QSqlQuery q(db_);
+
+  // 1 Create table
+  if(!q.exec(R"(
+        CREATE TABLE IF NOT EXISTS servers (
+            id TEXT PRIMARY KEY,
+            platform TEXT NOT NULL,
+            name TEXT NOT NULL,
+            url TEXT,
+            key TEXT,
+            order_index INTEGER NOT NULL,
+            is_active INTEGER NOT NULL DEFAULT 0
+        )
+    )")) {
+    db_.rollback();
+    qWarning() << "Failed to create servers table:" << q.lastError();
+    return false;
+  }
+
+  if(!setSchemaVersion(4))
+  {
+    db_.rollback();
+    return false;
+  }
+
+  return db_.commit();
+}
+
+QVector<StreamingServer> Database::listStreamingServers()
+{
+  QVector<StreamingServer> streamingServers;
+
+  QSqlQuery q("SELECT * FROM servers");
+
+  while(q.next())
+  {
+    StreamingServer ss;
+    ss.id = QUuid(q.value("id").toString());
+    ss.platform = q.value("platform").toString();
+    ss.name = q.value("name").toString();
+    ss.url = q.value("url").toString();
+    ss.key = q.value("key").toString();
+    ss.enabled = q.value("is_active").toInt() == 1;
+    ss.orderIndex = q.value("order_index").toInt();
+
+    streamingServers.push_back(ss);
+  }
+
+  std::sort(streamingServers.begin(), streamingServers.end(), [](const StreamingServer& a, const StreamingServer& b) { return a.orderIndex < b.orderIndex; });
+
+  return streamingServers;
+}
+
+bool Database::saveStreamingServer(StreamingServer& _streamingServer)
+{
+  QMutexLocker lock(&mutex_);
+
+  if(!db_.isOpen()) return false;
+
+  db_.transaction();
+
+  QSqlQuery q;
+  q.prepare(R"(
+        INSERT INTO servers(id, platform, name, url, key, is_active, order_index)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            platform=excluded.platform,
+            name=excluded.name,
+            url=excluded.url,
+            key=excluded.key,
+            is_active=excluded.is_active,
+            order_index=excluded.order_index
+    )");
+
+  q.addBindValue(_streamingServer.id.toString(QUuid::WithoutBraces));
+  q.addBindValue(_streamingServer.platform);
+  q.addBindValue(_streamingServer.name);
+  q.addBindValue(_streamingServer.url);
+  q.addBindValue(_streamingServer.key);
+  q.addBindValue(_streamingServer.enabled? 1 : 0);
+  q.addBindValue(_streamingServer.orderIndex);
+
+  if(!q.exec()) goto fail;
+
+  return db_.commit();
+
+fail:
+  QString aux = q.lastError().text();
+  qCritical() << "Save failed:" << q.lastError();
+  db_.rollback();
+  return false;
 }

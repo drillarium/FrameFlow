@@ -20,6 +20,10 @@ bool ProjectManager::openDatabase(const QString& dbPath)
   cachedProjects_ = Database::instance().listProjects();
   emit projectListChanged();
 
+  cachedTransitions_ = Database::instance().listTransitions();
+
+  cachedStreamingServers_ = Database::instance().listStreamingServers();
+
   return true;
 }
 
@@ -264,7 +268,7 @@ bool ProjectManager::updateSource(const Source& _source)
       saveCurrentProject();
       emit currentProjectChanged();
 
-      return true;
+return true;
     }
   }
 
@@ -280,7 +284,7 @@ void ProjectManager::resetDirty()
     for(int j = 0; j < currentProject_->scenes[i].sources.size(); ++j)
     {
       currentProject_->scenes[i].sources[j].dirty = false;
-    }    
+    }
   }
 }
 
@@ -336,7 +340,7 @@ bool ProjectManager::moveSource(const QUuid& sourceId, bool up)
         std::iter_swap(it, it + 1);
         save = true;
       }
-      
+
       if(save)
       {
         // normalize order index
@@ -351,4 +355,41 @@ bool ProjectManager::moveSource(const QUuid& sourceId, bool up)
   }
 
   return false;
+}
+
+QVector<Transition> ProjectManager::listTransitions()
+{
+  return cachedTransitions_;
+}
+
+QVector<StreamingServer> ProjectManager::listStreamingServers()
+{
+  return cachedStreamingServers_;
+}
+
+bool ProjectManager::setCurrentTransition(const QUuid& _transition)
+{
+  for(Transition t : cachedTransitions_)
+  {
+    if(t.id == _transition)
+    {
+      currentTransition_ = t;
+      return true;
+    }
+  }
+
+  currentTransition_ = std::optional<Transition>();
+  return false;
+}
+
+bool ProjectManager::addStreamingServer(StreamingServer& _streamingServer)
+{
+  _streamingServer.id = QUuid::createUuid();
+  _streamingServer.orderIndex = cachedStreamingServers_.size();
+  
+  if(!Database::instance().saveStreamingServer(_streamingServer)) return false;
+
+  cachedStreamingServers_ = Database::instance().listStreamingServers();
+
+  return true;
 }

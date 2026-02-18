@@ -1,15 +1,22 @@
 #include "transitionwidget.h"
 #include <QStyle>
 
-TransitionWidget::TransitionWidget(QWidget *parent)
+TransitionWidget::TransitionWidget(const Transition& _transition, QWidget *parent)
 :QWidget(parent)
 {
   ui.setupUi(this);
+  setTransition(_transition);
 }
 
 TransitionWidget::~TransitionWidget()
 {
 
+}
+
+void TransitionWidget::setTransition(const Transition& _transition)
+{
+  transition_ = _transition;
+  ui.titleLabel->setText(transition_.name);
 }
 
 void TransitionWidget::setSelected(bool _selected)

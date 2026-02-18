@@ -21,6 +21,7 @@
 #include "renderermanager.h"
 #include "editsourcedialog.h"
 #include "helpdialog.h"
+#include "transition_model.h"
 
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
@@ -67,6 +68,11 @@ FrameFlow::FrameFlow(QWidget *_parent)
       pm.loadProject(nextProjectUID_);
     }
   }
+
+  if(!nextTransitionUID_.isNull())
+  {
+    pm.setCurrentTransition(nextTransitionUID_);
+  }
   
   // project button
   projectsWidget_ = new ProjectsWidget(this);
@@ -98,17 +104,32 @@ FrameFlow::FrameFlow(QWidget *_parent)
   connect(modelSource, &QAbstractItemModel::modelReset, this, [this]() { onUpdateNumSources(); });
   onUpdateNumSources();
 
-  // dummy transitions
-  for(int i = 0; i < 5; i++)
+  // CUT | FADE | SLIDE
+  auto transitions = pm.listTransitions();
+  int selectedTransitionIndex = -1;
+  auto transition = pm.currentTransition();
+  for(int i = 0; i < transitions.size(); i++)
   {
     QListWidgetItem* lwi = new QListWidgetItem(ui.transitionListWidget);
     lwi->setSizeHint(QSize(100, 35));
-    TransitionWidget* sw = new TransitionWidget();
+    Transition t = transitions[i];
+    TransitionWidget* sw = new TransitionWidget(t);
     ui.transitionListWidget->addItem(lwi);
     ui.transitionListWidget->setItemWidget(lwi, sw);
+    if(transition && transition->id == t.id)
+    {
+      selectedTransitionIndex = i;
+    }
   }
-
-  ui.transitionListWidget->item(0)->setSelected(true); // cut
+  if( (selectedTransitionIndex < 0) && (transitions.size() > 0) )
+  {
+    selectedTransitionIndex = 0;
+    pm.setCurrentTransition(transitions[0].id);
+  }
+  if(selectedTransitionIndex >= 0)
+  {
+    ui.transitionListWidget->item(selectedTransitionIndex)->setSelected(true);
+  }
   ui.transitionsStackedWidget->setCurrentIndex(1);
   onExpandTransitions();
 
@@ -148,6 +169,10 @@ FrameFlow::FrameFlow(QWidget *_parent)
 
   connect(ui.previewSceneWidget, &PreviewSceneWidget::onCurrentSourceRectChange, this, &FrameFlow::onCurrentSourceRectChange);
   connect(ui.PREVIEWWidget, &PreviewSceneWidget::onCurrentSourceRectChange, this, &FrameFlow::onCurrentSourceRectChange);
+
+#ifndef _DEBUG
+  ui.effectsWidget->hide();
+#endif // _DEBUG
 }
 
 FrameFlow::~FrameFlow()
@@ -202,6 +227,10 @@ void FrameFlow::readSettings()
     QUuid scene = QUuid::fromString(settings.value("current_scene").toString());
     pm.setCurrentScene(scene);
   }
+  if(settings.contains("current_transition"))
+  {
+    nextTransitionUID_ = QUuid::fromString(settings.value("current_transition").toString());
+  }
 }
 
 void FrameFlow::writeSettings()
@@ -231,6 +260,11 @@ void FrameFlow::writeSettings()
   {
     settings.setValue("current_project", project->id.toString());
     settings.setValue("current_scene", pm.currentSceneId().toString());
+  }
+  auto transition = pm.currentTransition();
+  if(transition)
+  {
+    settings.setValue("current_transition", transition->id.toString());
   }
 }
 
@@ -365,8 +399,13 @@ void FrameFlow::onTransitionSelectionChanged()
   {
     QListWidgetItem* item = ui.transitionListWidget->item(i);
     TransitionWidget* w = static_cast<TransitionWidget*>(ui.transitionListWidget->itemWidget(item));
-    if(w) w->setSelected(item->isSelected());
+    if(w)
+    {
+      w->setSelected(item->isSelected());
+    }
   }
+
+  onChangeTransitionSelected();
 }
 
 void FrameFlow::onEffectSelectionChanged()
@@ -386,13 +425,13 @@ void FrameFlow::onExpandTransitions()
   {
     ui.expandTransitionButton->setText("Collapse");
     ui.transitionsStackedWidget->setCurrentIndex(1);
-    ui.transitionsStackedWidget->setFixedHeight(100);
+    ui.transitionsWidget->setFixedHeight(200);
   }
   else
   {
     ui.expandTransitionButton->setText("Expand");
     ui.transitionsStackedWidget->setCurrentIndex(0);
-    ui.transitionsStackedWidget->setFixedHeight(50);
+    ui.transitionsWidget->setFixedHeight(150);
   }
 }
 
@@ -403,7 +442,7 @@ void FrameFlow::onExpandEffects()
   {
     ui.expandEffectButton->setText("Collapse");
     ui.effectsStackedWidget->setCurrentIndex(1);
-    ui.effectsStackedWidget->setFixedHeight(100);
+    ui.effectsStackedWidget->setFixedHeight(200);
   }
   else
   {
@@ -747,4 +786,72 @@ void FrameFlow::onHelp()
   dlg.move(screenGeometry.center() - dlg.rect().center());
 
   dlg.exec();
+}
+
+void FrameFlow::onToggleFullScreen()
+{
+  fullScreen_ = !fullScreen_;
+
+  if(fullScreen_)
+  {
+    ui.inputWidget->hide();
+    ui.outputWidget->hide();
+    ui.timelineWidget->hide();
+    ui.previewFooterWidget->hide();
+    ui.fullScreenButton->setIcon(QIcon(":/FrameFlow/exit-full-screen.svg"));
+  }
+  else
+  {
+    ui.inputWidget->show();
+    ui.outputWidget->show();
+    ui.timelineWidget->show();
+    ui.previewFooterWidget->show();
+    ui.fullScreenButton->setIcon(QIcon(":/FrameFlow/full-screen.svg"));
+  }
+}
+
+void FrameFlow::onChangeTransitionDuration()
+{
+  for(int i = 0; i < ui.transitionListWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.transitionListWidget->item(i);
+    if(item->isSelected())
+    {
+      int ms = ui.transitionSlider->value();
+      TransitionWidget* w = static_cast<TransitionWidget*>(ui.transitionListWidget->itemWidget(item));
+      if(w)
+      {
+        Transition t = w->transition();
+        t.msDuration = ms;
+        ui.durationLabel->setText(t.type == TransitionType::TT_CUT ? "Instant" : QString("%1 ms %2").arg(t.msDuration).arg(defaultNameForTransition(t.type)));
+        ui.currentDurationLabel->setText(QString("%1ms").arg(t.msDuration));
+        w->setTransition(t);
+      }
+      break;
+    }
+  }
+}
+
+void FrameFlow::onChangeTransitionSelected()
+{
+  for(int i = 0; i < ui.transitionListWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.transitionListWidget->item(i);
+    if(item->isSelected())
+    {
+      TransitionWidget* w = static_cast<TransitionWidget*>(ui.transitionListWidget->itemWidget(item));
+      if(w)
+      {
+        Transition t = w->transition();
+        int ms = t.msDuration;
+        ui.transitionSlider->setValue(ms);
+        ui.durationLabel->setText(t.type == TransitionType::TT_CUT ? "Instant" : QString("%1 ms %2").arg(t.msDuration).arg(defaultNameForTransition(t.type)));
+        ui.currentDurationLabel->setText(QString("%1ms").arg(t.msDuration));
+
+        ProjectManager &pm = ProjectManager::instance();
+        pm.setCurrentTransition(t.id);
+      }
+      break;
+    }
+  }
 }

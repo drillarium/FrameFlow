@@ -24,6 +24,7 @@ public:
 
 protected:
   void workerThread();
+  void renderScene(CComPtr<IMFFrame> &_frame, const QUuid &_scene);
 
 protected:
   bool running_ = false;

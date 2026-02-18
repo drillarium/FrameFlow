@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/FrameFlow">
+    <file>exit-full-screen.svg</file>
     <file>shield.svg</file>
     <file>refresh.svg</file>
     <file>copy.svg</file>

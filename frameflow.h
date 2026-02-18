@@ -39,6 +39,9 @@ protected slots:
   void onTake();
   void onLicenseChanged(LicenseManager::Status newStatus);
   void onHelp();
+  void onToggleFullScreen();
+  void onChangeTransitionDuration();
+  void onChangeTransitionSelected();
 
 private:
   void readSettings();
@@ -57,5 +60,7 @@ private:
   class ProjectsWidget* projectsWidget_;
   bool windowTitleVisible_ = true;
   QUuid nextProjectUID_;
+  bool fullScreen_ = false;
+  QUuid nextTransitionUID_;
 };
 
