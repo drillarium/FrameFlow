@@ -28,7 +28,8 @@ public:
   bool deleteSource(const QUuid& sourceId);
   QVector<Transition> listTransitions();
   QVector<StreamingServer> listStreamingServers();
-  bool saveStreamingServer(StreamingServer &_streamingServer);
+  bool saveStreamingServer(const StreamingServer &_streamingServer);
+  bool removeStreamingServer(const QUuid &_id);
 
 private:
   Database();
@@ -44,6 +45,7 @@ private:
   bool migrateV1ToV2();
   bool migrateV2ToV3();
   bool migrateV3ToV4();
+  bool migrateV4ToV5();
 
 private:
   QSqlDatabase db_;

@@ -1,13 +1,16 @@
 #pragma once
 
+#include <QObject>
 #include <MFormats.h>
 #include <atlbase.h> // CComPtr
 #include "source_model.h"
 #include <QRect>
 
 // BaseRenderer
-class BaseRenderer
+class BaseRenderer : public QObject
 {
+Q_OBJECT
+
 public:
   static BaseRenderer *build(SourceType type);
   virtual ~BaseRenderer() {};

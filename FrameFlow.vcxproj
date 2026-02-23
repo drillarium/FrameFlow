@@ -197,6 +197,8 @@
     <QtMoc Include="livesourcewidget.h" />
     <QtMoc Include="screencapturewidget.h" />
     <QtMoc Include="textwidget.h" />
+    <ClInclude Include="encoding_settings_model.h" />
+    <ClInclude Include="MLProtect_MFormats SDK.(subscription valid until 25-May-2025 - NRD Multimedia, S.L.).h" />
     <ClInclude Include="server_model.h" />
     <ClInclude Include="textrenderer.h" />
     <ClInclude Include="transition_model.h" />
@@ -208,7 +210,7 @@
     <QtMoc Include="createscenedialog.h" />
     <QtMoc Include="alertwidget.h" />
     <QtMoc Include="colorpickerwidget.h" />
-    <ClInclude Include="baserenderer.h" />
+    <QtMoc Include="baserenderer.h" />
     <ClInclude Include="basesourcewidget.h" />
     <ClInclude Include="db.h" />
     <QtMoc Include="project_manager.h" />
@@ -217,7 +219,7 @@
     <QtMoc Include="license_manager.h" />
     <QtMoc Include="helpdialog.h" />
     <ClInclude Include="project_model.h" />
-    <ClInclude Include="scenerenderer.h" />
+    <QtMoc Include="scenerenderer.h" />
     <QtMoc Include="renamedialog.h" />
     <ClInclude Include="scene_model.h" />
     <QtMoc Include="sourceitemwidget.h" />

@@ -4,7 +4,7 @@
 #include <QJsonDocument>
 #include <QDebug>
 
-static constexpr int CURRENT_SCHEMA_VERSION = 4;
+static constexpr int CURRENT_SCHEMA_VERSION = 5;
 
 Database& Database::instance()
 {
@@ -94,6 +94,10 @@ bool Database::createSchemaIfNeeded()
       case 3:
         if(!migrateV3ToV4())  return false;
         version = 4;
+      break;
+      case 4:
+        if(!migrateV4ToV5())  return false;
+        version = 5;
       break;
       default:
         qCritical() << "Unknown schema version:" << version;
@@ -311,13 +315,14 @@ bool Database::saveProject(const Project& project)
 
       QSqlQuery qsrc;
       qsrc.prepare(R"(
-                INSERT INTO sources(id, scene_id, type, name, order_index, config)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO sources(id, scene_id, type, name, order_index, config, original_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(id) DO UPDATE SET
                     type=excluded.type,
                     name=excluded.name,
                     order_index=excluded.order_index,
-                    config=excluded.config
+                    config=excluded.config,
+                    original_id=excluded.original_id
             )");
 
       qsrc.addBindValue(src.id.toString(QUuid::WithoutBraces));
@@ -326,6 +331,7 @@ bool Database::saveProject(const Project& project)
       qsrc.addBindValue(src.name);
       qsrc.addBindValue(src.orderIndex);
       qsrc.addBindValue(QJsonDocument(src.config).toJson(QJsonDocument::Compact));
+      qsrc.addBindValue(src.originalId.toString(QUuid::WithoutBraces));
 
       if(!qsrc.exec()) goto fail;
     }
@@ -389,6 +395,7 @@ std::optional<Project> Database::loadProject(const QUuid& projectId)
       src.name = qsrc.value("name").toString();
       src.orderIndex = qsrc.value("order_index").toInt();
       src.config = QJsonDocument::fromJson(qsrc.value("config").toByteArray()).object();
+      src.originalId = QUuid(qsrc.value("original_id").toString());
 
       s.sources.push_back(src);
     }
@@ -578,6 +585,32 @@ bool Database::migrateV3ToV4()
   return db_.commit();
 }
 
+bool Database::migrateV4ToV5()
+{
+  qDebug() << "Migrating schema v4 => v5";
+
+  db_.transaction();
+
+  QSqlQuery q(db_);
+
+  if(!q.exec(R"(
+        ALTER TABLE sources
+        ADD COLUMN original_id TEXT
+    )")) {
+    db_.rollback();
+    qWarning() << "Failed to add original_id column:" << q.lastError();
+    return false;
+  }
+
+  if(!setSchemaVersion(5))
+  {
+    db_.rollback();
+    return false;
+  }
+
+  return db_.commit();
+}
+
 QVector<StreamingServer> Database::listStreamingServers()
 {
   QVector<StreamingServer> streamingServers;
@@ -603,7 +636,7 @@ QVector<StreamingServer> Database::listStreamingServers()
   return streamingServers;
 }
 
-bool Database::saveStreamingServer(StreamingServer& _streamingServer)
+bool Database::saveStreamingServer(const StreamingServer& _streamingServer)
 {
   QMutexLocker lock(&mutex_);
 
@@ -641,4 +674,34 @@ fail:
   qCritical() << "Save failed:" << q.lastError();
   db_.rollback();
   return false;
+}
+
+bool Database::removeStreamingServer(const QUuid& _id)
+{
+  QMutexLocker lock(&mutex_);
+
+  if(!db_.isOpen()) return false;
+
+  db_.transaction();
+
+  QSqlQuery q;
+  q.prepare("DELETE FROM servers WHERE id=?");
+  q.addBindValue(_id.toString(QUuid::WithoutBraces));
+
+  if(!q.exec())
+  {
+    qCritical() << "Delete server failed:" << q.lastError();
+    db_.rollback();
+    return false;
+  }
+
+  // Optional: check if something was actually deleted
+  if(q.numRowsAffected() == 0)
+  {
+    qWarning() << "No server deleted (id not found)";
+    db_.rollback();
+    return false;
+  }
+
+  return db_.commit();
 }

@@ -4,6 +4,7 @@
 #include "ui_frameflow.h"
 #include "scene_model.h"
 #include "license_manager.h"
+#include "renderermanager.h"
 
 class FrameFlow : public QMainWindow
 {
@@ -42,6 +43,10 @@ protected slots:
   void onToggleFullScreen();
   void onChangeTransitionDuration();
   void onChangeTransitionSelected();
+  void onStreamingStateChange(EStreamingState _newSate);
+  void onGoToLive();
+  void onStartRecording();
+  void onRecordingStateChange(ERecordingState newState);
 
 private:
   void readSettings();
@@ -62,5 +67,7 @@ private:
   QUuid nextProjectUID_;
   bool fullScreen_ = false;
   QUuid nextTransitionUID_;
+  QElapsedTimer streamingTimer_;
+  QElapsedTimer recordingTimer_;
 };
 

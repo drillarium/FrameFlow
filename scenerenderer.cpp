@@ -2,6 +2,10 @@
 #include "project_manager.h"
 #include "renderermanager.h"
 #include <QElapsedTimer>
+#include <chrono>
+#include <QDir>
+
+using namespace std::chrono_literals;
 
 class Transitioner
 {
@@ -51,7 +55,8 @@ public:
     {
       CComPtr<IMFFrame> frameResult;
       CComBSTR ttype(L"slide");
-      CComBSTR propList(L"slideStyle=SWAP bands=100");
+      // CComBSTR ttype(L"slide(slideStyle='SWAP' bands='100')");
+      CComBSTR propList;
       CComBSTR converterId;
       _toFrame->MFTransition(_fromFrame, &frameResult, _progress, ttype, propList, converterId);
       _fromFrame = frameResult;
@@ -130,7 +135,7 @@ void SceneRenderer::renderScene(CComPtr<IMFFrame>& _frame, const QUuid& _scene)
   {
     CComPtr<IMFFrame> sourceFrame;
     QRect rect = getSourceRect(scene.sources[i]);
-    rm.getFrame(scene.sources[i].id, sourceFrame);
+    rm.getFrame(scene.sources[i].originalId.isNull()? scene.sources[i].id : scene.sources[i].originalId, sourceFrame);
     if(sourceFrame)
     {
       int resizeField = -1;
@@ -168,6 +173,9 @@ void SceneRenderer::workerThread()
 
   QUuid lastSceneUID;
   Transitioner transitioner;
+
+  // commandThread
+  std::thread commandThread = std::thread([&] { nextCommandThread(); });
 
   // from current project
   ProjectManager& pm = ProjectManager::instance();
@@ -285,6 +293,33 @@ void SceneRenderer::workerThread()
       lastFrame_ = frame;
     }
 
+    // streaming
+    if(streamingWriterOpened_)
+    {
+      if(streamingWriter_)
+      {
+        std::lock_guard<std::mutex> lock(streamingWriterMutex_);
+        
+        REFERENCE_TIME maxWait = -1;
+        CComBSTR props;
+        CComQIPtr<IMFReceiver> receiverPreview(streamingWriter_);
+        receiverPreview->ReceiverFramePut(frame, maxWait, props);
+      }
+    }
+    // file
+    if(fileWriterOpened_)
+    {
+      if(fileWriter_)
+      {
+        std::lock_guard<std::mutex> lock(fileWriterMutex_);
+
+        REFERENCE_TIME maxWait = -1;
+        CComBSTR props;
+        CComQIPtr<IMFReceiver> receiverPreview(fileWriter_);
+        receiverPreview->ReceiverFramePut(frame, maxWait, props);
+      }
+    }
+
     // preview
     REFERENCE_TIME maxWait = -1;
     CComBSTR props;
@@ -294,6 +329,10 @@ void SceneRenderer::workerThread()
 
 cleanup:
   {
+    if(commandThread.joinable())
+    {
+      commandThread.join();
+    }
     preview->PreviewEnable(channel, FALSE, FALSE);
     preview = NULL;
     blackFrame = NULL;
@@ -311,3 +350,181 @@ bool SceneRenderer::getFrame(CComPtr<IMFFrame>& _frame)
   return true;
 }
 
+int get_writer_index(IMFWriter* writer, eMFWriterOption option, const char* _name)
+{
+  if(!writer) return -1;
+
+  int count = 0;
+  writer->WriterOptionGetCount(option, &count);
+  for(int i = 0; i < count; i++)
+  {
+    CComBSTR name, longName;
+    writer->WriterOptionGetByIndex(option, i, &name, &longName);
+    if(longName)
+    {
+      std::wstring wideLong(longName);
+      std::string strLong(wideLong.begin(), wideLong.end());
+      if(!strLong.compare(_name)) return i;
+    }
+    if(name)
+    {
+      std::wstring wide(name);
+      std::string str(wide.begin(), wide.end());
+      if(!str.compare(_name)) return i;
+    }
+  }
+
+  return -1;
+}
+
+bool has_codec(const char* codec)
+{
+  CComPtr<IMFWriter> writer;
+  HRESULT hr = writer.CoCreateInstance(__uuidof(MFWriter));
+  if(FAILED(hr))
+    return false;
+
+  int index = get_writer_index(writer, eMFWO_Format, "mpegts");
+  if(index < 0)
+    return false;
+
+  CComPtr<IMFProps> props;
+  hr = writer->WriterOptionSetByIndex(eMFWO_Format, index, &props);
+  if(FAILED(hr))
+    return false;
+
+  int codecIndex = get_writer_index(writer, eMFWO_VideoCodec, codec);
+  return (codecIndex >= 0);
+}
+
+#define H264_NVIDIA_CODED "n264"
+#define H264_QS_SW_CODEC "q264sw"
+#define H264_QS_HW_CODEC "q264hw"
+#define H264_CISCO_CODEC "libopenh264"
+
+QString get_h264_codec()
+{
+  if(has_codec(H264_NVIDIA_CODED))     return H264_NVIDIA_CODED;
+  else if(has_codec(H264_QS_HW_CODEC)) return H264_QS_HW_CODEC;
+  else if(has_codec(H264_QS_SW_CODEC)) return H264_QS_SW_CODEC;
+  return H264_CISCO_CODEC;
+}
+
+void SceneRenderer::nextCommandThread()
+{
+  while(running_)
+  {
+    // next command
+    ECommand nextCommand = nextCommand_;
+    nextCommand_ = ECommand::CMD_NONE;
+  
+    if(nextCommand == ECommand::CMD_START_STREAMING)
+    {
+      if(!streamingWriter_)
+      {
+        // open
+        HRESULT hr = streamingWriter_.CoCreateInstance(__uuidof(MFWriter));
+        if(SUCCEEDED(hr))
+        {
+          ProjectManager &pm = ProjectManager::instance();
+          auto ssl = pm.listStreamingServers();
+          for(StreamingServer ss : ssl)
+          {
+            if(ss.enabled)
+            {
+              // youyube
+              QString qurl = QString("%1/%2").arg(ss.url).arg(ss.key);
+              CComBSTR url = qurl.toStdWString().c_str();
+              QString h264Codec = get_h264_codec();
+              QString qcondif = QString(" format='flv' protocol='rtmp://' video::codec='%1' audio::codec='libmp3lame' audio::ar='44100'").arg(h264Codec);
+              CComBSTR config = qcondif.toStdWString().c_str();
+              int reset = 1;
+              hr = streamingWriter_->WriterSet(url, reset, config);
+            }
+            break;
+          }
+        }
+
+        streamingWriterOpened_ = true;
+        emit onStartStreaming();
+      }
+    }
+    else if(nextCommand == ECommand::CMD_STOP_STREAMING)
+    {
+      streamingWriterOpened_ = false;
+
+      {
+        std::lock_guard<std::mutex> lock(streamingWriterMutex_);
+        if(streamingWriter_)
+        {
+          BOOL async = FALSE;
+          streamingWriter_->WriterClose(async);
+          streamingWriter_ = NULL;
+        }
+      }
+
+      emit onStopStreaming();
+    }
+    else if(nextCommand == ECommand::CMD_START_RECORDING)
+    {
+      if(!fileWriter_)
+      {
+        // open
+        HRESULT hr = fileWriter_.CoCreateInstance(__uuidof(MFWriter));
+        if(SUCCEEDED(hr))
+        {
+          ProjectManager &pm = ProjectManager::instance();
+          EncoderSettings encoderSettings = pm.encoderSettings();
+
+          QDir dir(encoderSettings.outputFolder);
+          if(!dir.exists()) dir.mkpath(".");
+          QString timestamp = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss");
+          QString fileName = QString("FrameFlow_%1.mp4").arg(timestamp);
+          QString fullPath = dir.filePath(fileName);
+
+          CComBSTR url = fullPath.toStdWString().c_str();
+          QString h264Codec = get_h264_codec();
+          QString qcondif = QString(" format='mp4' video::codec='%1' audio::codec='aac' audio::ar='44100' audio::b='128K'").arg(h264Codec);
+          CComBSTR config = qcondif.toStdWString().c_str();
+          int reset = 1;
+          hr = fileWriter_->WriterSet(url, reset, config);
+        }
+
+        fileWriterOpened_ = true;
+        emit onStartRecording();
+      }
+    }
+    else if(nextCommand == ECommand::CMD_STOP_RECORDING)
+    {
+      fileWriterOpened_ = false;
+
+      {
+        std::lock_guard<std::mutex> lock(fileWriterMutex_);
+        if(fileWriter_)
+        {
+          BOOL async = FALSE;
+          fileWriter_->WriterClose(async);
+          fileWriter_ = NULL;
+        }
+      }
+
+      emit onStopRecording();
+    }
+    
+    std::this_thread::sleep_for(1ms);
+  }
+
+  if(streamingWriter_)
+  {
+    BOOL async = FALSE;
+    streamingWriter_->WriterClose(async);
+    streamingWriter_ = NULL;
+  }
+
+  if(fileWriter_)
+  {
+    BOOL async = FALSE;
+    fileWriter_->WriterClose(async);
+    fileWriter_ = NULL;
+  }
+}

@@ -5,6 +5,7 @@
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QTimer>
+#include "project_manager.h"
 
 class SourceItemDelegate : public QStyledItemDelegate
 {
@@ -98,9 +99,12 @@ SelectSourceDialog::SelectSourceDialog(QWidget *parent)
   connect(ui.buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, [this](QAbstractButton* button) {
     if(button == ui.newSourceButton) {
       ui.pageStackedWidget->setCurrentIndex(0);
+      onItemSelectedChange();
     }
     else if(button == ui.copySceneButton) {
+      
       ui.pageStackedWidget->setCurrentIndex(1);
+      onItemSelectedChange();
     }
   });
 
@@ -108,12 +112,27 @@ SelectSourceDialog::SelectSourceDialog(QWidget *parent)
   ui.listView->setModel(model);
   ui.listView->setItemDelegate(new SourceItemDelegate(ui.listView));
 
-  for(int i = 0; i < 10; i++) {
-  QStandardItem* item = new QStandardItem();
-  item->setText("Webcam");  // title
-  item->setData(QIcon(":/icons/webcam.png"), Qt::DecorationRole);
-  item->setData("Capture video from local webcam", Qt::UserRole + 1);
-  model->appendRow(item); }
+  // iterate over all sources not cloned from another one
+  ProjectManager &pm = ProjectManager::instance();
+  auto project = pm.currentProject();
+  if(project)
+  {
+    for(Scene scene : project->scenes)
+    {
+      for(Source source : scene.sources)
+      {
+        if(source.originalId.isNull())
+        {
+          QStandardItem* item = new QStandardItem();
+          item->setText(source.name);
+          item->setData(QIcon(":/FrameFlow/tv.svg"), Qt::DecorationRole);
+          item->setData(sourceTitle(source.type), Qt::UserRole + 1);
+          item->setData(source.id, Qt::UserRole + 2);
+          model->appendRow(item);
+        }
+      }
+    }
+  }
 }
 
 SelectSourceDialog::~SelectSourceDialog()
@@ -123,57 +142,101 @@ SelectSourceDialog::~SelectSourceDialog()
 
 void SelectSourceDialog::onAccept()
 {
-  for(int i = 0; i < ui.listWidget->count(); ++i)
+  int index = ui.pageStackedWidget->currentIndex();
+  if(index == 0)
   {
-    QListWidgetItem* item = ui.listWidget->item(i);
-    if(item->isSelected())
+    for(int i = 0; i < ui.listWidget->count(); ++i)
     {
-      if(i < ui.customStackedWidget->count())
+      QListWidgetItem* item = ui.listWidget->item(i);
+      if(item->isSelected())
       {
-        BaseSourceWidget* w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget(i));
-        if(w->isValid())
+        if(i < ui.customStackedWidget->count())
         {
-          source_ = w->source();
-          accept();
+          BaseSourceWidget* w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget(i));
+          if(w->isValid())
+          {
+            source_ = w->source();
+            accept();
+          }
+          else
+          {
+            ui.errorLabel->setText("ERROR: Check parameters");
+            QTimer::singleShot(5000, [&](){ ui.errorLabel->clear(); });
+          }
+          return;
         }
-        else
-        {
-          ui.errorLabel->setText("ERROR: Check parameters");
-          QTimer::singleShot(5000, [&](){ ui.errorLabel->clear(); });
-        }
-        return;
       }
     }
+    reject();
   }
-
-  reject();
+  else
+  {
+    QModelIndex index = ui.listView->currentIndex();
+    if(index.isValid())
+    {
+      QVariant value = index.data(Qt::UserRole + 2);
+      QUuid sourceId = value.toUuid();
+      
+      ProjectManager& pm = ProjectManager::instance();
+      auto project = pm.currentProject();
+      if(project)
+      {
+        for(Scene scene : project->scenes)
+        {
+          for(Source source : scene.sources)
+          {
+            if(source.id == sourceId)
+            {
+              source_ = source;
+              source_.originalId = sourceId;
+              source_.name = source_.name + "_copy";
+              accept();
+              return;
+            }
+          }
+        }
+      }
+    }
+    reject();
+  }
 }
 
 void SelectSourceDialog::onItemSelectedChange()
 {
-  int selected = -1;
-  for(int i = 0; i < ui.listWidget->count(); ++i)
+  int index = ui.pageStackedWidget->currentIndex();
+  if(index == 0)
   {
-    QListWidgetItem* item = ui.listWidget->item(i);
-    SourceItemWidget* w = static_cast<SourceItemWidget*>(ui.listWidget->itemWidget(item));
-    if(w) w->setSelected(item->isSelected() && isTypeEnabled((SourceType) i));
-    if(item->isSelected()) selected = i;
-  }
+    int selected = -1;
+    for(int i = 0; i < ui.listWidget->count(); ++i)
+    {
+      QListWidgetItem* item = ui.listWidget->item(i);
+      SourceItemWidget* w = static_cast<SourceItemWidget*>(ui.listWidget->itemWidget(item));
+      if(w) w->setSelected(item->isSelected() && isTypeEnabled((SourceType) i));
+      if(item->isSelected()) selected = i;
+    }
 
-  if(!isTypeEnabled((SourceType) selected)) return;
+    if(!isTypeEnabled((SourceType) selected)) return;
 
-  if(selected >= 0 && selected < ui.customStackedWidget->count())
-  {
-    ui.customStackedWidget->setCurrentIndex(selected);
-    BaseSourceWidget *w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget(selected));
-    w->init();
-    ui.customStackedWidget->setFixedHeight(w->h());
+    if(selected >= 0 && selected < ui.customStackedWidget->count())
+    {
+      ui.customStackedWidget->setCurrentIndex(selected);
+      BaseSourceWidget *w = static_cast<BaseSourceWidget*>(ui.customStackedWidget->widget(selected));
+      w->init();
+      ui.customStackedWidget->setFixedHeight(w->h());
+    }
+    else
+    {
+      ui.customStackedWidget->setCurrentIndex(0);
+      ui.customStackedWidget->setFixedHeight(0);
+    }
+    setFixedWidth(width());
+    ui.customStackedWidget->show();
+    setFixedHeight(ui.listWidget->height() + ui.customStackedWidget->height() + 120);
   }
-  else
+  else if(index == 1)
   {
-    ui.customStackedWidget->setCurrentIndex(0);
-    ui.customStackedWidget->setFixedHeight(0);
+    setFixedWidth(width());
+    ui.customStackedWidget->hide();
+    setFixedHeight(ui.listView->height() + 120);
   }
-  setFixedWidth(width());
-  setFixedHeight(ui.listWidget->height() + ui.customStackedWidget->height() + 120);
 }

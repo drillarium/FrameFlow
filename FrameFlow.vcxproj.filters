@@ -175,9 +175,6 @@
     <ClCompile Include="helpdialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="livesourcewidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="textwidget.cpp">
       <Filter>widgets</Filter>
     </ClCompile>
@@ -188,7 +185,10 @@
       <Filter>widgets</Filter>
     </ClCompile>
     <ClCompile Include="textrenderer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="livesourcewidget.cpp">
+      <Filter>widgets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -207,17 +207,11 @@
     <ClInclude Include="scene_model.h">
       <Filter>models</Filter>
     </ClInclude>
-    <ClInclude Include="baserenderer.h">
-      <Filter>renderers</Filter>
-    </ClInclude>
     <ClInclude Include="sourcecolorbaserenderer.h">
       <Filter>renderers</Filter>
     </ClInclude>
     <ClInclude Include="basesourcewidget.h">
       <Filter>widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="scenerenderer.h">
-      <Filter>renderers</Filter>
     </ClInclude>
     <ClInclude Include="sourcereaderbaserenderer.h">
       <Filter>renderers</Filter>
@@ -228,13 +222,19 @@
     <ClInclude Include="version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="textrenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="transition_model.h">
       <Filter>models</Filter>
     </ClInclude>
     <ClInclude Include="server_model.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="textrenderer.h">
+      <Filter>renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="MLProtect_MFormats SDK.(subscription valid until 25-May-2025 - NRD Multimedia, S.L.).h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="encoding_settings_model.h">
       <Filter>models</Filter>
     </ClInclude>
   </ItemGroup>
@@ -338,9 +338,6 @@
     <QtMoc Include="helpdialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="livesourcewidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="textwidget.h">
       <Filter>widgets</Filter>
     </QtMoc>
@@ -349,6 +346,15 @@
     </QtMoc>
     <QtMoc Include="ndiwidget.h">
       <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="livesourcewidget.h">
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="baserenderer.h">
+      <Filter>renderers</Filter>
+    </QtMoc>
+    <QtMoc Include="scenerenderer.h">
+      <Filter>renderers</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

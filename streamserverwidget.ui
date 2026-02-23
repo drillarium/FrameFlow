@@ -127,7 +127,7 @@ QComboBox QScrollBar:vertical {
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
-          <number>10</number>
+          <number>5</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -161,7 +161,7 @@ QComboBox QScrollBar:vertical {
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit">
+          <widget class="QLineEdit" name="nameLineEdit">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -180,22 +180,38 @@ QComboBox QScrollBar:vertical {
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
+          <widget class="QPushButton" name="saveButton">
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
            </property>
-           <property name="sizeHint" stdset="0">
+           <property name="toolTip">
+            <string>Save changes</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="frameflow.qrc">
+             <normaloff>:/FrameFlow/save.svg</normaloff>:/FrameFlow/save.svg</iconset>
+           </property>
+           <property name="iconSize">
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>24</width>
+             <height>24</height>
             </size>
            </property>
-          </spacer>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="removeButton">
            <property name="cursor">
             <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>Remove server</string>
            </property>
            <property name="text">
             <string/>
@@ -280,7 +296,7 @@ QComboBox QScrollBar:vertical {
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_2">
+       <widget class="QLineEdit" name="serverLineEdit">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -324,7 +340,7 @@ QComboBox QScrollBar:vertical {
           <number>3</number>
          </property>
          <item>
-          <widget class="QLineEdit" name="lineEdit_3">
+          <widget class="QLineEdit" name="streamKeyLineEdit">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -409,7 +425,7 @@ QComboBox QScrollBar:vertical {
    <sender>removeButton</sender>
    <signal>clicked()</signal>
    <receiver>StreamServerWidgetClass</receiver>
-   <slot>onRemoveButton()</slot>
+   <slot>onRemove()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>379</x>
@@ -421,8 +437,42 @@ QComboBox QScrollBar:vertical {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>saveButton</sender>
+   <signal>clicked()</signal>
+   <receiver>StreamServerWidgetClass</receiver>
+   <slot>onSave()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>eyeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>StreamServerWidgetClass</receiver>
+   <slot>onToggleKey()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>374</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>onRemoveButton()</slot>
+  <slot>onRemove()</slot>
+  <slot>onSave()</slot>
+  <slot>onToggleKey()</slot>
  </slots>
 </ui>

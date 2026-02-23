@@ -29,6 +29,7 @@ struct Source
   QJsonObject config;   // persisted parameters
   QJsonObject state;    // optional, maybe not persisted
   bool dirty = false;
+  QUuid originalId;
 };
 
 static QRect getSourceRect(const Source& _source)

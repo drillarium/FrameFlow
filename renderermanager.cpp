@@ -17,6 +17,11 @@ RendererManager::RendererManager(QObject *parent)
   QTimer* timer = new QTimer(this);
   connect(timer, &QTimer::timeout, this, &RendererManager::onTimeout);
   timer->start(100); // 100 ms
+
+  connect(&programRenderer_, &SceneRenderer::onStartStreaming, this, &RendererManager::onStartStreaming);
+  connect(&programRenderer_, &SceneRenderer::onStopStreaming, this, &RendererManager::onStopStreaming);
+  connect(&programRenderer_, &SceneRenderer::onStartRecording, this, &RendererManager::onStartRecording);
+  connect(&programRenderer_, &SceneRenderer::onStopRecording, this, &RendererManager::onStopRecording);
 }
 
 QImage convertFrame(CComPtr<IMFFrame>& _frame)
@@ -72,12 +77,15 @@ bool RendererManager::reloadProjec()
       for(int j = 0; j < project->scenes[i].sources.size(); j++)
       {
         Source source = project->scenes[i].sources[j];
-        BaseRenderer *br = BaseRenderer::build(source.type);
-        if(br)
+        if(source.originalId.isNull())
         {
-          br->setSource(source);
-          br->start();
-          renderers_.push_back(br);
+          BaseRenderer *br = BaseRenderer::build(source.type);
+          if(br)
+          {
+            br->setSource(source);
+            br->start();
+            renderers_.push_back(br);
+          }
         }
       }
     }
@@ -137,12 +145,15 @@ bool RendererManager::reloadProjec()
     for(int i = 0; i < s.size(); i++)
     {
       Source source = s[i];
-      BaseRenderer* br = BaseRenderer::build(source.type);
-      if(br)
+      if(source.originalId.isNull())
       {
-        br->setSource(source);
-        br->start();
-        renderers_.push_back(br);
+        BaseRenderer* br = BaseRenderer::build(source.type);
+        if(br)
+        {
+          br->setSource(source);
+          br->start();
+          renderers_.push_back(br);
+        }
       }
     }
 
@@ -196,4 +207,77 @@ bool RendererManager::getFrame(QUuid sourceId, CComPtr<IMFFrame>& _frame)
 
   return true;
 }
+
+bool RendererManager::startStreaming()
+{
+  if(streaming_ == EStreamingState::SS_STREAMING || streaming_ == EStreamingState::SS_WAITING_START) return true;
+
+  streaming_ = EStreamingState::SS_WAITING_START;
+  emit onStreamingStateChange(streaming_);
+
+  programRenderer_.startStreaming();
+  
+  return true;
+}
+
+bool RendererManager::stopStreaming()
+{
+  if(streaming_ == EStreamingState::SS_NONE || streaming_ == EStreamingState::SS_WAITING_NONE) return true;
+
+  streaming_ = EStreamingState::SS_WAITING_NONE;
+  emit onStreamingStateChange(streaming_);
+
+  programRenderer_.stopStreaming();
+
+  return true;
+}
+
+void RendererManager::onStartStreaming()
+{
+  streaming_ = EStreamingState::SS_STREAMING;
+  emit onStreamingStateChange(streaming_);
+}
+
+void RendererManager::onStopStreaming()
+{
+  streaming_ = EStreamingState::SS_NONE;
+  emit onStreamingStateChange(streaming_);
+}
+
+bool RendererManager::startRecording()
+{
+  if(recording_ == ERecordingState::RS_RECORDING || recording_ == ERecordingState::RS_WAITING_START) return true;
+
+  recording_ = ERecordingState::RS_WAITING_START;
+  emit onRecordingStateChange(recording_);
+
+  programRenderer_.startRecording();
+
+  return true;
+}
+
+bool RendererManager::stopRecording()
+{
+  if(recording_ == ERecordingState::RS_NONE || recording_ == ERecordingState::RS_WAITING_NONE) return true;
+
+  recording_ = ERecordingState::RS_WAITING_NONE;
+  emit onRecordingStateChange(recording_);
+
+  programRenderer_.stopRecording();
+
+  return true;
+}
+
+void RendererManager::onStartRecording()
+{
+  recording_ = ERecordingState::RS_RECORDING;
+  emit onRecordingStateChange(recording_);
+}
+
+void RendererManager::onStopRecording()
+{
+  recording_ = ERecordingState::RS_NONE;
+  emit onRecordingStateChange(recording_);
+}
+
 

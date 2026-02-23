@@ -1,4 +1,4 @@
-#include "frameflow.h"
+﻿#include "frameflow.h"
 #include <QSettings>
 #include <QTimer>
 #include "myutils.h"
@@ -18,11 +18,30 @@
 #include "createscenedialog.h"
 #include "newprojectdialog.h"
 #include "renamedialog.h"
-#include "renderermanager.h"
 #include "editsourcedialog.h"
 #include "helpdialog.h"
 #include "transition_model.h"
+#include "MLProtect_MFormats SDK.(subscription valid until 25-May-2025 - NRD Multimedia, S.L.).h"
+#include <QJsonDocument>
 
+// MFormatProtectionInitializer
+class MFormatProtectionInitializer
+{
+public:
+  MFormatProtectionInitializer()
+  {
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    hr = MFormatsSDKLic::IntializeProtection();
+  }
+  ~MFormatProtectionInitializer()
+  {
+    MFormatsSDKLic::CloseProtection();
+    CoUninitialize();
+  }
+
+} initializer_;
+
+// FrameFlow
 FrameFlow::FrameFlow(QWidget *_parent)
 :QMainWindow(_parent)
 {
@@ -170,8 +189,17 @@ FrameFlow::FrameFlow(QWidget *_parent)
   connect(ui.previewSceneWidget, &PreviewSceneWidget::onCurrentSourceRectChange, this, &FrameFlow::onCurrentSourceRectChange);
   connect(ui.PREVIEWWidget, &PreviewSceneWidget::onCurrentSourceRectChange, this, &FrameFlow::onCurrentSourceRectChange);
 
+  // live status signals
+  RendererManager& rm = RendererManager::instance();
+  connect(&rm, &RendererManager::onStreamingStateChange, this, &FrameFlow::onStreamingStateChange);
+  onStreamingStateChange(EStreamingState::SS_NONE);
+
+  connect(&rm, &RendererManager::onRecordingStateChange, this, &FrameFlow::onRecordingStateChange);
+  onRecordingStateChange(ERecordingState::RS_NONE);
+
 #ifndef _DEBUG
   ui.effectsWidget->hide();
+  ui.timelineWidget->hide();
 #endif // _DEBUG
 }
 
@@ -231,6 +259,13 @@ void FrameFlow::readSettings()
   {
     nextTransitionUID_ = QUuid::fromString(settings.value("current_transition").toString());
   }
+  if(settings.contains("ecoder_settings"))
+  {
+    QByteArray jsonData = settings.value("ecoder_settings").toByteArray();
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+    ProjectManager &pm = ProjectManager::instance();
+    pm.setEncoderSettings(modelFromJSON(doc));
+  }
 }
 
 void FrameFlow::writeSettings()
@@ -266,6 +301,11 @@ void FrameFlow::writeSettings()
   {
     settings.setValue("current_transition", transition->id.toString());
   }
+
+  EncoderSettings es = pm.encoderSettings();
+  QJsonDocument doc = JSONfromModel(es);
+  QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+  settings.setValue("ecoder_settings", jsonData);
 }
 
 void FrameFlow::closeEvent(QCloseEvent* event)
@@ -296,6 +336,38 @@ void FrameFlow::updateSystemStats()
   ui.cpuValueLabel->setText(QString("%1%").arg(cpu, 0, 'f', 1));
   ui.gpuValueLabel->setText(QString("%1%").arg(gpu, 0, 'f', 1));
   ui.memValueLabel->setText(QString("%1% / %2 GB").arg(mem.usedPercent, 0, 'f', 1).arg(mem.usedGB, 0, 'f', 1));
+
+  if(streamingTimer_.isValid())
+  {
+    qint64 elapsed = streamingTimer_.elapsed();
+    qint64 totalSeconds = elapsed / 1000;
+    qint64 hours = totalSeconds / 3600;
+    qint64 minutes = (totalSeconds % 3600) / 60;
+    qint64 seconds = totalSeconds % 60;
+    QString timeString = QString("%1:%2:%3").arg(hours, 2, 10, QChar('0')).arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0'));
+    ui.streamTimeLabel->setText(timeString);
+    ui.streamingTimeLabel->setText(timeString);
+  }
+  else
+  {
+    ui.streamTimeLabel->setText("00:00:00");
+    ui.streamingTimeLabel->setText("00:00:00");
+  }
+
+  if(recordingTimer_.isValid())
+  {
+    qint64 elapsed = recordingTimer_.elapsed();
+    qint64 totalSeconds = elapsed / 1000;
+    qint64 hours = totalSeconds / 3600;
+    qint64 minutes = (totalSeconds % 3600) / 60;
+    qint64 seconds = totalSeconds % 60;
+    QString timeString = QString("● %1:%2:%3").arg(hours, 2, 10, QChar('0')).arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0'));
+    ui.recordingLabel->setText(timeString);
+  }
+  else
+  {
+    ui.recordingLabel->setText("● 00:00:00");
+  }  
 }
 
 void FrameFlow::onAlerts()
@@ -316,6 +388,12 @@ void FrameFlow::onSettings()
 {
   SettingsDialog dlg(this);
   dlg.setWindowModality(Qt::ApplicationModal);
+
+  connect(&dlg, &SettingsDialog::saveEncoding, this, [&] (const EncoderSettings& _settings) {
+    ProjectManager &pm = ProjectManager::instance();
+    pm.setEncoderSettings(_settings);
+    writeSettings();
+  });
 
   QWidget* parent = this;
   QRect parentRect = parent->geometry();
@@ -853,5 +931,125 @@ void FrameFlow::onChangeTransitionSelected()
       }
       break;
     }
+  }
+}
+
+void FrameFlow::onGoToLive()
+{
+  RendererManager& rm = RendererManager::instance();
+  EStreamingState state = rm.stremingState();
+  if(state == EStreamingState::SS_STREAMING)
+  {
+    rm.stopStreaming();
+  }
+  else if(state == EStreamingState::SS_NONE)
+  {
+    rm.startStreaming();
+  }
+}
+
+void FrameFlow::onStreamingStateChange(EStreamingState newState)
+{
+  if(newState == EStreamingState::SS_NONE)
+  {
+    ui.gotoLiveButton->setStyleSheet("QPushButton { background: #19BDDE; color: black; border: 1px solid #19BDDE; border-radius: 8px;} QPushButton:hover { background-color: #14A8C6; color: black;}");
+    ui.gotoLiveButton->setText("Go Live");
+    ui.liveStatusLabel->setText("Offline");
+    ui.liveStatusLabel->setStyleSheet("QLabel { color: #22C35D }");
+    ui.iconStatusLabel->setPixmap(QPixmap(":/FrameFlow/offline.svg"));
+    streamingTimer_.invalidate();
+    ui.streamTimeWidget->hide();
+    ui.viewersWidget->hide();
+    ui.streamingStatusLabel->setText("Offline");
+    ui.streamingStatusLabel->setStyleSheet("QLabel{ background: black; color: #7B899D; border-radius: 12px; }");
+    ui.streamingTimeLabel->hide();
+  }
+  else if(newState == EStreamingState::SS_WAITING_START)
+  {
+    ui.gotoLiveButton->setStyleSheet("QPushButton { background: #19BDDE; color: black; border: 1px solid #19BDDE; border-radius: 8px;} QPushButton:hover { background-color: #14A8C6; color: black;}");
+    ui.gotoLiveButton->setText("Waiting Start");
+    ui.liveStatusLabel->setText("Connecting");
+    ui.liveStatusLabel->setStyleSheet("QLabel { color: #C39337 }");
+    ui.iconStatusLabel->setPixmap(QPixmap(":/FrameFlow/offline.svg"));
+    streamingTimer_.invalidate();
+    ui.streamTimeWidget->hide();
+    ui.viewersWidget->hide();
+    ui.streamingStatusLabel->setText("Connecting");
+    ui.streamingStatusLabel->setStyleSheet("QLabel{ background: black; color: #7B899D; border-radius: 12px; }");
+    ui.streamingTimeLabel->hide();
+  }
+  else if(newState == EStreamingState::SS_STREAMING)
+  {
+    ui.gotoLiveButton->setStyleSheet("QPushButton { background: #DB3F40; color: white; border: 1px solid #DB3F40; border-radius: 8px;} QPushButton:hover { background-color: #C43839; color: white;}");
+    ui.gotoLiveButton->setText("End Stream");
+    ui.liveStatusLabel->setText("Connected");
+    ui.liveStatusLabel->setStyleSheet("QLabel { color: #22C35D }");
+    ui.iconStatusLabel->setPixmap(QPixmap(":/FrameFlow/wifi.svg"));
+    streamingTimer_.start();
+    ui.streamTimeWidget->show();
+    ui.viewersWidget->show();
+    ui.streamingStatusLabel->setText("LIVE");
+    ui.streamingStatusLabel->setStyleSheet("QLabel{ background: #DB3F40; color: white; border-radius: 12px; }");
+    ui.streamingTimeLabel->show();
+  }
+  else if(newState == EStreamingState::SS_WAITING_NONE)
+  {
+    ui.gotoLiveButton->setStyleSheet("QPushButton { background: #19BDDE; color: black; border: 1px solid #19BDDE; border-radius: 8px;} QPushButton:hover { background-color: #14A8C6; color: black;}");
+    ui.gotoLiveButton->setText("Waiting Stop");
+    ui.liveStatusLabel->setText("Disconnecting");
+    ui.liveStatusLabel->setStyleSheet("QLabel { color: #C39337 }");
+    ui.iconStatusLabel->setPixmap(QPixmap(":/FrameFlow/offline.svg"));
+    streamingTimer_.invalidate();
+    ui.streamTimeWidget->hide();
+    ui.viewersWidget->hide();
+    ui.streamingStatusLabel->setText("Disconnecting");
+    ui.streamingStatusLabel->setStyleSheet("QLabel{ background: black; color: #7B899D; border-radius: 12px; }");
+    ui.streamingTimeLabel->hide();
+  }
+}
+
+void FrameFlow::onStartRecording()
+{
+  RendererManager& rm = RendererManager::instance();
+  ERecordingState state = rm.recordingState();
+  if(state == ERecordingState::RS_RECORDING)
+  {
+    rm.stopRecording();
+  }
+  else if(state == ERecordingState::RS_NONE)
+  {
+    rm.startRecording();
+  }
+}
+
+void FrameFlow::onRecordingStateChange(ERecordingState newState)
+{
+ if(newState == ERecordingState::RS_NONE)
+  {
+    ui.startRecordingButton->setStyleSheet(" QPushButton { background: #171B22; color: white; border: 1px solid #647081; border-radius: 8px; } QPushButton:hover { background-color: #1E2330; color: white; }");
+    ui.startRecordingButton->setText("Start Recording");
+    ui.recordingStateWidget->hide();
+    recordingTimer_.invalidate();
+  }
+  else if(newState == ERecordingState::RS_WAITING_START)
+  {
+    ui.startRecordingButton->setStyleSheet(" QPushButton { background: #171B22; color: white; border: 1px solid #647081; border-radius: 8px; } QPushButton:hover { background-color: #1E2330; color: white; }");
+    ui.startRecordingButton->setText("Waiting Start");
+    ui.recordingStateWidget->hide();
+    recordingTimer_.invalidate();
+  }
+  else if(newState == ERecordingState::RS_RECORDING)
+  {
+    ui.startRecordingButton->setStyleSheet(" QPushButton { background: #3F1D23; color: #8D2226; border: 1px solid #8D2226; border-radius: 8px; } QPushButton:hover { background-color: #3F1D23; color: white; }");
+    ui.startRecordingButton->setText("Stop Recording");
+    ui.recordingStateWidget->show();
+    recordingTimer_.start();
+  }
+  else if(newState == EStreamingState::SS_WAITING_NONE)
+  {
+    ui.startRecordingButton->setStyleSheet(" QPushButton { background: #171B22; color: white; border: 1px solid #647081; border-radius: 8px; } QPushButton:hover { background-color: #1E2330; color: white; }");
+    ui.startRecordingButton->setText("Waiting Stop");
+    ui.recordingStateWidget->hide();
+    recordingTimer_.invalidate();
   }
 }

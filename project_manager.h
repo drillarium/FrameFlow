@@ -7,6 +7,7 @@
 #include <QRect>
 #include "transition_model.h"
 #include "server_model.h"
+#include "encoding_settings_model.h"
 
 class ProjectManager : public QObject
 {
@@ -46,6 +47,10 @@ public:
   QVector<Transition> listTransitions();
   QVector<StreamingServer> listStreamingServers();
   bool addStreamingServer(StreamingServer &_streamingServer);
+  bool removeStreamingServer(const QUuid &_id);
+  bool updateStreamingServer(const StreamingServer &_streamingServer);
+  EncoderSettings encoderSettings() { return encoderSettings_; }
+  void setEncoderSettings(const EncoderSettings &_settings) { encoderSettings_ = _settings; }
 
   // Queries
   QVector<Project> listProjects() const;
@@ -73,4 +78,5 @@ private:
   QVector<Transition> cachedTransitions_;
   std::optional<Transition> currentTransition_;
   QVector<StreamingServer> cachedStreamingServers_;
+  EncoderSettings encoderSettings_;
 };

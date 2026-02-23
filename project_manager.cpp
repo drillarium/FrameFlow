@@ -241,6 +241,15 @@ bool ProjectManager::removeSource(const QUuid& sourceId)
       // normalize order index
       for(int j = 0; j < currentProject_->scenes[i].sources.size(); ++j) currentProject_->scenes[i].sources[j].orderIndex = j;
 
+      // check originalId, case found invalidate
+      for(int j = 0; j < currentProject_->scenes[i].sources.size(); ++j)
+      {
+        if(currentProject_->scenes[i].sources[j].originalId == sourceId)
+        {
+          currentProject_->scenes[i].sources[j].originalId = QUuid();
+        }
+      }
+
       Database::instance().deleteSource(sourceId);
       saveCurrentProject();
       emit currentProjectChanged();
@@ -387,6 +396,24 @@ bool ProjectManager::addStreamingServer(StreamingServer& _streamingServer)
   _streamingServer.id = QUuid::createUuid();
   _streamingServer.orderIndex = cachedStreamingServers_.size();
   
+  if(!Database::instance().saveStreamingServer(_streamingServer)) return false;
+
+  cachedStreamingServers_ = Database::instance().listStreamingServers();
+
+  return true;
+}
+
+bool ProjectManager::removeStreamingServer(const QUuid& _id)
+{
+  if(!Database::instance().removeStreamingServer(_id)) return false;
+
+  cachedStreamingServers_ = Database::instance().listStreamingServers();
+
+  return true;
+}
+
+bool ProjectManager::updateStreamingServer(const StreamingServer& _streamingServer)
+{
   if(!Database::instance().saveStreamingServer(_streamingServer)) return false;
 
   cachedStreamingServers_ = Database::instance().listStreamingServers();
