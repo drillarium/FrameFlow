@@ -190,6 +190,9 @@
     <ClCompile Include="livesourcewidget.cpp">
       <Filter>widgets</Filter>
     </ClCompile>
+    <ClCompile Include="notification_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myutils.h">
@@ -235,6 +238,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="encoding_settings_model.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="notification_model.h">
       <Filter>models</Filter>
     </ClInclude>
   </ItemGroup>
@@ -355,6 +361,9 @@
     </QtMoc>
     <QtMoc Include="scenerenderer.h">
       <Filter>renderers</Filter>
+    </QtMoc>
+    <QtMoc Include="notification_manager.h">
+      <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

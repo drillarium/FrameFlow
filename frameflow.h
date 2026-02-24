@@ -47,6 +47,7 @@ protected slots:
   void onGoToLive();
   void onStartRecording();
   void onRecordingStateChange(ERecordingState newState);
+  void updateNotifications();
 
 private:
   void readSettings();

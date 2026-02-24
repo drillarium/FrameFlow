@@ -23,6 +23,7 @@
 #include "transition_model.h"
 #include "MLProtect_MFormats SDK.(subscription valid until 25-May-2025 - NRD Multimedia, S.L.).h"
 #include <QJsonDocument>
+#include "notification_manager.h"
 
 // MFormatProtectionInitializer
 class MFormatProtectionInitializer
@@ -196,6 +197,12 @@ FrameFlow::FrameFlow(QWidget *_parent)
 
   connect(&rm, &RendererManager::onRecordingStateChange, this, &FrameFlow::onRecordingStateChange);
   onRecordingStateChange(ERecordingState::RS_NONE);
+
+  // notifications
+  NotificationManager& nm = NotificationManager::instance();
+  connect(&nm, &NotificationManager::onNotificationAdded, this, &FrameFlow::updateNotifications);
+  connect(&nm, &NotificationManager::onNotificationUpdated, this, &FrameFlow::updateNotifications);
+  connect(&nm, &NotificationManager::onNotificationRemoved, this, &FrameFlow::updateNotifications);
 
 #ifndef _DEBUG
   ui.effectsWidget->hide();
@@ -991,6 +998,10 @@ void FrameFlow::onStreamingStateChange(EStreamingState newState)
     ui.streamingStatusLabel->setText("LIVE");
     ui.streamingStatusLabel->setStyleSheet("QLabel{ background: #DB3F40; color: white; border-radius: 12px; }");
     ui.streamingTimeLabel->show();
+
+    NotificationManager& nm = NotificationManager::instance();
+    Notification n = { QUuid::createUuid(), "Streaming Started", "Streaming Started Description", ENotificationSeverity::S_INFO };
+    nm.registerNotification(n);
   }
   else if(newState == EStreamingState::SS_WAITING_NONE)
   {
@@ -1044,6 +1055,10 @@ void FrameFlow::onRecordingStateChange(ERecordingState newState)
     ui.startRecordingButton->setText("Stop Recording");
     ui.recordingStateWidget->show();
     recordingTimer_.start();
+
+    NotificationManager &nm = NotificationManager::instance();
+    Notification n = { QUuid::createUuid(), "Recording Started", "Recording Started Description", ENotificationSeverity::S_INFO};
+    nm.registerNotification(n);
   }
   else if(newState == EStreamingState::SS_WAITING_NONE)
   {
@@ -1051,5 +1066,24 @@ void FrameFlow::onRecordingStateChange(ERecordingState newState)
     ui.startRecordingButton->setText("Waiting Stop");
     ui.recordingStateWidget->hide();
     recordingTimer_.invalidate();
+  }
+}
+
+void FrameFlow::updateNotifications()
+{
+  NotificationManager &nm = NotificationManager::instance();
+  auto nl = nm.notificationList();
+  if(nl.size() == 0)
+  {
+    ui.alertButton->setHasAlert(false);
+  }
+  else
+  {
+    ENotificationSeverity severity = ENotificationSeverity::S_INFO;
+    for(auto notification : nl)
+    {
+      severity = std::max<ENotificationSeverity>(notification.severity, severity);
+    }
+    ui.alertButton->setHasAlert(true, severity);
   }
 }

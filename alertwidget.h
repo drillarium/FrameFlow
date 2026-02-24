@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include "ui_alertwidget.h"
+#include "notification_model.h"
 
 class AlertWidget : public QWidget
 {
@@ -12,6 +13,8 @@ public:
   ~AlertWidget();
 
   void setSelected(bool _selected);
+  void update(const Notification &_notification);
+  QUuid id() { return id_; }
 
 protected:
   void enterEvent(QEnterEvent* event) override;
@@ -21,6 +24,7 @@ signals:
   void onRemoveAlert();
 
 private:
-    Ui::AlertWidgetClass ui;
+  Ui::AlertWidgetClass ui;
+  QUuid id_;
 };
 

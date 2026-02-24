@@ -12,9 +12,9 @@ AlertButton::~AlertButton()
 
 }
 
-void AlertButton::setHasAlert(bool value)
+void AlertButton::setHasAlert(bool value, ENotificationSeverity _severity)
 {
-  if(hasAlert_ == value) return;
+  _severity = _severity;
   hasAlert_ = value;
   update();
 }
@@ -32,8 +32,9 @@ void AlertButton::paintEvent(QPaintEvent* e)
   const int margin = 6;
 
   QPoint topRight(width() - dotSize - margin, margin);
-
-  p.setBrush(QColor("#19BDDE"));
+  if(severity_ == ENotificationSeverity::S_INFO) p.setBrush(QColor("#19BDDE"));
+  else if(severity_ == ENotificationSeverity::S_WARNING) p.setBrush(QColor("#F5A623"));
+  else p.setBrush(QColor("#E74C3C"));
   p.setPen(Qt::NoPen);
   p.drawEllipse(topRight, dotSize, dotSize);
 }

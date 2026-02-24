@@ -2,14 +2,15 @@
 
 #include <QDialog>
 #include "ui_alertsdialog.h"
+#include "notification_model.h"
 
 class AlertsDialog : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    AlertsDialog(QWidget *parent = nullptr);
-    ~AlertsDialog();
+  AlertsDialog(QWidget *parent = nullptr);
+  ~AlertsDialog();
 
 protected:
   void keyPressEvent(QKeyEvent* event) override;
@@ -19,8 +20,10 @@ protected slots:
   void onClearAll();
   void onMarkAll();
   void onNotificationsSelectionChange();
+  void updateNotifications();
 
 private:
   Ui::AlertsDialogClass ui;
+  bool clear_ = false;
 };
 

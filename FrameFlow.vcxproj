@@ -128,6 +128,7 @@
     <ClCompile Include="myutils.win.cpp" />
     <ClCompile Include="ndiwidget.cpp" />
     <ClCompile Include="newprojectdialog.cpp" />
+    <ClCompile Include="notification_manager.cpp" />
     <ClCompile Include="pathpickerwidget.cpp" />
     <ClCompile Include="previewscenewidget.cpp" />
     <ClCompile Include="projectmenuitem.cpp" />
@@ -199,6 +200,8 @@
     <QtMoc Include="textwidget.h" />
     <ClInclude Include="encoding_settings_model.h" />
     <ClInclude Include="MLProtect_MFormats SDK.(subscription valid until 25-May-2025 - NRD Multimedia, S.L.).h" />
+    <QtMoc Include="notification_manager.h" />
+    <ClInclude Include="notification_model.h" />
     <ClInclude Include="server_model.h" />
     <ClInclude Include="textrenderer.h" />
     <ClInclude Include="transition_model.h" />
