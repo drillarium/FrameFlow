@@ -205,6 +205,17 @@ void SceneRenderer::workerThread()
   // blackframe
   hr = factory->MFFrameCreateFromMem(&avProps, 0, (long) samples, (LONGLONG) 0, &blackFrame, colorParameters);
   if(FAILED(hr)) goto cleanup;
+  else if(project)
+  {
+    blackFrame->MFAVPropsGet(&avProps, NULL);
+    M_TIME mTime = {};
+    blackFrame->MFTimeGet(&mTime);
+    int fpsNum = 0, fpsDen = 0;
+    getFactors(project->framerate, fpsNum, fpsDen);
+    REFERENCE_TIME timePerFrame = REFERENCE_TIME(((fpsDen * 10000000.f) / fpsNum) + 0.5);
+    mTime.rtEndTime = mTime.rtStartTime + timePerFrame;
+    blackFrame->MFTimeSet(&mTime);
+  }
 
   while(running_)
   {
@@ -291,6 +302,13 @@ void SceneRenderer::workerThread()
     {
       std::lock_guard<std::mutex> lock(lastFrameMutex_);
       lastFrame_ = frame;
+    }
+
+    // audio mixer
+    if(mode_ == EPreviewMode::PM_PROGRAM)
+    {
+      RendererManager& rm = RendererManager::instance();
+      rm.mixAudio(frame);
     }
 
     // streaming

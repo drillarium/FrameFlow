@@ -48,6 +48,8 @@ protected slots:
   void onStartRecording();
   void onRecordingStateChange(ERecordingState newState);
   void updateNotifications();
+  void updateProjectInfo();
+  void onShowTimeline();
 
 private:
   void readSettings();
@@ -60,6 +62,7 @@ private:
   void renameSource(const Source& _source);
   void moveSource(const Source& _source, bool up);
   void showLicenseStatus(LicenseManager::Status status);
+  void initExternalAudio();
 
 private:
   Ui::FrameFlowClass ui;

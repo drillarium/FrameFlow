@@ -3,6 +3,7 @@
 #include <QObject>
 #include "scenerenderer.h"
 #include <QImage>
+#include "externalaudiorenderer.h"
 
 enum EStreamingState { SS_NONE, SS_WAITING_START, SS_STREAMING, SS_WAITING_NONE };
 enum ERecordingState { RS_NONE, RS_WAITING_START, RS_RECORDING, RS_WAITING_NONE };
@@ -22,6 +23,11 @@ public:
   ERecordingState recordingState() { return recording_; }
   bool startRecording();
   bool stopRecording();
+  bool mixAudio(CComPtr<IMFFrame>& _frame);
+  QStringList listOfAudioDevices();
+  bool deinit();
+  bool vumeterValue(int _deviceIndex, M_AUDIO_LOUDNESS &_al);
+  void updateVolume(int _deviceIndex, double _value);
 
 signals:
   void onNewPreviewImage(QImage image);
@@ -42,6 +48,8 @@ private:
 
   Q_DISABLE_COPY_MOVE(RendererManager)
 
+  void initExternalAudioRenderers();
+
 protected:
   SceneRenderer previewRenderer_;    // preview
   SceneRenderer programRenderer_;    // program
@@ -49,5 +57,6 @@ protected:
   QUuid currentProjectUid_;
   EStreamingState streaming_ = EStreamingState::SS_NONE;
   ERecordingState recording_ = ERecordingState::RS_NONE;
+  QList<ExternalAudioRenderer *> audioRenderers_;
 };
 

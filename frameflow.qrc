@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/FrameFlow">
+    <file>timeline.svg</file>
     <file>wifi.svg</file>
     <file>save.svg</file>
     <file>exit-full-screen.svg</file>

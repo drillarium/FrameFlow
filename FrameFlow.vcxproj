@@ -122,6 +122,7 @@
     <ClCompile Include="db.cpp" />
     <ClCompile Include="editsourcedialog.cpp" />
     <ClCompile Include="effectwidget.cpp" />
+    <ClCompile Include="externalaudiorenderer.cpp" />
     <ClCompile Include="helpdialog.cpp" />
     <ClCompile Include="license_manager.cpp" />
     <ClCompile Include="livesourcewidget.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="streamserverwidget.cpp" />
     <ClCompile Include="textrenderer.cpp" />
     <ClCompile Include="textwidget.cpp" />
+    <ClCompile Include="timelinewidget.cpp" />
     <ClCompile Include="toggleswitch.cpp" />
     <ClCompile Include="transitionwidget.cpp" />
     <ClCompile Include="urlpickerwidget.cpp" />
@@ -199,11 +201,13 @@
     <QtMoc Include="screencapturewidget.h" />
     <QtMoc Include="textwidget.h" />
     <ClInclude Include="encoding_settings_model.h" />
+    <QtMoc Include="externalaudiorenderer.h" />
     <ClInclude Include="MLProtect_MFormats SDK.(subscription valid until 25-May-2025 - NRD Multimedia, S.L.).h" />
     <QtMoc Include="notification_manager.h" />
     <ClInclude Include="notification_model.h" />
     <ClInclude Include="server_model.h" />
     <ClInclude Include="textrenderer.h" />
+    <QtMoc Include="timelinewidget.h" />
     <ClInclude Include="transition_model.h" />
     <ClInclude Include="version.h" />
     <QtMoc Include="webcamwidget.h" />

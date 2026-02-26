@@ -22,6 +22,8 @@ RendererManager::RendererManager(QObject *parent)
   connect(&programRenderer_, &SceneRenderer::onStopStreaming, this, &RendererManager::onStopStreaming);
   connect(&programRenderer_, &SceneRenderer::onStartRecording, this, &RendererManager::onStartRecording);
   connect(&programRenderer_, &SceneRenderer::onStopRecording, this, &RendererManager::onStopRecording);
+
+  initExternalAudioRenderers();
 }
 
 QImage convertFrame(CComPtr<IMFFrame>& _frame)
@@ -165,6 +167,9 @@ bool RendererManager::reloadProjec()
   // save current project
   currentProjectUid_ = project->id;
 
+  // for audio renderers. Notify project has change. The should change it's output properties
+  for(auto r : audioRenderers_) r->update();  
+
   return true;
 }
 
@@ -280,4 +285,76 @@ void RendererManager::onStopRecording()
   emit onRecordingStateChange(recording_);
 }
 
+void RendererManager::initExternalAudioRenderers()
+{
+  CComPtr<IMFDevice> device;
+  device.CoCreateInstance(__uuidof(MFLive));
 
+  int count = 0;
+  device->DeviceGetCount(eMFDeviceType::eMFDT_ExtAudio, &count);
+  for(int i = 0; i < count; i++)
+  {
+    CComBSTR name;
+    BOOL busy = FALSE;
+    device->DeviceGetByIndex(eMFDeviceType::eMFDT_ExtAudio, i, &name, &busy);
+    QString qname = QString::fromWCharArray(name, name.Length());
+    if(qname != "<No External Audio>")
+    {
+      ExternalAudioRenderer *ar = new ExternalAudioRenderer(qname);
+      ar->init();
+      audioRenderers_.push_back(ar);
+    }
+  }
+  device->DeviceClose();
+}
+
+QStringList RendererManager::listOfAudioDevices()
+{
+  QStringList l;
+  for(auto r : audioRenderers_)
+  {
+    l.append(r->name());
+  }
+  return l;
+}
+
+bool RendererManager::mixAudio(CComPtr<IMFFrame>& _frame)
+{
+  // silence source
+  LONG size = 0;
+  LONGLONG data = 0;
+  _frame->MFAudioGetBytes(&size, &data);
+  memset((void *) data, 0, size);
+
+  // get last frames from external audio renderers
+  for(auto r : audioRenderers_)
+  {
+    r->mixAudio(_frame);
+  }
+
+  return true;
+}
+
+bool RendererManager::deinit()
+{
+  for(auto r : audioRenderers_)
+  {
+    r->deinit();
+    delete r;
+  }
+  audioRenderers_.clear();
+
+  return true;
+}
+
+bool RendererManager::vumeterValue(int _deviceIndex, M_AUDIO_LOUDNESS &_al)
+{
+  if(_deviceIndex >= audioRenderers_.size()) return false;
+  return audioRenderers_[_deviceIndex]->vumeterValue(_al);
+}
+
+void RendererManager::updateVolume(int _deviceIndex, double _value)
+{
+  if(_deviceIndex >= audioRenderers_.size()) return;
+  return audioRenderers_[_deviceIndex]->updateVolume(_value);
+}

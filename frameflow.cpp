@@ -59,6 +59,10 @@ FrameFlow::FrameFlow(QWidget *_parent)
   connect(timer, &QTimer::timeout, this, &FrameFlow::updateSystemStats);
   timer->start(1000);
 
+  timer = new QTimer(this);
+  connect(timer, &QTimer::timeout, this, &FrameFlow::updateProjectInfo);
+  timer->start(100);
+
   // db path
   QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
   QDir dir(dataDir);
@@ -204,6 +208,17 @@ FrameFlow::FrameFlow(QWidget *_parent)
   connect(&nm, &NotificationManager::onNotificationUpdated, this, &FrameFlow::updateNotifications);
   connect(&nm, &NotificationManager::onNotificationRemoved, this, &FrameFlow::updateNotifications);
 
+  initExternalAudio();
+
+  int index = 0;
+  connect(ui.vumeter1, &VumeterControl::onVumeterValueChanged, this, [this, index](double value) { RendererManager::instance().updateVolume(index, value); });
+  index++;
+  connect(ui.vumeter2, &VumeterControl::onVumeterValueChanged, this, [this, index](double value) { RendererManager::instance().updateVolume(index, value); });
+  index++;
+  connect(ui.vumeter3, &VumeterControl::onVumeterValueChanged, this, [this, index](double value) { RendererManager::instance().updateVolume(index, value); });
+  index++;
+  connect(ui.vumeter4, &VumeterControl::onVumeterValueChanged, this, [this, index](double value) { RendererManager::instance().updateVolume(index, value); });
+
 #ifndef _DEBUG
   ui.effectsWidget->hide();
   ui.timelineWidget->hide();
@@ -215,6 +230,7 @@ FrameFlow::~FrameFlow()
   // unload renderers
   RendererManager& rm = RendererManager::instance();
   rm.unload();
+  rm.deinit();
 
   projectsWidget_->deleteLater();
 
@@ -343,7 +359,11 @@ void FrameFlow::updateSystemStats()
   ui.cpuValueLabel->setText(QString("%1%").arg(cpu, 0, 'f', 1));
   ui.gpuValueLabel->setText(QString("%1%").arg(gpu, 0, 'f', 1));
   ui.memValueLabel->setText(QString("%1% / %2 GB").arg(mem.usedPercent, 0, 'f', 1).arg(mem.usedGB, 0, 'f', 1));
+}
 
+void FrameFlow::updateProjectInfo()
+{
+  // update streaming state
   if(streamingTimer_.isValid())
   {
     qint64 elapsed = streamingTimer_.elapsed();
@@ -361,6 +381,7 @@ void FrameFlow::updateSystemStats()
     ui.streamingTimeLabel->setText("00:00:00");
   }
 
+  // update recording state
   if(recordingTimer_.isValid())
   {
     qint64 elapsed = recordingTimer_.elapsed();
@@ -374,7 +395,30 @@ void FrameFlow::updateSystemStats()
   else
   {
     ui.recordingLabel->setText("● 00:00:00");
-  }  
+  }
+
+  // update vumeters
+  RendererManager &rm = RendererManager::instance();
+  if(ui.vumeter1->isVisible())
+  {
+    M_AUDIO_LOUDNESS al;
+    if(rm.vumeterValue(0, al)) { ui.vumeter1->setAudioLoudness(al); }
+  }
+  if(ui.vumeter2->isVisible())
+  {
+    M_AUDIO_LOUDNESS al;
+    if(rm.vumeterValue(1, al)) { ui.vumeter2->setAudioLoudness(al); }
+  }
+  if(ui.vumeter3->isVisible())
+  {
+    M_AUDIO_LOUDNESS al;
+    if(rm.vumeterValue(2, al)) { ui.vumeter3->setAudioLoudness(al); }
+  }
+  if(ui.vumeter4->isVisible())
+  {
+    M_AUDIO_LOUDNESS al;
+    if(rm.vumeterValue(3, al)) { ui.vumeter4->setAudioLoudness(al); }
+  }
 }
 
 void FrameFlow::onAlerts()
@@ -889,7 +933,7 @@ void FrameFlow::onToggleFullScreen()
   {
     ui.inputWidget->show();
     ui.outputWidget->show();
-    ui.timelineWidget->show();
+    if(!ui.timelineButton->isChecked()) ui.timelineWidget->show();
     ui.previewFooterWidget->show();
     ui.fullScreenButton->setIcon(QIcon(":/FrameFlow/full-screen.svg"));
   }
@@ -1085,5 +1129,57 @@ void FrameFlow::updateNotifications()
       severity = std::max<ENotificationSeverity>(notification.severity, severity);
     }
     ui.alertButton->setHasAlert(true, severity);
+  }
+}
+
+void FrameFlow::initExternalAudio()
+{
+  RendererManager& rm = RendererManager::instance();
+  QStringList sl = rm.listOfAudioDevices();
+
+  QHBoxLayout *layout = static_cast<QHBoxLayout*>(ui.scrollAreaVumetersWidget->layout());
+  layout->addStretch();
+  for(int i = 0; i < sl.size(); ++i)
+  {
+    VumeterControl* item = new VumeterControl;
+    layout->addWidget(item);
+  }
+  layout->addStretch();
+
+  ui.vumeter4->hide();
+  ui.vumeter3->hide();
+  ui.vumeter2->hide();
+  ui.vumeter1->hide();
+  if(sl.size() > 0)
+  {
+    ui.vumeter1->show();
+    ui.vumeter1->setDevice(sl[0]);
+  }
+  if(sl.size() > 1)
+  {
+    ui.vumeter2->show();
+    ui.vumeter2->setDevice(sl[1]);
+  }
+  if(sl.size() > 2)
+  {
+    ui.vumeter3->show();
+    ui.vumeter3->setDevice(sl[2]);
+  }
+  if(sl.size() > 3)
+  {
+    ui.vumeter4->show();
+    ui.vumeter4->setDevice(sl[3]);
+  }
+}
+
+void FrameFlow::onShowTimeline()
+{
+  if(ui.timelineButton->isChecked())
+  {
+    ui.timelineWidget->hide();
+  }
+  else
+  {
+    ui.timelineWidget->show();
   }
 }

@@ -193,6 +193,12 @@
     <ClCompile Include="notification_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="externalaudiorenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="timelinewidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="myutils.h">
@@ -363,6 +369,12 @@
       <Filter>renderers</Filter>
     </QtMoc>
     <QtMoc Include="notification_manager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="externalaudiorenderer.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="timelinewidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

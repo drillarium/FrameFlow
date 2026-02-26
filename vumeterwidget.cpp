@@ -3,7 +3,7 @@
 
 // VuMeterWidget
 VuMeterWidget::VuMeterWidget(QWidget* parent)
-  :QWidget(parent)
+:QWidget(parent)
 {
 
 }

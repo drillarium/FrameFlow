@@ -24,8 +24,6 @@ public:
   virtual bool getFrame(CComPtr<IMFFrame>& _frame) = 0;
 
   static QString getVideoFormatString(int w, int h, double fr);
-
-protected:
   static M_VID_PROPS getMVideoFormat(int w, int h, double fr);
   static M_AUD_PROPS getMAudioProps() { return { 2, 48000, 16, 0 }; };
   static void getFactors(double fr, int &num, int &den);
