@@ -17,7 +17,6 @@ public:
   void setAudioLoudness(const M_AUDIO_LOUDNESS &_al);
 
 protected slots:
-  void onMute();
   void onVolumeChange(int value);
 
 signals:

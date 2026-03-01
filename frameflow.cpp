@@ -24,6 +24,7 @@
 #include "MLProtect_MFormats SDK.(subscription valid until 25-May-2025 - NRD Multimedia, S.L.).h"
 #include <QJsonDocument>
 #include "notification_manager.h"
+#include "vumetercontrol.h"
 
 // MFormatProtectionInitializer
 class MFormatProtectionInitializer
@@ -169,6 +170,22 @@ FrameFlow::FrameFlow(QWidget *_parent)
   ui.effectsStackedWidget->setCurrentIndex(1);
   onExpandEffects();
 
+  // dummy actions
+  for(int i = 0; i < 10; i++)
+  {
+    QPushButton *action = new QPushButton();
+    action->setFixedSize(40, 40);
+    action->setFlat(true);
+    action->setCursor(Qt::PointingHandCursor);
+    action->setIconSize(QSize(24, 24));
+    action->setIcon(QIcon(":/FrameFlow/camera.svg"));
+    action->setStyleSheet("QPushButton { background: #647081; border: 1px solid black; border-radius: 10px; padding: 6px 6px;}");
+    QListWidgetItem* lwi = new QListWidgetItem(ui.actionsListWidget);
+    lwi->setSizeHint(QSize(60, 60));
+    ui.actionsListWidget->addItem(lwi);
+    ui.actionsListWidget->setItemWidget(lwi, action);
+  }
+
   // Program | Preview
   connect(ui.buttonGroup, QOverload<QAbstractButton*>::of(&QButtonGroup::buttonClicked), this, [this] (QAbstractButton* button) {
     if(button == ui.directButton) {
@@ -209,15 +226,6 @@ FrameFlow::FrameFlow(QWidget *_parent)
   connect(&nm, &NotificationManager::onNotificationRemoved, this, &FrameFlow::updateNotifications);
 
   initExternalAudio();
-
-  int index = 0;
-  connect(ui.vumeter1, &VumeterControl::onVumeterValueChanged, this, [this, index](double value) { RendererManager::instance().updateVolume(index, value); });
-  index++;
-  connect(ui.vumeter2, &VumeterControl::onVumeterValueChanged, this, [this, index](double value) { RendererManager::instance().updateVolume(index, value); });
-  index++;
-  connect(ui.vumeter3, &VumeterControl::onVumeterValueChanged, this, [this, index](double value) { RendererManager::instance().updateVolume(index, value); });
-  index++;
-  connect(ui.vumeter4, &VumeterControl::onVumeterValueChanged, this, [this, index](double value) { RendererManager::instance().updateVolume(index, value); });
 
 #ifndef _DEBUG
   ui.effectsWidget->hide();
@@ -399,25 +407,13 @@ void FrameFlow::updateProjectInfo()
 
   // update vumeters
   RendererManager &rm = RendererManager::instance();
-  if(ui.vumeter1->isVisible())
+  for(int i = 0; i < vumeters_.size(); i++)
   {
     M_AUDIO_LOUDNESS al;
-    if(rm.vumeterValue(0, al)) { ui.vumeter1->setAudioLoudness(al); }
-  }
-  if(ui.vumeter2->isVisible())
-  {
-    M_AUDIO_LOUDNESS al;
-    if(rm.vumeterValue(1, al)) { ui.vumeter2->setAudioLoudness(al); }
-  }
-  if(ui.vumeter3->isVisible())
-  {
-    M_AUDIO_LOUDNESS al;
-    if(rm.vumeterValue(2, al)) { ui.vumeter3->setAudioLoudness(al); }
-  }
-  if(ui.vumeter4->isVisible())
-  {
-    M_AUDIO_LOUDNESS al;
-    if(rm.vumeterValue(3, al)) { ui.vumeter4->setAudioLoudness(al); }
+    if(rm.vumeterValue(i, al))
+    {
+      vumeters_[i]->setAudioLoudness(al);
+    }
   }
 }
 
@@ -1137,39 +1133,18 @@ void FrameFlow::initExternalAudio()
   RendererManager& rm = RendererManager::instance();
   QStringList sl = rm.listOfAudioDevices();
 
-  QHBoxLayout *layout = static_cast<QHBoxLayout*>(ui.scrollAreaVumetersWidget->layout());
-  layout->addStretch();
+  QVBoxLayout*layout = static_cast<QVBoxLayout*>(ui.scrollAreaVumetersWidget->layout());
   for(int i = 0; i < sl.size(); ++i)
   {
     VumeterControl* item = new VumeterControl;
+    item->setFixedHeight(25);
+    item->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    item->setDevice(sl[i]);
     layout->addWidget(item);
+    connect(item, &VumeterControl::onVumeterValueChanged, this, [this, i] (double value) { RendererManager::instance().updateVolume(i, value); });
+    vumeters_.push_back(item);
   }
   layout->addStretch();
-
-  ui.vumeter4->hide();
-  ui.vumeter3->hide();
-  ui.vumeter2->hide();
-  ui.vumeter1->hide();
-  if(sl.size() > 0)
-  {
-    ui.vumeter1->show();
-    ui.vumeter1->setDevice(sl[0]);
-  }
-  if(sl.size() > 1)
-  {
-    ui.vumeter2->show();
-    ui.vumeter2->setDevice(sl[1]);
-  }
-  if(sl.size() > 2)
-  {
-    ui.vumeter3->show();
-    ui.vumeter3->setDevice(sl[2]);
-  }
-  if(sl.size() > 3)
-  {
-    ui.vumeter4->show();
-    ui.vumeter4->setDevice(sl[3]);
-  }
 }
 
 void FrameFlow::onShowTimeline()

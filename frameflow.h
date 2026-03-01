@@ -73,5 +73,6 @@ private:
   QUuid nextTransitionUID_;
   QElapsedTimer streamingTimer_;
   QElapsedTimer recordingTimer_;
+  QList<class VumeterControl*> vumeters_;
 };
 

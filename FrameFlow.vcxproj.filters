@@ -172,9 +172,6 @@
     <ClCompile Include="license_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="helpdialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="textwidget.cpp">
       <Filter>widgets</Filter>
     </ClCompile>
@@ -193,11 +190,17 @@
     <ClCompile Include="notification_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="externalaudiorenderer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="effectsdialog.cpp">
+      <Filter>dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="helpdialog.cpp">
+      <Filter>dialogs</Filter>
     </ClCompile>
     <ClCompile Include="timelinewidget.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="externalaudiorenderer.cpp">
+      <Filter>renderers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -347,9 +350,6 @@
     <QtMoc Include="license_manager.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="helpdialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="textwidget.h">
       <Filter>widgets</Filter>
     </QtMoc>
@@ -372,10 +372,16 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="externalaudiorenderer.h">
-      <Filter>Header Files</Filter>
+      <Filter>renderers</Filter>
     </QtMoc>
     <QtMoc Include="timelinewidget.h">
-      <Filter>Header Files</Filter>
+      <Filter>widgets</Filter>
+    </QtMoc>
+    <QtMoc Include="effectsdialog.h">
+      <Filter>dialogs</Filter>
+    </QtMoc>
+    <QtMoc Include="helpdialog.h">
+      <Filter>dialogs</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -461,6 +467,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="textwidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="effectsdialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

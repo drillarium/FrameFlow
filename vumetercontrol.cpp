@@ -31,24 +31,19 @@ void VumeterControl::setAudioLoudness(const M_AUDIO_LOUDNESS& _al)
   {
     bool valid = !is_infinite(_al.arrVUMeter[0]);
     if(valid) ui.vumeterWidget->setLevelDb(_al.arrVUMeter[0]);
-    else ui.vumeterWidget->setLevelDb(-100);
+    else ui.vumeterWidget->setLevelDb(-60);
   }
   else
   {
-    ui.vumeterWidget->setLevelDb(-100);
+    ui.vumeterWidget->setLevelDb(-60);
   }
 }
 
-void VumeterControl::onMute()
+void VumeterControl::onVolumeChange(int)
 {
-  bool mute = ui.muteButton->isChecked();
-  double value = mute? 0 : ui.horizontalSlider->value() / 100.;
+  int v = ui.horizontalSlider->value();
+  ui.volumeLabel->setText(QString::number(v));
+  double value = ui.horizontalSlider->value() / 100.;
   emit onVumeterValueChanged(value);
-}
-
-void VumeterControl::onVolumeChange(int value)
-{
-  ui.muteButton->setChecked(value == 0);
-  onMute();
 }
 

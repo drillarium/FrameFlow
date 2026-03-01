@@ -13,7 +13,10 @@ public:
 
 protected:
   void paintEvent(QPaintEvent*) override;
+  void drawHeader(QPainter &_p);
+  void drawBar(QPainter& _p);
 
 private:
   float m_db = -60.0f;
+  int headerHeight_ = 10;
 };

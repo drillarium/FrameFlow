@@ -121,6 +121,7 @@
     <ClCompile Include="createscenedialog.cpp" />
     <ClCompile Include="db.cpp" />
     <ClCompile Include="editsourcedialog.cpp" />
+    <ClCompile Include="effectsdialog.cpp" />
     <ClCompile Include="effectwidget.cpp" />
     <ClCompile Include="externalaudiorenderer.cpp" />
     <ClCompile Include="helpdialog.cpp" />
@@ -166,6 +167,7 @@
     <QtUic Include="confirmationdialog.ui" />
     <QtUic Include="createscenedialog.ui" />
     <QtUic Include="editsourcedialog.ui" />
+    <QtUic Include="effectsdialog.ui" />
     <QtUic Include="effectwidget.ui" />
     <QtUic Include="frameflow.ui" />
     <QtMoc Include="frameflow.h" />
@@ -200,6 +202,7 @@
     <QtMoc Include="livesourcewidget.h" />
     <QtMoc Include="screencapturewidget.h" />
     <QtMoc Include="textwidget.h" />
+    <QtMoc Include="effectsdialog.h" />
     <ClInclude Include="encoding_settings_model.h" />
     <QtMoc Include="externalaudiorenderer.h" />
     <ClInclude Include="MLProtect_MFormats SDK.(subscription valid until 25-May-2025 - NRD Multimedia, S.L.).h" />

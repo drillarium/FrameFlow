@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/FrameFlow">
+    <file>microphone_blue.svg</file>
     <file>timeline.svg</file>
     <file>wifi.svg</file>
     <file>save.svg</file>
