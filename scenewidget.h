@@ -21,6 +21,8 @@ protected:
 signals:
   void onDeleteScene();
   void onRenameScene();
+  void onUpScene();
+  void onDownScene();
 
 private:
   Scene scene_;

@@ -29,10 +29,12 @@ protected:
   void drawHeader(QPainter& p);
   void drawCenter(QPainter& p);
   void drawFooter(QPainter& p);
+  void drawPointer(QPainter& p);
 
   double timeToPixel(double seconds) const;
   bool isInHeader(const QPoint& pos) const { return pos.y() <= headerHeight_; }
   int hitTestItem(const QPoint& pos) const;
+  bool isInPointer(const QPoint& pos);
 
 protected:
   QVector<TimelineItem> items_;
@@ -43,4 +45,6 @@ protected:
   bool isPanning_ = false;
   int lastMouseX_ = 0;
   int selectedIndex_ = -1;
+  double positionSecs_ = 0;
+  bool isMovingPointer_ = false;
 };

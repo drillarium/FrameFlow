@@ -46,6 +46,7 @@ private:
   bool migrateV2ToV3();
   bool migrateV3ToV4();
   bool migrateV4ToV5();
+  bool migrateV5ToV6();
 
 private:
   QSqlDatabase db_;

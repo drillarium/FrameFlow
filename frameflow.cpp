@@ -25,6 +25,8 @@
 #include <QJsonDocument>
 #include "notification_manager.h"
 #include "vumetercontrol.h"
+#include <QToolButton>
+#include "effectsdialog.h"
 
 // MFormatProtectionInitializer
 class MFormatProtectionInitializer
@@ -162,26 +164,25 @@ FrameFlow::FrameFlow(QWidget *_parent)
   for(int i = 0; i < 2; i++)
   {
     QListWidgetItem* lwi = new QListWidgetItem(ui.effectListWidget);
-    lwi->setSizeHint(QSize(50, 50));
+    lwi->setSizeHint(QSize(0, 30));
     EffectWidget* sw = new EffectWidget();
     ui.effectListWidget->addItem(lwi);
     ui.effectListWidget->setItemWidget(lwi, sw);
   }
-  ui.effectsStackedWidget->setCurrentIndex(1);
-  onExpandEffects();
 
   // dummy actions
-  for(int i = 0; i < 10; i++)
+  for(int i = 0; i < 3; i++)
   {
-    QPushButton *action = new QPushButton();
-    action->setFixedSize(40, 40);
-    action->setFlat(true);
+    QToolButton*action = new QToolButton();
+    action->setFixedSize(50, 50);
     action->setCursor(Qt::PointingHandCursor);
-    action->setIconSize(QSize(24, 24));
+    action->setIconSize(QSize(16, 16));
     action->setIcon(QIcon(":/FrameFlow/camera.svg"));
-    action->setStyleSheet("QPushButton { background: #647081; border: 1px solid black; border-radius: 10px; padding: 6px 6px;}");
+    action->setStyleSheet("QToolButton { background: #303541; border: 1px solid black; border-radius: 10px; padding: 6px 6px; color: white; font-size: 8px;}");
+    action->setText("NDI");
+    action->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     QListWidgetItem* lwi = new QListWidgetItem(ui.actionsListWidget);
-    lwi->setSizeHint(QSize(60, 60));
+    lwi->setSizeHint(QSize(65, 55));
     ui.actionsListWidget->addItem(lwi);
     ui.actionsListWidget->setItemWidget(lwi, action);
   }
@@ -342,7 +343,7 @@ void FrameFlow::writeSettings()
 void FrameFlow::closeEvent(QCloseEvent* event)
 {
 #ifndef _DEBUG
-  QMessageBox::StandardButton reply = ConfirmationDialog::question(this, "Exit application", "Are you sure you want to exit?", QMessageBox::Yes, QMessageBox::No, QMessageBox::No);
+  QMessageBox::StandardButton reply = ConfirmationDialog::question(this, "Exit application", "Are you sure you want to exit?", QMessageBox::Yes, QMessageBox::No, QMessageBox::Yes);
   if(reply == QMessageBox::Yes)
   {
     writeSettings();
@@ -550,31 +551,28 @@ void FrameFlow::onExpandTransitions()
   {
     ui.expandTransitionButton->setText("Collapse");
     ui.transitionsStackedWidget->setCurrentIndex(1);
-    ui.transitionsWidget->setFixedHeight(200);
+    ui.transitionsStackedWidget->setFixedHeight(100);
   }
   else
   {
     ui.expandTransitionButton->setText("Expand");
     ui.transitionsStackedWidget->setCurrentIndex(0);
-    ui.transitionsWidget->setFixedHeight(150);
+    ui.transitionsStackedWidget->setFixedHeight(30);
   }
 }
 
 void FrameFlow::onExpandEffects()
 {
-  int index = ui.effectsStackedWidget->currentIndex();
-  if(index == 0)
-  {
-    ui.expandEffectButton->setText("Collapse");
-    ui.effectsStackedWidget->setCurrentIndex(1);
-    ui.effectsStackedWidget->setFixedHeight(200);
-  }
-  else
-  {
-    ui.expandEffectButton->setText("Expand");
-    ui.effectsStackedWidget->setCurrentIndex(0);
-    ui.effectsStackedWidget->setFixedHeight(50);
-  }
+  EffectsDialog dlg(this);
+  dlg.setWindowModality(Qt::ApplicationModal);
+
+  // center
+  QScreen* screen = QGuiApplication::screenAt(QCursor::pos());
+  if(!screen) screen = QGuiApplication::primaryScreen();
+  QRect screenGeometry = screen->availableGeometry();
+  dlg.move(screenGeometry.center() - dlg.rect().center());
+
+  dlg.exec();
 }
 
 void FrameFlow::keyPressEvent(QKeyEvent* event)
@@ -704,6 +702,8 @@ void FrameFlow::updateScenes()
     SceneWidget* sw = new SceneWidget(scene);
     connect(sw, &SceneWidget::onDeleteScene, this, [this, scene] () { deleteScene(scene); });
     connect(sw, &SceneWidget::onRenameScene, this, [this, scene]() { renameScene(scene); });
+    connect(sw, &SceneWidget::onUpScene, this, [this, scene]() { moveScene(scene, true); });
+    connect(sw, &SceneWidget::onDownScene, this, [this, scene]() { moveScene(scene, false); });
     ui.sceneListWidget->addItem(lwi);
     ui.sceneListWidget->setItemWidget(lwi, sw);
   }
@@ -887,6 +887,12 @@ void FrameFlow::moveSource(const Source& _source, bool up)
 {
   ProjectManager& pm = ProjectManager::instance();
   pm.moveSource(_source.id, up);
+}
+
+void FrameFlow::moveScene(const Scene& _scene, bool up)
+{
+  ProjectManager& pm = ProjectManager::instance();
+  pm.moveScene(_scene.id, up);
 }
 
 void FrameFlow::onLicenseChanged(LicenseManager::Status newStatus)

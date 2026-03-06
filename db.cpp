@@ -4,7 +4,7 @@
 #include <QJsonDocument>
 #include <QDebug>
 
-static constexpr int CURRENT_SCHEMA_VERSION = 5;
+static constexpr int CURRENT_SCHEMA_VERSION = 6;
 
 Database& Database::instance()
 {
@@ -98,6 +98,10 @@ bool Database::createSchemaIfNeeded()
       case 4:
         if(!migrateV4ToV5())  return false;
         version = 5;
+      break;
+      case 5:
+        if(!migrateV5ToV6())  return false;
+        version = 6;
       break;
       default:
         qCritical() << "Unknown schema version:" << version;
@@ -295,12 +299,13 @@ bool Database::saveProject(const Project& project)
 
     QSqlQuery qs;
     qs.prepare(R"(
-            INSERT INTO scenes(id, project_id, name, order_index, settings)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO scenes(id, project_id, name, order_index, settings, color_index)
+            VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 name=excluded.name,
                 order_index=excluded.order_index,
-                settings=excluded.settings
+                settings=excluded.settings,
+                color_index=excluded.color_index
         )");
 
     qs.addBindValue(scene.id.toString(QUuid::WithoutBraces));
@@ -308,6 +313,7 @@ bool Database::saveProject(const Project& project)
     qs.addBindValue(scene.name);
     qs.addBindValue(scene.orderIndex);
     qs.addBindValue(QJsonDocument(scene.settings).toJson(QJsonDocument::Compact));
+    qs.addBindValue(scene.colorIndex);
 
     if(!qs.exec()) goto fail;
 
@@ -380,6 +386,7 @@ std::optional<Project> Database::loadProject(const QUuid& projectId)
     s.settings = QJsonDocument::fromJson(
       qs.value("settings").toByteArray()
     ).object();
+    s.colorIndex = qs.value("color_index").toInt();
 
     QSqlQuery qsrc;
     qsrc.prepare("SELECT * FROM sources WHERE scene_id=? ORDER BY order_index");
@@ -599,6 +606,32 @@ bool Database::migrateV4ToV5()
     )")) {
     db_.rollback();
     qWarning() << "Failed to add original_id column:" << q.lastError();
+    return false;
+  }
+
+  if(!setSchemaVersion(5))
+  {
+    db_.rollback();
+    return false;
+  }
+
+  return db_.commit();
+}
+
+bool Database::migrateV5ToV6()
+{
+  qDebug() << "Migrating schema v5 => v6";
+
+  db_.transaction();
+
+  QSqlQuery q(db_);
+
+  if(!q.exec(R"(
+        ALTER TABLE scenes
+        ADD COLUMN color_index INTEGER
+    )")) {
+    db_.rollback();
+    qWarning() << "Failed to add color_index column:" << q.lastError();
     return false;
   }
 

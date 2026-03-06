@@ -51,6 +51,7 @@ public:
   bool updateStreamingServer(const StreamingServer &_streamingServer);
   EncoderSettings encoderSettings() { return encoderSettings_; }
   void setEncoderSettings(const EncoderSettings &_settings) { encoderSettings_ = _settings; }
+  bool moveScene(const QUuid& sceneId, bool up);
 
   // Queries
   QVector<Project> listProjects() const;

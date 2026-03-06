@@ -1,6 +1,7 @@
 #include "project_manager.h"
 #include "db.h"
 #include <QDateTime>
+#include <QRandomGenerator>
 
 ProjectManager& ProjectManager::instance()
 {
@@ -114,6 +115,7 @@ bool ProjectManager::addScene(Scene& _scene)
   
   _scene.id = QUuid::createUuid();
   _scene.projectId = currentProject_->id;
+  _scene.colorIndex = QRandomGenerator::global()->bounded(20);
   currentProject_->scenes.push_back(_scene);
 
   saveCurrentProject();
@@ -419,4 +421,38 @@ bool ProjectManager::updateStreamingServer(const StreamingServer& _streamingServ
   cachedStreamingServers_ = Database::instance().listStreamingServers();
 
   return true;
+}
+
+bool ProjectManager::moveScene(const QUuid& sceneId, bool up)
+{
+  if(!currentProject_) return false;
+
+  auto it = std::find_if(currentProject_->scenes.begin(), currentProject_->scenes.end(), [sceneId](const Scene& s) { return s.id == sceneId; });
+  if(it != currentProject_->scenes.end())
+  {
+    bool save = false;
+    if(up && it != currentProject_->scenes.begin())
+    {
+      std::iter_swap(it, it - 1);
+      save = true;
+    }
+    else if(!up && it + 1 != currentProject_->scenes.end())
+    {
+      std::iter_swap(it, it + 1);
+      save = true;
+    }
+
+    if(save)
+    {
+      // normalize order index
+      for(int i = 0; i < currentProject_->scenes.size(); ++i) currentProject_->scenes[i].orderIndex = i;
+
+      saveCurrentProject();
+      emit currentProjectChanged();
+    }
+
+    return true;
+  }
+
+  return false;
 }

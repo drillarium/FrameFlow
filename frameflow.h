@@ -63,6 +63,7 @@ private:
   void moveSource(const Source& _source, bool up);
   void showLicenseStatus(LicenseManager::Status status);
   void initExternalAudio();
+  void moveScene(const Scene & _scene, bool up);
 
 private:
   Ui::FrameFlowClass ui;

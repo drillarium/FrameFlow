@@ -5,6 +5,10 @@ EffectWidget::EffectWidget(QWidget *parent)
 :QWidget(parent)
 {
   ui.setupUi(this);
+
+  ui.editButton->hide();
+  ui.cloneButton->hide();
+  ui.deleteButton->hide();
 }
 
 EffectWidget::~EffectWidget()
@@ -37,3 +41,16 @@ void EffectWidget::setSelected(bool _selected)
   update();
 }
 
+void EffectWidget::enterEvent(QEnterEvent* e)
+{
+  ui.editButton->show();
+  ui.cloneButton->show();
+  ui.deleteButton->show();
+}
+
+void EffectWidget::leaveEvent(QEvent* e)
+{
+  ui.editButton->hide();
+  ui.cloneButton->hide();
+  ui.deleteButton->hide();
+}

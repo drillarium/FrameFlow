@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>459</height>
+    <height>473</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -127,19 +127,19 @@ QComboBox QScrollBar:vertical {
     <widget class="QWidget" name="mainWidget" native="true">
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
-       <number>9</number>
+       <number>10</number>
       </property>
       <property name="leftMargin">
-       <number>9</number>
+       <number>10</number>
       </property>
       <property name="topMargin">
-       <number>9</number>
+       <number>10</number>
       </property>
       <property name="rightMargin">
-       <number>9</number>
+       <number>10</number>
       </property>
       <property name="bottomMargin">
-       <number>9</number>
+       <number>10</number>
       </property>
       <item>
        <widget class="QWidget" name="headerNewProjectWidget" native="true">
@@ -150,17 +150,20 @@ QComboBox QScrollBar:vertical {
          </sizepolicy>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <property name="leftMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <property name="topMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <property name="rightMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <property name="bottomMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <item>
           <widget class="QLabel" name="label_2">
@@ -216,6 +219,9 @@ QComboBox QScrollBar:vertical {
            </property>
            <property name="cursor">
             <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>Close</string>
            </property>
            <property name="text">
             <string/>
@@ -279,7 +285,7 @@ QComboBox QScrollBar:vertical {
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
-          <number>2</number>
+          <number>5</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -405,7 +411,7 @@ QComboBox QScrollBar:vertical {
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <property name="spacing">
-          <number>2</number>
+          <number>5</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -511,17 +517,20 @@ QComboBox QScrollBar:vertical {
       <item>
        <widget class="QWidget" name="resumeWidget" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <property name="leftMargin">
-          <number>14</number>
+          <number>15</number>
          </property>
          <property name="topMargin">
-          <number>14</number>
+          <number>15</number>
          </property>
          <property name="rightMargin">
-          <number>14</number>
+          <number>15</number>
          </property>
          <property name="bottomMargin">
-          <number>14</number>
+          <number>15</number>
          </property>
          <item>
           <widget class="QLabel" name="label_4">
@@ -562,17 +571,20 @@ QComboBox QScrollBar:vertical {
          </sizepolicy>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <property name="leftMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <property name="topMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <property name="rightMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <property name="bottomMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <item>
           <spacer name="horizontalSpacer">

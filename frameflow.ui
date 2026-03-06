@@ -40,7 +40,7 @@ QLabel {
 
 #projectButtonWidget {
   border: 2px solid #22252D;
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 6px 10px;
   background-color: transparent;
 }
@@ -53,7 +53,7 @@ QLabel {
   color: white;
 }
 
-#titleLabel, #controlsLabel, #audioMixerLabel {
+#titleLabel, #controlsLabel, #audioMixerLabel, #outputsLabel {
   color: white;
 }
 
@@ -239,6 +239,16 @@ QSlider::handle:horizontal:hover {
 }
 
 
+#createSceneButton {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+
+#createSceneButton:hover {
+    background: #33ffffff;
+}
+
 </string>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -247,19 +257,19 @@ QSlider::handle:horizontal:hover {
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="spacing">
-     <number>6</number>
+     <number>5</number>
     </property>
     <property name="leftMargin">
-     <number>6</number>
+     <number>5</number>
     </property>
     <property name="topMargin">
-     <number>6</number>
+     <number>5</number>
     </property>
     <property name="rightMargin">
-     <number>6</number>
+     <number>5</number>
     </property>
     <property name="bottomMargin">
-     <number>6</number>
+     <number>5</number>
     </property>
     <item>
      <widget class="QWidget" name="headerWidget" native="true">
@@ -283,16 +293,16 @@ QSlider::handle:horizontal:hover {
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
-        <number>6</number>
+        <number>5</number>
        </property>
        <property name="leftMargin">
-        <number>6</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
         <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>6</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
@@ -386,16 +396,16 @@ QSlider::handle:horizontal:hover {
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <property name="spacing">
-           <number>3</number>
+           <number>5</number>
           </property>
           <property name="leftMargin">
-           <number>9</number>
+           <number>10</number>
           </property>
           <property name="topMargin">
            <number>0</number>
           </property>
           <property name="rightMargin">
-           <number>9</number>
+           <number>10</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
@@ -1054,33 +1064,50 @@ QSlider::handle:horizontal:hover {
                  <number>0</number>
                 </property>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_20">
-                  <item>
-                   <widget class="QLabel" name="label_14">
-                    <property name="minimumSize">
-                     <size>
-                      <width>64</width>
-                      <height>64</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>64</width>
-                      <height>64</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="pixmap">
-                     <pixmap resource="frameflow.qrc">:/FrameFlow/tv.svg</pixmap>
-                    </property>
-                    <property name="scaledContents">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 <widget class="QWidget" name="widget" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_20">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QLabel" name="label_14">
+                     <property name="minimumSize">
+                      <size>
+                       <width>64</width>
+                       <height>64</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>64</width>
+                       <height>64</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap resource="frameflow.qrc">:/FrameFlow/tv.svg</pixmap>
+                     </property>
+                     <property name="scaledContents">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="label_20">
@@ -1148,7 +1175,7 @@ QSlider::handle:horizontal:hover {
                <x>0</x>
                <y>0</y>
                <width>250</width>
-               <height>452</height>
+               <height>455</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -1272,18 +1299,6 @@ QSlider::handle:horizontal:hover {
                  </item>
                  <item>
                   <widget class="QListWidget" name="transitionListWidget">
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>75</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>75</height>
-                    </size>
-                   </property>
                    <property name="horizontalScrollBarPolicy">
                     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
                    </property>
@@ -1319,7 +1334,7 @@ QSlider::handle:horizontal:hover {
                  <item>
                   <widget class="QStackedWidget" name="transitionsStackedWidget">
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="page1">
                     <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -1344,7 +1359,7 @@ QSlider::handle:horizontal:hover {
                         <string>Instant</string>
                        </property>
                        <property name="alignment">
-                        <set>Qt::AlignmentFlag::AlignCenter</set>
+                        <set>Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignTop</set>
                        </property>
                       </widget>
                      </item>
@@ -1586,7 +1601,7 @@ QPushButton:hover {
                     <item>
                      <widget class="QLabel" name="effetsLabel">
                       <property name="text">
-                       <string>Effects</string>
+                       <string>Effects Library</string>
                       </property>
                      </widget>
                     </item>
@@ -1609,7 +1624,7 @@ QPushButton:hover {
                        <cursorShape>PointingHandCursor</cursorShape>
                       </property>
                       <property name="text">
-                       <string>Expand</string>
+                       <string>+</string>
                       </property>
                      </widget>
                     </item>
@@ -1618,17 +1633,8 @@ QPushButton:hover {
                  </item>
                  <item>
                   <widget class="QListWidget" name="effectListWidget">
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>100</height>
-                    </size>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>100</height>
-                    </size>
+                   <property name="frameShape">
+                    <enum>QFrame::Shape::NoFrame</enum>
                    </property>
                    <property name="horizontalScrollBarPolicy">
                     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
@@ -1636,87 +1642,10 @@ QPushButton:hover {
                    <property name="editTriggers">
                     <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
                    </property>
-                   <property name="selectionMode">
-                    <enum>QAbstractItemView::SelectionMode::MultiSelection</enum>
-                   </property>
-                   <property name="verticalScrollMode">
-                    <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
-                   </property>
-                   <property name="movement">
-                    <enum>QListView::Movement::Free</enum>
-                   </property>
-                   <property name="flow">
-                    <enum>QListView::Flow::LeftToRight</enum>
-                   </property>
-                   <property name="isWrapping" stdset="0">
-                    <bool>true</bool>
-                   </property>
-                   <property name="resizeMode">
-                    <enum>QListView::ResizeMode::Adjust</enum>
-                   </property>
-                   <property name="spacing">
-                    <number>8</number>
-                   </property>
-                   <property name="gridSize">
-                    <size>
-                     <width>50</width>
-                     <height>50</height>
-                    </size>
-                   </property>
-                   <property name="viewMode">
-                    <enum>QListView::ViewMode::IconMode</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QStackedWidget" name="effectsStackedWidget">
-                   <property name="currentIndex">
-                    <number>0</number>
-                   </property>
-                   <widget class="QWidget" name="effectsPage1">
-                    <layout class="QVBoxLayout" name="verticalLayout_16">
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <property name="leftMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="topMargin">
-                      <number>0</number>
-                     </property>
-                     <property name="rightMargin">
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="effectsPage1Label">
-                       <property name="text">
-                        <string>No effects applied</string>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignmentFlag::AlignCenter</set>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </widget>
-                   <widget class="QWidget" name="page"/>
                   </widget>
                  </item>
                 </layout>
                </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Orientation::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
              </layout>
             </widget>
@@ -2444,7 +2373,7 @@ QPushButton:hover {
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>787</width>
+                  <width>789</width>
                   <height>121</height>
                  </rect>
                 </property>
@@ -2869,6 +2798,12 @@ QPushButton:hover {
           </item>
           <item>
            <widget class="QWidget" name="advancedWidget" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <layout class="QVBoxLayout" name="verticalLayout_20">
              <property name="spacing">
               <number>5</number>
@@ -2889,19 +2824,19 @@ QPushButton:hover {
               <widget class="QWidget" name="horizontalWidget" native="true">
                <layout class="QHBoxLayout" name="horizontalLayout_24">
                 <property name="spacing">
-                 <number>5</number>
+                 <number>6</number>
                 </property>
                 <property name="leftMargin">
-                 <number>0</number>
+                 <number>6</number>
                 </property>
                 <property name="topMargin">
-                 <number>0</number>
+                 <number>6</number>
                 </property>
                 <property name="rightMargin">
-                 <number>0</number>
+                 <number>6</number>
                 </property>
                 <property name="bottomMargin">
-                 <number>0</number>
+                 <number>6</number>
                 </property>
                 <item>
                  <widget class="QLabel" name="label_22">
@@ -2929,7 +2864,7 @@ QPushButton:hover {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_21">
+                 <widget class="QLabel" name="outputsLabel">
                   <property name="text">
                    <string>Output</string>
                   </property>

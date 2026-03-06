@@ -13,7 +13,7 @@ public:
   ~SourceWidget();
   void setSelected(bool _selected);
   QUuid id() { return source_.id; }
-
+  
 protected:
   void enterEvent(QEnterEvent*) override;
   void leaveEvent(QEvent*) override;

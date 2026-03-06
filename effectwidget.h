@@ -13,6 +13,10 @@ public:
 
   void setSelected(bool _selected);
 
+protected:
+  void enterEvent(QEnterEvent*) override;
+  void leaveEvent(QEvent*) override;
+
 private:
   Ui::EffectWidgetClass ui;
 };

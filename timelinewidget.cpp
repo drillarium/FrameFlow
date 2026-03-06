@@ -37,6 +37,7 @@ void TimelineWidget::paintEvent(QPaintEvent*)
   drawHeader(p);
   drawCenter(p);
   drawFooter(p);
+  drawPointer(p);
 }
 
 void TimelineWidget::drawHeader(QPainter& p)
@@ -212,33 +213,48 @@ void TimelineWidget::drawCenter(QPainter& p)
   p.restore();
 }
 
+bool TimelineWidget::isInPointer(const QPoint& pos)
+{
+  int x = timeToPixel(positionSecs_);
+  QRect centerRect(x-5, 0, 10, height());
+
+  return centerRect.contains(pos);
+}
+
 void TimelineWidget::mousePressEvent(QMouseEvent* event)
 {
   if(event->button() == Qt::LeftButton)
   {
-    if(isInHeader(event->pos()))
+    if(isInPointer(event->pos()))
+    {
+      isMovingPointer_ = true;
+      lastMouseX_ = event->pos().x();
+      setCursor(Qt::ClosedHandCursor);
+    }
+    else if(isInHeader(event->pos()))
     {
       isPanning_ = true;
       lastMouseX_ = event->pos().x();
       setCursor(Qt::ClosedHandCursor);
-    }
-    
-    int index = hitTestItem(event->pos());
-    if(index != -1)
-    {
-      if(selectedIndex_ != index)
+    }    
+    else {   
+      int index = hitTestItem(event->pos());
+      if(index != -1)
       {
-        selectedIndex_ = index;
-        update();
+        if(selectedIndex_ != index)
+        {
+          selectedIndex_ = index;
+          update();
+        }
       }
-    }
-    else
-    {
-      // Clicked empty area => clear selection
-      if(selectedIndex_ != -1)
+      else
       {
-        selectedIndex_ = -1;
-        update();
+        // Clicked empty area => clear selection
+        if(selectedIndex_ != -1)
+        {
+          selectedIndex_ = -1;
+          update();
+        }
       }
     }
   }
@@ -266,7 +282,26 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
     return;
   }
 
-  if(hitTestItem(event->pos()) >= 0)
+  if(isMovingPointer_)
+  {
+    int dx = event->pos().x() - lastMouseX_;
+
+    // Convert pixels to seconds
+    double deltaSec = dx / pixelsPerSecond_;
+
+    positionSecs_ += deltaSec;
+    if(positionSecs_ < 0)
+      positionSecs_ = 0;
+
+    lastMouseX_ = event->pos().x();
+
+    update();
+    return;
+  }
+
+  if(isInPointer(event->pos()))
+    setCursor(Qt::OpenHandCursor);
+  else if(hitTestItem(event->pos()) >= 0)
     setCursor(Qt::PointingHandCursor);
   else if(isInHeader(event->pos()))
     setCursor(Qt::OpenHandCursor);
@@ -276,10 +311,18 @@ void TimelineWidget::mouseMoveEvent(QMouseEvent* event)
 
 void TimelineWidget::mouseReleaseEvent(QMouseEvent* event)
 {
-  if(event->button() == Qt::LeftButton && isPanning_)
+  if(event->button() == Qt::LeftButton)
   {
-    isPanning_ = false;
-    setCursor(Qt::ArrowCursor);
+    if(isPanning_)
+    {
+      isPanning_ = false;
+      setCursor(Qt::ArrowCursor);
+    }
+    if(isMovingPointer_)
+    {
+      isMovingPointer_ = false;
+      setCursor(Qt::ArrowCursor);
+    }
   }
 
   QWidget::mouseReleaseEvent(event);
@@ -312,4 +355,11 @@ int TimelineWidget::hitTestItem(const QPoint& pos) const
   }
 
   return -1;
+}
+
+void TimelineWidget::drawPointer(QPainter& p)
+{
+  int x = timeToPixel(positionSecs_);
+  p.setPen(QPen(Qt::red, 2));
+  p.drawLine(x, 0, x, height());
 }

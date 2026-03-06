@@ -10,5 +10,6 @@ struct Scene {
   QString name;
   int orderIndex;
   QJsonObject settings; // resolution, fps, layout...
-  QVector<Source> sources;
+  int colorIndex;
+  QVector<Source> sources;  
 };
