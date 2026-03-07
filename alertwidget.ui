@@ -51,6 +51,9 @@ QLabel {
    </property>
    <item>
     <widget class="QWidget" name="mainAlertWidget" native="true">
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
        <number>0</number>
@@ -109,7 +112,7 @@ QLabel {
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="frameflow.qrc">:/FrameFlow/check.svg</pixmap>
+            <pixmap resource="frameflow.qrc">:/FrameFlow/warning.svg</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/FrameFlow">
+    <file>warning.svg</file>
     <file>stop.svg</file>
     <file>play.svg</file>
     <file>clone.svg</file>

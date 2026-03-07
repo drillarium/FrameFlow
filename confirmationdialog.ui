@@ -151,6 +151,9 @@ QPlainTextEdit {
            <property name="cursor">
             <cursorShape>PointingHandCursor</cursorShape>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::FocusPolicy::NoFocus</enum>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -171,6 +174,9 @@ QPlainTextEdit {
       </item>
       <item>
        <widget class="QPlainTextEdit" name="plainTextEdit">
+        <property name="focusPolicy">
+         <enum>Qt::FocusPolicy::NoFocus</enum>
+        </property>
         <property name="frameShape">
          <enum>QFrame::Shape::NoFrame</enum>
         </property>
@@ -230,6 +236,9 @@ QPlainTextEdit {
            </property>
            <property name="cursor">
             <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::FocusPolicy::NoFocus</enum>
            </property>
            <property name="text">
             <string>Cancel</string>

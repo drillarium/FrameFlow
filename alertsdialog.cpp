@@ -60,6 +60,13 @@ void AlertsDialog::onClearAll()
     }
   }
 
+  // unselect all the items
+  for(int i = 0; i < ui.listWidget->count(); ++i)
+  {
+    QListWidgetItem* item = ui.listWidget->item(i);
+    item->setSelected(false);
+  }
+
   clear_ = false;
 
   updateNotifications();
@@ -88,6 +95,26 @@ void AlertsDialog::updateNotifications()
   auto notifications = nm.notificationList();
   int newItemCount = notifications.size();
 
+  // label
+  if(newItemCount == 0)
+  {
+    ui.notificationsLabel->setVisible(false);
+  }
+  else
+  {
+    ENotificationSeverity severity = ENotificationSeverity::S_INFO;
+    for(auto notification : notifications) severity = std::max<ENotificationSeverity>(notification.severity, severity);
+    int itemCount = std::count_if(notifications.begin(), notifications.end(), [severity](const Notification& i) { return i.severity == severity; });
+
+    ui.notificationsLabel->setVisible(true);
+    ui.notificationsLabel->setText(newItemCount < 100 ? QString::number(itemCount) : "99+");
+    QString color;
+    if(severity == ENotificationSeverity::S_INFO) color = "#19BDDE";
+    else if(severity == ENotificationSeverity::S_WARNING) color = "#F5A623";
+    else color = "#E74C3C";
+    ui.notificationsLabel->setStyleSheet(QString("color: black; background: %1; border-radius: 12px;").arg(color));
+  }
+
   // update existing ones
   for(int i = 0; i < std::min(newItemCount, ui.listWidget->count()); ++i)
   {
@@ -104,7 +131,7 @@ void AlertsDialog::updateNotifications()
     AlertWidget* aw = new AlertWidget();
     aw->update(notifications[i]);
     QUuid id = notifications[i].id;
-    connect(aw, &AlertWidget::onRemoveAlert, this, [id]() {
+    connect(aw, &AlertWidget::onRemoveAlert, this, [](QUuid id) {
       NotificationManager& nm = NotificationManager::instance();
       nm.unregisterNotification(id);
     });
@@ -119,7 +146,4 @@ void AlertsDialog::updateNotifications()
     QListWidgetItem* it = ui.listWidget->takeItem(newItemCount);
     delete it;
   }
-
-  // list size
-  ui.listWidget->setFixedHeight((100 * ui.listWidget->count()) + (6 * ui.listWidget->count()));
 }

@@ -100,5 +100,6 @@ void ConfirmationDialog::keyPressEvent(QKeyEvent* event)
     event->ignore();
     return;
   }
+
   QDialog::keyPressEvent(event);
 }

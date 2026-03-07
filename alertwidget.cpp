@@ -6,7 +6,7 @@ AlertWidget::AlertWidget(QWidget *parent)
 {
   ui.setupUi(this);
   ui.closeAlertButton->hide();
-  connect(ui.closeAlertButton, &QPushButton::clicked, this, &AlertWidget::onRemoveAlert);
+  connect(ui.closeAlertButton, &QPushButton::clicked, this, [this] () { emit onRemoveAlert(id_); });
 }
 
 AlertWidget::~AlertWidget()
@@ -55,7 +55,18 @@ void AlertWidget::update(const Notification& _notification)
   ui.titleLabel->setText(_notification.title);
   ui.descriptionLabel->setText(_notification.desciption);
   ui.elapsedLabel->setText(text);
-  ui.iconLabel->setPixmap(QPixmap(":/FrameFlow/check.svg"));
+  if(_notification.severity == ENotificationSeverity::S_ERROR)
+  {
+    ui.iconLabel->setPixmap(QPixmap(":/FrameFlow/closered.svg"));
+  }
+  else if(_notification.severity == ENotificationSeverity::S_WARNING)
+  {
+    ui.iconLabel->setPixmap(QPixmap(":/FrameFlow/warning.svg"));
+  }
+  else
+  {
+    ui.iconLabel->setPixmap(QPixmap(":/FrameFlow/check.svg"));
+  }
 }
 
 void AlertWidget::setSelected(bool _selected)

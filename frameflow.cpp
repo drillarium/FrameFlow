@@ -232,6 +232,17 @@ FrameFlow::FrameFlow(QWidget *_parent)
   ui.effectsWidget->hide();
   ui.timelineWidget->hide();
 #endif // _DEBUG
+
+  for(int i = 0; i < 5; i++)
+  {
+    NotificationManager& nm = NotificationManager::instance();
+    Notification n1 = { QUuid::createUuid(), "Streaming Started", "Streaming Started Description", ENotificationSeverity::S_INFO };
+    nm.registerNotification(n1);
+    Notification n2 = { QUuid::createUuid(), "Streaming Started", "Streaming Started Description", ENotificationSeverity::S_WARNING };
+    nm.registerNotification(n2);
+    Notification n3 = { QUuid::createUuid(), "Streaming Started", "Streaming Started Description", ENotificationSeverity::S_ERROR };
+    nm.registerNotification(n3);
+  }
 }
 
 FrameFlow::~FrameFlow()
@@ -791,7 +802,7 @@ void FrameFlow::deleteScene(const Scene& _scene)
 {
   if(ui.sceneListWidget->count() == 1) return;
 
-  QMessageBox::StandardButton reply = ConfirmationDialog::question(this, "Remove scene", "Are you sure you want to remove this scene?", QMessageBox::Yes, QMessageBox::No, QMessageBox::No);
+  QMessageBox::StandardButton reply = ConfirmationDialog::question(this, "Remove scene", "Are you sure you want to remove this scene?", QMessageBox::Yes, QMessageBox::No, QMessageBox::Yes);
   if(reply == QMessageBox::Yes)
   {
     ProjectManager& pm = ProjectManager::instance();

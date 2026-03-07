@@ -21,7 +21,7 @@ protected:
   void leaveEvent(QEvent* event) override;
 
 signals:
-  void onRemoveAlert();
+  void onRemoveAlert(QUuid);
 
 private:
   Ui::AlertWidgetClass ui;

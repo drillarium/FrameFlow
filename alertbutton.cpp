@@ -14,7 +14,7 @@ AlertButton::~AlertButton()
 
 void AlertButton::setHasAlert(bool value, ENotificationSeverity _severity)
 {
-  _severity = _severity;
+  severity_ = _severity;
   hasAlert_ = value;
   update();
 }
