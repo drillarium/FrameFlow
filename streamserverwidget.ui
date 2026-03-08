@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>404</width>
-    <height>201</height>
+    <height>203</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,19 +106,19 @@ QComboBox QScrollBar:vertical {
        <number>5</number>
       </property>
       <property name="leftMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="topMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
-       <number>6</number>
+       <number>5</number>
       </property>
       <item>
-       <widget class="QWidget" name="horizontalWidget" native="true">
+       <widget class="QWidget" name="horizontalWidget_2" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -176,32 +176,6 @@ QComboBox QScrollBar:vertical {
            </property>
            <property name="text">
             <string>New Server</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="saveButton">
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="toolTip">
-            <string>Save changes</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="frameflow.qrc">
-             <normaloff>:/FrameFlow/save.svg</normaloff>:/FrameFlow/save.svg</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -328,16 +302,16 @@ QComboBox QScrollBar:vertical {
           <number>5</number>
          </property>
          <property name="leftMargin">
-          <number>3</number>
+          <number>5</number>
          </property>
          <property name="topMargin">
-          <number>3</number>
+          <number>5</number>
          </property>
          <property name="rightMargin">
-          <number>3</number>
+          <number>5</number>
          </property>
          <property name="bottomMargin">
-          <number>3</number>
+          <number>5</number>
          </property>
          <item>
           <widget class="QLineEdit" name="streamKeyLineEdit">
@@ -352,6 +326,9 @@ QComboBox QScrollBar:vertical {
              <width>16777215</width>
              <height>25</height>
             </size>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::EchoMode::Password</enum>
            </property>
            <property name="placeholderText">
             <string>Enter stream key ...</string>
@@ -381,6 +358,9 @@ QComboBox QScrollBar:vertical {
            <property name="icon">
             <iconset resource="frameflow.qrc">
              <normaloff>:/FrameFlow/eye.svg</normaloff>:/FrameFlow/eye.svg</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -420,59 +400,5 @@ QComboBox QScrollBar:vertical {
  <resources>
   <include location="frameflow.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>removeButton</sender>
-   <signal>clicked()</signal>
-   <receiver>StreamServerWidgetClass</receiver>
-   <slot>onRemove()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>379</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>201</x>
-     <y>100</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>saveButton</sender>
-   <signal>clicked()</signal>
-   <receiver>StreamServerWidgetClass</receiver>
-   <slot>onSave()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>338</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>201</x>
-     <y>100</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>eyeButton</sender>
-   <signal>clicked()</signal>
-   <receiver>StreamServerWidgetClass</receiver>
-   <slot>onToggleKey()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>374</x>
-     <y>178</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>201</x>
-     <y>100</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
- <slots>
-  <slot>onRemove()</slot>
-  <slot>onSave()</slot>
-  <slot>onToggleKey()</slot>
- </slots>
+ <connections/>
 </ui>

@@ -20,12 +20,9 @@ protected:
 
 protected slots:
   void onAddStreamServer();
-  void onSaveEncoding();
+  void onClose();
   void onSelectOutputFolder();
   void onVideoBitrateChange();
-
-signals:
-  void saveEncoding(const EncoderSettings &_settings);
 
 private:
   Ui::SettingsDialogClass ui;

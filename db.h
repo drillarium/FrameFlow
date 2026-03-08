@@ -30,6 +30,7 @@ public:
   QVector<StreamingServer> listStreamingServers();
   bool saveStreamingServer(const StreamingServer &_streamingServer);
   bool removeStreamingServer(const QUuid &_id);
+  bool removeStreamingServers();
 
 private:
   Database();

@@ -15,14 +15,8 @@ public:
   QUuid id() { return streamingServer_.id; }
   StreamingServer server() { return streamingServer_; }
 
-protected slots:
-  void onSave();
-  void onRemove();
-  void onToggleKey();
-
 signals:
   void onRemoveStreamServer();
-  void onSaveStreamServer();
 
 private:
   Ui::StreamServerWidgetClass ui;

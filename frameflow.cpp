@@ -77,6 +77,7 @@ FrameFlow::FrameFlow(QWidget *_parent)
   connect(&pm, &ProjectManager::projectListChanged, this, &FrameFlow::onProjectListChanged);
 
   // open DB and create a first project case no project available
+  pm.loadEncodingSettings();
   pm.openDatabase(dbPath);
   auto projects = pm.listProjects();
   if(projects.size() == 0)
@@ -233,16 +234,6 @@ FrameFlow::FrameFlow(QWidget *_parent)
   ui.timelineWidget->hide();
 #endif // _DEBUG
 
-  for(int i = 0; i < 5; i++)
-  {
-    NotificationManager& nm = NotificationManager::instance();
-    Notification n1 = { QUuid::createUuid(), "Streaming Started", "Streaming Started Description", ENotificationSeverity::S_INFO };
-    nm.registerNotification(n1);
-    Notification n2 = { QUuid::createUuid(), "Streaming Started", "Streaming Started Description", ENotificationSeverity::S_WARNING };
-    nm.registerNotification(n2);
-    Notification n3 = { QUuid::createUuid(), "Streaming Started", "Streaming Started Description", ENotificationSeverity::S_ERROR };
-    nm.registerNotification(n3);
-  }
 }
 
 FrameFlow::~FrameFlow()
@@ -302,13 +293,6 @@ void FrameFlow::readSettings()
   {
     nextTransitionUID_ = QUuid::fromString(settings.value("current_transition").toString());
   }
-  if(settings.contains("ecoder_settings"))
-  {
-    QByteArray jsonData = settings.value("ecoder_settings").toByteArray();
-    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
-    ProjectManager &pm = ProjectManager::instance();
-    pm.setEncoderSettings(modelFromJSON(doc));
-  }
 }
 
 void FrameFlow::writeSettings()
@@ -344,11 +328,6 @@ void FrameFlow::writeSettings()
   {
     settings.setValue("current_transition", transition->id.toString());
   }
-
-  EncoderSettings es = pm.encoderSettings();
-  QJsonDocument doc = JSONfromModel(es);
-  QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
-  settings.setValue("ecoder_settings", jsonData);
 }
 
 void FrameFlow::closeEvent(QCloseEvent* event)
@@ -447,12 +426,6 @@ void FrameFlow::onSettings()
 {
   SettingsDialog dlg(this);
   dlg.setWindowModality(Qt::ApplicationModal);
-
-  connect(&dlg, &SettingsDialog::saveEncoding, this, [&] (const EncoderSettings& _settings) {
-    ProjectManager &pm = ProjectManager::instance();
-    pm.setEncoderSettings(_settings);
-    writeSettings();
-  });
 
   QWidget* parent = this;
   QRect parentRect = parent->geometry();

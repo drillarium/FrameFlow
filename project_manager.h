@@ -46,11 +46,13 @@ public:
   void resetDirty();
   QVector<Transition> listTransitions();
   QVector<StreamingServer> listStreamingServers();
-  bool addStreamingServer(StreamingServer &_streamingServer);
-  bool removeStreamingServer(const QUuid &_id);
-  bool updateStreamingServer(const StreamingServer &_streamingServer);
+  bool saveStreamingServers(const QVector<StreamingServer> &_ssl);
+  // bool addStreamingServer(StreamingServer &_streamingServer);
+  // bool removeStreamingServer(const QUuid &_id);
+  // bool updateStreamingServer(const StreamingServer &_streamingServer);
   EncoderSettings encoderSettings() { return encoderSettings_; }
-  void setEncoderSettings(const EncoderSettings &_settings) { encoderSettings_ = _settings; }
+  void loadEncodingSettings();
+  void saveEncodingSettings(const EncoderSettings& _settings);
   bool moveScene(const QUuid& sceneId, bool up);
 
   // Queries

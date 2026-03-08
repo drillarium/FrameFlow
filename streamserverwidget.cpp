@@ -11,29 +11,16 @@ StreamServerWidget::StreamServerWidget(const StreamingServer& _ss, QWidget *pare
   ui.serverLineEdit->setText(streamingServer_.url);
   ui.streamKeyLineEdit->setText(streamingServer_.key);
   ui.onOffSwitch->setChecked(streamingServer_.enabled);
+
+  connect(ui.removeButton, &QPushButton::clicked, this, &StreamServerWidget::onRemoveStreamServer);
+
+  connect(ui.eyeButton, &QPushButton::toggled, this,
+    [this](bool checked) {
+      ui.streamKeyLineEdit->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);
+      ui.eyeButton->setIcon(QIcon(checked ? ":/FrameFlow/eye-slash.svg" : ":/FrameFlow/eye.svg"));
+  });
 }
 
 StreamServerWidget::~StreamServerWidget()
 {
-}
-
-void StreamServerWidget::onSave()
-{
-  streamingServer_.platform = ui.comboBox->currentText();
-  streamingServer_.name = ui.nameLineEdit->text();
-  streamingServer_.url = ui.serverLineEdit->text();
-  streamingServer_.key = ui.streamKeyLineEdit->text();
-  streamingServer_.enabled = ui.onOffSwitch->isChecked();
-
-  emit onSaveStreamServer();
-}
-
-void StreamServerWidget::onRemove()
-{
-  emit onRemoveStreamServer();
-}
-
-void StreamServerWidget::onToggleKey()
-{
-  // TODO
 }

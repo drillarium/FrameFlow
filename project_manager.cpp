@@ -2,6 +2,7 @@
 #include "db.h"
 #include <QDateTime>
 #include <QRandomGenerator>
+#include <QSettings>
 
 ProjectManager& ProjectManager::instance()
 {
@@ -12,6 +13,7 @@ ProjectManager& ProjectManager::instance()
 ProjectManager::ProjectManager(QObject* parent)
 :QObject(parent)
 {
+
 }
 
 bool ProjectManager::openDatabase(const QString& dbPath)
@@ -393,6 +395,27 @@ bool ProjectManager::setCurrentTransition(const QUuid& _transition)
   return false;
 }
 
+bool ProjectManager::saveStreamingServers(const QVector<StreamingServer>& _ssl)
+{
+  // remove all existing
+  Database::instance().removeStreamingServers();
+
+  // create new ones
+  for(int i = 0; i < _ssl.size(); i++)
+  {
+    StreamingServer ss = _ssl[i];
+    ss.id = QUuid::createUuid();
+    ss.orderIndex = i;
+    Database::instance().saveStreamingServer(ss);
+  }
+
+  // load
+  cachedStreamingServers_ = Database::instance().listStreamingServers();
+
+  return true;
+}
+
+/*
 bool ProjectManager::addStreamingServer(StreamingServer& _streamingServer)
 {
   _streamingServer.id = QUuid::createUuid();
@@ -422,6 +445,7 @@ bool ProjectManager::updateStreamingServer(const StreamingServer& _streamingServ
 
   return true;
 }
+*/
 
 bool ProjectManager::moveScene(const QUuid& sceneId, bool up)
 {
@@ -455,4 +479,26 @@ bool ProjectManager::moveScene(const QUuid& sceneId, bool up)
   }
 
   return false;
+}
+
+void ProjectManager::loadEncodingSettings()
+{
+  QSettings settings("AVIO", "FrameFlow");
+
+  if(settings.contains("ecoder_settings"))
+  {
+    QByteArray jsonData = settings.value("ecoder_settings").toByteArray();
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+    encoderSettings_ = modelFromJSON(doc);
+  }
+}
+
+void ProjectManager::saveEncodingSettings(const EncoderSettings &_settings)
+{
+  encoderSettings_ = _settings;
+
+  QJsonDocument doc = JSONfromModel(encoderSettings_);
+  QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
+  QSettings qsettings("AVIO", "FrameFlow");
+  qsettings.setValue("ecoder_settings", jsonData);
 }

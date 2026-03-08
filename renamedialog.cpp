@@ -5,6 +5,7 @@ RenameDialog::RenameDialog(const QString& _name, QWidget *parent)
 {
   ui.setupUi(this);
   ui.lineEdit->setText(_name);
+  ui.lineEdit->selectAll();
 
   setWindowFlags(windowFlags() | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint);
   setAttribute(Qt::WA_TranslucentBackground);

@@ -50,11 +50,7 @@ void SettingsDialog::onAddStreamServer()
   ss.platform = "Custom RTMP";
   ss.enabled = true;
 
-  ProjectManager& pm = ProjectManager::instance();
-  if(pm.addStreamingServer(ss))
-  {
-    addStreamingServer(ss);
-  }
+  addStreamingServer(ss);
 }
 
 void SettingsDialog::addStreamingServer(const StreamingServer &_ss)
@@ -71,27 +67,11 @@ void SettingsDialog::addStreamingServer(const StreamingServer &_ss)
     StreamServerWidget *widget = static_cast<StreamServerWidget*>(lw->itemWidget(lwi));
     if(!widget) return;
 
-    QUuid id = widget->id();
-
-    // save db
-    ProjectManager &pm = ProjectManager::instance();
-    if(!pm.removeStreamingServer(id)) return;
-
     // remove from list
     int row = lw->row(lwi);
     QListWidgetItem* it = lw->takeItem(row);
     delete it;
     lw->setFixedHeight((205 * lw->count()) + (6 * lw->count()));
-  });
-  connect(ssw, &StreamServerWidget::onSaveStreamServer, this, [&, lw, lwi]() {
-    StreamServerWidget *widget = static_cast<StreamServerWidget*>(lw->itemWidget(lwi));
-    if(!widget) return;
-
-    StreamingServer server = widget->server();
-
-    // save db
-    ProjectManager &pm = ProjectManager::instance();
-    if(!pm.updateStreamingServer(server)) return;
   });
   ui.streamServersListWidgets->addItem(lwi);
   ui.streamServersListWidgets->setItemWidget(lwi, ssw);
@@ -216,22 +196,6 @@ void SettingsDialog::loadEncoderSettings(const EncoderSettings& _settings)
   onVideoBitrateChange();
 }
 
-void SettingsDialog::onSaveEncoding()
-{
-  EncoderSettings settings;
-
-  settings.videoEncoder = videoEncoderText(ui.videoEncoderComboBox->currentText());
-  settings.videoBitrateKbps = ui.videoBitrateSlider->value();
-  settings.rateControl = rateControlText(ui.rateControlComboBox->currentText());
-  settings.keyFrameIntervalInSeconds = keyFrameIntervalInt(ui.keyFrameIntervalComboBox->currentText());
-  settings.audioEncoder = audioEncoderText(ui.audioEncoderComboBox->currentText());
-  settings.audioBitrateKbps = audioBitrateInt(ui.audioBitrateComboBox->currentText());
-  settings.sampleRate = audioSampleRateInt(ui.sampleRateComboBox->currentText());
-  settings.outputFolder = ui.outputFolderLineEdit->text();
-
-  emit saveEncoding(settings);
-}
-
 void SettingsDialog::onSelectOutputFolder()
 {
   QString initialFolder = ui.outputFolderLineEdit->text();
@@ -247,4 +211,37 @@ void SettingsDialog::onVideoBitrateChange()
 {
   int kbps = ui.videoBitrateSlider->value();
   ui.bitrateLabel->setText(QString("%1 Kbps").arg(kbps));
+}
+
+void SettingsDialog::onClose()
+{
+  EncoderSettings settings;
+  settings.videoEncoder = videoEncoderText(ui.videoEncoderComboBox->currentText());
+  settings.videoBitrateKbps = ui.videoBitrateSlider->value();
+  settings.rateControl = rateControlText(ui.rateControlComboBox->currentText());
+  settings.keyFrameIntervalInSeconds = keyFrameIntervalInt(ui.keyFrameIntervalComboBox->currentText());
+  settings.audioEncoder = audioEncoderText(ui.audioEncoderComboBox->currentText());
+  settings.audioBitrateKbps = audioBitrateInt(ui.audioBitrateComboBox->currentText());
+  settings.sampleRate = audioSampleRateInt(ui.sampleRateComboBox->currentText());
+  settings.outputFolder = ui.outputFolderLineEdit->text();
+
+  // Save encoder settings in manager
+  ProjectManager& pm = ProjectManager::instance();
+  pm.saveEncodingSettings(settings);
+
+  // same for streaming servers
+  QVector<StreamingServer> ssl;
+  for(int i = 0; i < ui.streamServersListWidgets->count(); ++i)
+  {
+    QListWidgetItem* item = ui.streamServersListWidgets->item(i);
+    StreamServerWidget* widget = static_cast<StreamServerWidget*>(ui.streamServersListWidgets->itemWidget(item));
+    if(widget)
+    {
+      StreamingServer server = widget->server();
+      ssl.push_back(server);
+    }
+  }
+  pm.saveStreamingServers(ssl);
+
+  QDialog::accept();
 }

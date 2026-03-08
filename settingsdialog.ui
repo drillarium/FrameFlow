@@ -299,7 +299,7 @@ QSlider::handle:horizontal:hover {
            <widget class="QWidget" name="hotKeysWidget" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout">
              <property name="spacing">
-              <number>6</number>
+              <number>5</number>
              </property>
              <property name="leftMargin">
               <number>0</number>
@@ -331,7 +331,7 @@ QSlider::handle:horizontal:hover {
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap resource="frameflow.qrc">:/FrameFlow/plus.svg</pixmap>
+                <pixmap resource="frameflow.qrc">:/FrameFlow/tv.svg</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
@@ -410,7 +410,7 @@ QSlider::handle:horizontal:hover {
            <widget class="QWidget" name="streamServersWidget" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_3">
              <property name="spacing">
-              <number>6</number>
+              <number>5</number>
              </property>
              <property name="leftMargin">
               <number>0</number>
@@ -442,7 +442,7 @@ QSlider::handle:horizontal:hover {
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap resource="frameflow.qrc">:/FrameFlow/plus.svg</pixmap>
+                <pixmap resource="frameflow.qrc">:/FrameFlow/liveblue.svg</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
@@ -513,6 +513,9 @@ QSlider::handle:horizontal:hover {
           <item>
            <widget class="QWidget" name="horizontalWidget" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <property name="spacing">
+              <number>5</number>
+             </property>
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -543,7 +546,7 @@ QSlider::handle:horizontal:hover {
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap resource="frameflow.qrc">:/FrameFlow/plus.svg</pixmap>
+                <pixmap resource="frameflow.qrc">:/FrameFlow/video.svg</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
@@ -554,29 +557,6 @@ QSlider::handle:horizontal:hover {
               <widget class="QLabel" name="encodingLabel">
                <property name="text">
                 <string>Encoding</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="saveEncodingButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="cursor">
-                <cursorShape>PointingHandCursor</cursorShape>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="frameflow.qrc">
-                 <normaloff>:/FrameFlow/save.svg</normaloff>:/FrameFlow/save.svg</iconset>
-               </property>
-               <property name="flat">
-                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -1035,7 +1015,7 @@ QSlider::handle:horizontal:hover {
    <sender>closeButton</sender>
    <signal>clicked()</signal>
    <receiver>SettingsDialogClass</receiver>
-   <slot>reject()</slot>
+   <slot>onClose()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>327</x>
@@ -1060,22 +1040,6 @@ QSlider::handle:horizontal:hover {
     <hint type="destinationlabel">
      <x>174</x>
      <y>292</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>saveEncodingButton</sender>
-   <signal>clicked()</signal>
-   <receiver>SettingsDialogClass</receiver>
-   <slot>onSaveEncoding()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>324</x>
-     <y>220</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>174</x>
-     <y>419</y>
     </hint>
    </hints>
   </connection>
@@ -1117,5 +1081,6 @@ QSlider::handle:horizontal:hover {
   <slot>onSaveEncoding()</slot>
   <slot>onVideoBitrateChange()</slot>
   <slot>onSelectOutputFolder()</slot>
+  <slot>onClose()</slot>
  </slots>
 </ui>

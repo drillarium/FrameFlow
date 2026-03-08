@@ -635,7 +635,7 @@ bool Database::migrateV5ToV6()
     return false;
   }
 
-  if(!setSchemaVersion(5))
+  if(!setSchemaVersion(6))
   {
     db_.rollback();
     return false;
@@ -732,6 +732,27 @@ bool Database::removeStreamingServer(const QUuid& _id)
   if(q.numRowsAffected() == 0)
   {
     qWarning() << "No server deleted (id not found)";
+    db_.rollback();
+    return false;
+  }
+
+  return db_.commit();
+}
+
+bool Database::removeStreamingServers()
+{
+  QMutexLocker lock(&mutex_);
+
+  if(!db_.isOpen()) return false;
+
+  db_.transaction();
+
+  QSqlQuery q;
+  q.prepare("DELETE FROM servers");
+
+  if(!q.exec())
+  {
+    qCritical() << "Delete servers failed:" << q.lastError();
     db_.rollback();
     return false;
   }
