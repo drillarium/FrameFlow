@@ -362,6 +362,13 @@ QSlider::handle:horizontal:hover {
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="versionLabel">
+         <property name="text">
+          <string>v1.0.0</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_4">
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>

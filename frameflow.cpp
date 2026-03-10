@@ -27,6 +27,7 @@
 #include "vumetercontrol.h"
 #include <QToolButton>
 #include "effectsdialog.h"
+#include "version.h"
 
 // MFormatProtectionInitializer
 class MFormatProtectionInitializer
@@ -229,6 +230,8 @@ FrameFlow::FrameFlow(QWidget *_parent)
 
   initExternalAudio();
 
+  ui.versionLabel->setText(QString("v%1").arg(APP_VERSION));
+
 #ifndef _DEBUG
   ui.effectsWidget->hide();
   ui.timelineWidget->hide();
@@ -252,7 +255,7 @@ FrameFlow::~FrameFlow()
 
 void FrameFlow::readSettings()
 {
-  QSettings settings("AVIO", "FrameFlow");
+  QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
 
   // Geometry & UI state
   if(settings.contains("geometry"))
@@ -297,7 +300,7 @@ void FrameFlow::readSettings()
 
 void FrameFlow::writeSettings()
 {
-  QSettings settings("AVIO", "FrameFlow");
+  QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
 
   settings.setValue("geometry", saveGeometry());
   settings.setValue("windowState", saveState());

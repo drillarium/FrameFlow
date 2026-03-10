@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
-    <height>367</height>
+    <width>500</width>
+    <height>441</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -87,6 +87,13 @@ QLineEdit:focus {
   border-radius: 6px;
 }
 
+QProgressBar {
+    border: 0px;
+    background-color: transparent;
+}
+QProgressBar::chunk {
+    background-color: #101318;
+}
 
 </string>
   </property>
@@ -98,16 +105,16 @@ QLineEdit:focus {
        <number>15</number>
       </property>
       <property name="leftMargin">
-       <number>9</number>
+       <number>10</number>
       </property>
       <property name="topMargin">
-       <number>9</number>
+       <number>10</number>
       </property>
       <property name="rightMargin">
-       <number>9</number>
+       <number>10</number>
       </property>
       <property name="bottomMargin">
-       <number>9</number>
+       <number>10</number>
       </property>
       <item>
        <widget class="QWidget" name="headerNewProjectWidget" native="true">
@@ -118,17 +125,20 @@ QLineEdit:focus {
          </sizepolicy>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>5</number>
+         </property>
          <property name="leftMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <property name="topMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <property name="rightMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <property name="bottomMargin">
-          <number>9</number>
+          <number>10</number>
          </property>
          <item>
           <widget class="QLabel" name="label_2">
@@ -367,7 +377,7 @@ QLineEdit:focus {
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <property name="spacing">
-          <number>2</number>
+          <number>5</number>
          </property>
          <property name="leftMargin">
           <number>0</number>
@@ -543,6 +553,45 @@ QLineEdit:focus {
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QLabel" name="messageLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>5</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>5</height>
+         </size>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
    </item>
@@ -569,5 +618,24 @@ QLineEdit:focus {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>checkForUpdatesButton</sender>
+   <signal>clicked()</signal>
+   <receiver>HelpDialogClass</receiver>
+   <slot>onCheckForUpdates()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>263</x>
+     <y>185</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>onCheckForUpdates()</slot>
+ </slots>
 </ui>

@@ -3,6 +3,7 @@
 #include <QDateTime>
 #include <QRandomGenerator>
 #include <QSettings>
+#include <QCoreApplication>
 
 ProjectManager& ProjectManager::instance()
 {
@@ -483,7 +484,7 @@ bool ProjectManager::moveScene(const QUuid& sceneId, bool up)
 
 void ProjectManager::loadEncodingSettings()
 {
-  QSettings settings("AVIO", "FrameFlow");
+  QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
 
   if(settings.contains("ecoder_settings"))
   {
@@ -499,6 +500,6 @@ void ProjectManager::saveEncodingSettings(const EncoderSettings &_settings)
 
   QJsonDocument doc = JSONfromModel(encoderSettings_);
   QByteArray jsonData = doc.toJson(QJsonDocument::Compact);
-  QSettings qsettings("AVIO", "FrameFlow");
-  qsettings.setValue("ecoder_settings", jsonData);
+  QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+  settings.setValue("ecoder_settings", jsonData);
 }
